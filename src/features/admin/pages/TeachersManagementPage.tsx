@@ -9,15 +9,30 @@ import { apiClient } from '@services/api/client'
  * Allows admins to view, create, update, and delete teachers
  */
 
-interface Teacher {
-  id: string
-  name: string
+interface User {
+  _id: string
   email: string
+}
+
+interface Teacher {
+  _id: string
+  id: string
+  userId: string | User
+  teacherId: string
+  firstName: string
+  lastName: string
+  email: string
+  dateOfBirth: string
+  gender: string
   department: string
   qualification: string
   status: string
   phone?: string
   address?: string
+  subject?: string
+  experience?: number
+  salary?: number
+  joinDate?: string
 }
 
 interface FormData {
@@ -141,9 +156,17 @@ export const TeachersManagementPage: React.FC = () => {
       }
 
       // Only send fields that are not empty
-      const dataToSend = Object.fromEntries(
+      const dataToSend: any = Object.fromEntries(
         Object.entries(formData).filter(([_, value]) => value !== '')
       )
+      
+      // Convert numeric fields to numbers
+      if (dataToSend.experience && typeof dataToSend.experience === 'string') {
+        dataToSend.experience = parseFloat(dataToSend.experience)
+      }
+      if (dataToSend.salary && typeof dataToSend.salary === 'string') {
+        dataToSend.salary = parseFloat(dataToSend.salary)
+      }
       
       await apiClient.post('/teachers', dataToSend)
       setSuccess('Teacher created successfully')
@@ -174,22 +197,23 @@ export const TeachersManagementPage: React.FC = () => {
 
   // Handle edit teacher
   const handleEdit = (teacher: Teacher) => {
-    setEditingId(teacher.id)
+    setEditingId(teacher._id)
+    const userIdStr = typeof teacher.userId === 'string' ? teacher.userId : (teacher.userId as User)._id
     setFormData({
-      userId: '',
-      teacherId: '',
-      firstName: teacher.name.split(' ')[0] || '',
-      lastName: teacher.name.split(' ')[1] || '',
-      dateOfBirth: '',
-      gender: 'male',
+      userId: userIdStr || '',
+      teacherId: teacher.teacherId || '',
+      firstName: teacher.firstName || '',
+      lastName: teacher.lastName || '',
+      dateOfBirth: teacher.dateOfBirth || '',
+      gender: teacher.gender || 'male',
       phone: teacher.phone || '',
       address: teacher.address || '',
-      subject: '',
+      subject: teacher.subject || '',
       qualification: teacher.qualification || '',
-      experience: '',
-      salary: '',
-      joinDate: '',
-      status: teacher.status,
+      experience: teacher.experience?.toString() || '',
+      salary: teacher.salary?.toString() || '',
+      joinDate: teacher.joinDate || '',
+      status: teacher.status || 'active',
     })
     setShowForm(true)
   }
@@ -202,9 +226,22 @@ export const TeachersManagementPage: React.FC = () => {
     try {
       setError(null)
       // Only send fields that are not empty
-      const dataToSend = Object.fromEntries(
+      const dataToSend: any = Object.fromEntries(
         Object.entries(formData).filter(([_, value]) => value !== '')
       )
+      
+      // Remove immutable fields (userId and teacherId cannot be updated)
+      delete dataToSend.userId
+      delete dataToSend.teacherId
+      
+      // Convert numeric fields to numbers
+      if (dataToSend.experience && typeof dataToSend.experience === 'string') {
+        dataToSend.experience = parseFloat(dataToSend.experience)
+      }
+      if (dataToSend.salary && typeof dataToSend.salary === 'string') {
+        dataToSend.salary = parseFloat(dataToSend.salary)
+      }
+      
       await apiClient.put(`/teachers/${editingId}`, dataToSend)
       setSuccess('Teacher updated successfully')
       setFormData({
@@ -574,6 +611,7 @@ export const TeachersManagementPage: React.FC = () => {
                   <tr>
                     <th className="px-4 py-3 text-left font-semibold text-neutral-700 dark:text-neutral-300">Name</th>
                     <th className="px-4 py-3 text-left font-semibold text-neutral-700 dark:text-neutral-300">Email</th>
+                    <th className="px-4 py-3 text-left font-semibold text-neutral-700 dark:text-neutral-300">Teacher ID</th>
                     <th className="px-4 py-3 text-left font-semibold text-neutral-700 dark:text-neutral-300">Department</th>
                     <th className="px-4 py-3 text-left font-semibold text-neutral-700 dark:text-neutral-300">Qualification</th>
                     <th className="px-4 py-3 text-left font-semibold text-neutral-700 dark:text-neutral-300">Status</th>
@@ -581,45 +619,49 @@ export const TeachersManagementPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {teachers.map((teacher) => (
-                    <tr key={teacher.id} className="border-t border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-700">
-                      <td className="px-4 py-3 text-neutral-900 dark:text-white">{teacher.name}</td>
-                      <td className="px-4 py-3 text-neutral-900 dark:text-white">{teacher.email}</td>
-                      <td className="px-4 py-3 text-neutral-900 dark:text-white">{teacher.department}</td>
-                      <td className="px-4 py-3 text-neutral-900 dark:text-white">{teacher.qualification}</td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`px-2 py-1 rounded text-xs font-medium ${
-                            teacher.status === 'active'
-                              ? 'bg-success-100 dark:bg-success-900 text-success-700 dark:text-success-200'
-                              : teacher.status === 'on_leave'
-                                ? 'bg-warning-100 dark:bg-warning-900 text-warning-700 dark:text-warning-200'
-                                : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300'
-                          }`}
-                        >
-                          {teacher.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            onClick={() => handleEdit(teacher)}
+                  {teachers.map((teacher) => {
+                    const userEmail = typeof teacher.userId === 'string' ? teacher.email : (teacher.userId as User).email
+                    return (
+                      <tr key={teacher._id} className="border-t border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-700">
+                        <td className="px-4 py-3 text-neutral-900 dark:text-white">{teacher.firstName} {teacher.lastName}</td>
+                        <td className="px-4 py-3 text-neutral-900 dark:text-white">{userEmail}</td>
+                        <td className="px-4 py-3 text-neutral-900 dark:text-white">{teacher.teacherId}</td>
+                        <td className="px-4 py-3 text-neutral-900 dark:text-white">{teacher.department}</td>
+                        <td className="px-4 py-3 text-neutral-900 dark:text-white">{teacher.qualification}</td>
+                        <td className="px-4 py-3">
+                          <span
+                            className={`px-2 py-1 rounded text-xs font-medium ${
+                              teacher.status === 'active'
+                                ? 'bg-success-100 dark:bg-success-900 text-success-700 dark:text-success-200'
+                                : teacher.status === 'on_leave'
+                                  ? 'bg-warning-100 dark:bg-warning-900 text-warning-700 dark:text-warning-200'
+                                  : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300'
+                            }`}
                           >
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="danger"
-                            onClick={() => handleDelete(teacher.id)}
-                          >
-                            Delete
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                            {teacher.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => handleEdit(teacher)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="danger"
+                              onClick={() => handleDelete(teacher._id)}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
