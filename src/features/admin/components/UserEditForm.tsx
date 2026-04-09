@@ -26,7 +26,8 @@ export const UserEditForm: React.FC<UserEditFormProps> = ({
   onRoleChange,
 }) => {
   const [formData, setFormData] = useState({
-    name: user.name,
+    firstname: user.firstname,
+    lastname: user.lastname,
     email: user.email,
     role: user.role,
   })
@@ -57,7 +58,8 @@ export const UserEditForm: React.FC<UserEditFormProps> = ({
 
     try {
       await onSubmit({
-        name: formData.name,
+        firstname: formData.firstname,
+        lastname: formData.lastname,
         email: formData.email,
       })
     } catch (err) {
@@ -93,14 +95,28 @@ export const UserEditForm: React.FC<UserEditFormProps> = ({
 
         <div>
           <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-            Name
+            First Name
           </label>
           <Input
             type="text"
-            name="name"
-            value={formData.name}
+            name="firstname"
+            value={formData.firstname}
             onChange={handleChange}
-            placeholder="Enter user name"
+            placeholder="Enter first name"
+            disabled={loading}
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+            Last Name
+          </label>
+          <Input
+            type="text"
+            name="lastname"
+            value={formData.lastname}
+            onChange={handleChange}
+            placeholder="Enter last name"
             disabled={loading}
           />
         </div>

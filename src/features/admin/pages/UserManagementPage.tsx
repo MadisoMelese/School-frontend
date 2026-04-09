@@ -118,7 +118,7 @@ export const UserManagementPage: React.FC = () => {
   // Handle user creation
   const handleCreateUser = async (data: any) => {
     try {
-      await createUser(data.email, data.name, data.role)
+      await createUser(data.firstname, data.lastname, data.email, data.role)
       closeModal()
     } catch (err) {
       throw err
@@ -171,20 +171,23 @@ export const UserManagementPage: React.FC = () => {
   // Define table columns
   const columns: Column<User>[] = [
     {
-      key: 'name',
+      key: 'firstname',
       label: 'Name',
       sortable: true,
-      render: (value, row) => (
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-sm font-semibold text-primary-600 dark:text-primary-300">
-            {value.charAt(0).toUpperCase()}
+      render: (value, row) => {
+        const fullName = `${row.firstname} ${row.lastname}`
+        return (
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-sm font-semibold text-primary-600 dark:text-primary-300">
+              {fullName.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <p className="font-medium text-neutral-900 dark:text-white">{fullName}</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">{row.email}</p>
+            </div>
           </div>
-          <div>
-            <p className="font-medium text-neutral-900 dark:text-white">{value}</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">{row.email}</p>
-          </div>
-        </div>
-      ),
+        )
+      },
     },
     {
       key: 'role',

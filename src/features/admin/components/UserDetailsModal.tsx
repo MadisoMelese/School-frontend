@@ -21,16 +21,16 @@ export const UserDetailsModal: React.FC<UserDetailsModalProps> = ({ user, onClos
           {user.avatar ? (
             <img
               src={user.avatar}
-              alt={user.name}
+              alt={`${user.firstname} ${user.lastname}`}
               className="w-16 h-16 rounded-full object-cover"
             />
           ) : (
             <div className="w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-2xl font-semibold text-primary-600 dark:text-primary-300">
-              {user.name.charAt(0).toUpperCase()}
+              {`${user.firstname} ${user.lastname}`.charAt(0).toUpperCase()}
             </div>
           )}
           <div>
-            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">{user.name}</h3>
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">{user.firstname} {user.lastname}</h3>
             <p className="text-sm text-neutral-600 dark:text-neutral-400">{user.email}</p>
           </div>
         </div>

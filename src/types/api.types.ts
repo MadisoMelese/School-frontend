@@ -56,16 +56,21 @@ export interface ChangePasswordResponse {
 
 // ============ User ============
 
-export type UserRole = 'student' | 'teacher' | 'parent' | 'admin';
+export type UserRole = 'student' | 'teacher' | 'parent' | 'admin' | 'user';
 export type UserStatus = 'active' | 'blocked' | 'inactive';
 
 export interface User {
   id: string;
   email: string;
-  name: string;
+  firstname: string;
+  lastname: string;
+  username: string;
   role: UserRole;
   avatar?: string;
   status: UserStatus;
+  isBlocked: boolean;
+  isVerified: boolean;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }

@@ -18,7 +18,8 @@ const roleOptions = [
 
 export const UserCreateForm: React.FC<UserCreateFormProps> = ({ onSubmit, onClose }) => {
   const [formData, setFormData] = useState({
-    name: '',
+    firstname: '',
+    lastname: '',
     email: '',
     role: 'student' as UserRole,
   })
@@ -36,8 +37,14 @@ export const UserCreateForm: React.FC<UserCreateFormProps> = ({ onSubmit, onClos
     setError(null)
 
     // Validate required fields
-    if (!formData.name.trim()) {
-      setError('Name is required')
+    if (!formData.firstname.trim()) {
+      setError('First name is required')
+      setLoading(false)
+      return
+    }
+
+    if (!formData.lastname.trim()) {
+      setError('Last name is required')
       setLoading(false)
       return
     }
@@ -89,14 +96,29 @@ export const UserCreateForm: React.FC<UserCreateFormProps> = ({ onSubmit, onClos
 
         <div>
           <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-            Name *
+            First Name *
           </label>
           <Input
             type="text"
-            name="name"
-            value={formData.name}
+            name="firstname"
+            value={formData.firstname}
             onChange={handleChange}
-            placeholder="Enter user name"
+            placeholder="Enter first name"
+            disabled={loading}
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+            Last Name *
+          </label>
+          <Input
+            type="text"
+            name="lastname"
+            value={formData.lastname}
+            onChange={handleChange}
+            placeholder="Enter last name"
             disabled={loading}
             required
           />

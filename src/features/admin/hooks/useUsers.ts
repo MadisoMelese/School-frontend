@@ -28,6 +28,7 @@ export const useUsers = () => {
     try {
       setState((prev) => ({ ...prev, loading: true, error: null }))
       const data = await userService.getUsers(filters)
+      console.log("user data", data)
       setState((prev) => ({
         ...prev,
         users: data.users,
@@ -57,10 +58,10 @@ export const useUsers = () => {
   /**
    * Create a new user
    */
-  const createUser = useCallback(async (email: string, name: string, role: UserRole) => {
+  const createUser = useCallback(async (firstname: string, lastname: string, email: string, role: UserRole) => {
     try {
       setState((prev) => ({ ...prev, loading: true, error: null }))
-      const user = await userService.createUser({ email, name, role })
+      const user = await userService.createUser({ email, firstname, lastname, role })
       setState((prev) => ({
         ...prev,
         users: [user, ...prev.users],

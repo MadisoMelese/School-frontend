@@ -10,12 +10,14 @@ export interface UserListResponse {
 
 export interface CreateUserRequest {
   email: string
-  name: string
+  firstname: string
+  lastname: string
   role: UserRole
 }
 
 export interface UpdateUserRequest {
-  name?: string
+  firstname?: string
+  lastname?: string
   email?: string
   role?: UserRole
   status?: UserStatus
