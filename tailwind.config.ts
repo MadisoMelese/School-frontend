@@ -3,6 +3,16 @@ import type { Config } from 'tailwindcss'
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
+    screens: {
+      // Mobile-first breakpoints
+      'xs': '320px',   // Extra small devices
+      'sm': '640px',   // Small devices (landscape phones)
+      'md': '768px',   // Medium devices (tablets)
+      'lg': '1024px',  // Large devices (small laptops)
+      'xl': '1280px',  // Extra large devices (desktops)
+      '2xl': '1536px', // 2X large devices (large desktops)
+      '3xl': '1920px', // 3X large devices (ultra-wide)
+    },
     extend: {
       colors: {
         primary: {
@@ -85,13 +95,15 @@ export default {
         'safe-right': 'max(1rem, env(safe-area-inset-right))',
       },
       fontSize: {
-        xs: ['0.75rem', { lineHeight: '1rem' }],
-        sm: ['0.875rem', { lineHeight: '1.25rem' }],
-        base: ['1rem', { lineHeight: '1.5rem' }],
-        lg: ['1.125rem', { lineHeight: '1.75rem' }],
-        xl: ['1.25rem', { lineHeight: '1.75rem' }],
+        // Mobile-first typography scaling
+        'xs': ['0.75rem', { lineHeight: '1rem' }],
+        'sm': ['0.875rem', { lineHeight: '1.25rem' }],
+        'base': ['1rem', { lineHeight: '1.5rem' }],
+        'lg': ['1.125rem', { lineHeight: '1.75rem' }],
+        'xl': ['1.25rem', { lineHeight: '1.75rem' }],
         '2xl': ['1.5rem', { lineHeight: '2rem' }],
         '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
+        '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-in-out',
@@ -122,6 +134,14 @@ export default {
       },
       minWidth: {
         'touch-target': '44px',
+      },
+      maxWidth: {
+        'container-xs': '320px',
+        'container-sm': '640px',
+        'container-md': '768px',
+        'container-lg': '1024px',
+        'container-xl': '1280px',
+        'container-2xl': '1536px',
       },
     },
   },
