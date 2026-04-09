@@ -96,7 +96,7 @@ function App() {
   // Initialize auth from stored tokens on app load
   useEffect(() => {
     initializeAuth()
-  }, [initializeAuth])
+  }, [])
 
   // Apply theme to document
   useEffect(() => {
