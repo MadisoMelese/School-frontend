@@ -118,17 +118,36 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   // Initialize auth from stored tokens
-  initializeAuth: () => {
-    const accessToken = getAccessToken();
-    const refreshToken = getRefreshToken();
+  initializeAuth: async () => {
+    try {
+      const accessToken = getAccessToken();
+      const refreshToken = getRefreshToken();
 
-    if (accessToken && refreshToken) {
-      set({
-        accessToken,
-        refreshTokenValue: refreshToken,
-        isAuthenticated: true,
-      });
-    } else {
+      if (accessToken && refreshToken) {
+        set({
+          accessToken,
+          refreshTokenValue: refreshToken,
+          isAuthenticated: true,
+        });
+
+        // Fetch user profile to restore user data
+        try {
+          const response = await authService.getProfile();
+          set({
+            user: response.user,
+          });
+        } catch (error) {
+          // If profile fetch fails, logout
+          get().logout();
+        }
+      } else {
+        clearTokens();
+        set({
+          isAuthenticated: false,
+        });
+      }
+    } catch (error) {
+      console.error('Error initializing auth:', error);
       clearTokens();
       set({
         isAuthenticated: false,
