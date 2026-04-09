@@ -70,7 +70,7 @@ export const Modal: React.FC<ModalProps> = ({
     >
       <div
         ref={modalRef}
-        className={`${sizeStyles[size]} w-full bg-white rounded-lg shadow-lg overflow-hidden animate-scale-in`}
+        className={`${sizeStyles[size]} w-full bg-white dark:bg-neutral-800 rounded-lg shadow-lg overflow-hidden animate-scale-in`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
@@ -78,16 +78,16 @@ export const Modal: React.FC<ModalProps> = ({
       >
         {/* Header */}
         {(title || closeButton) && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200 dark:border-neutral-700">
             {title && (
-              <h2 id="modal-title" className="text-lg font-semibold text-neutral-900">
+              <h2 id="modal-title" className="text-lg font-semibold text-neutral-900 dark:text-white">
                 {title}
               </h2>
             )}
             {closeButton && (
               <button
                 onClick={onClose}
-                className="ml-auto p-1 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors"
+                className="ml-auto p-1 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-neutral-300 dark:hover:bg-neutral-700 rounded-lg transition-colors"
                 aria-label="Close modal"
               >
                 <Icon name="X" size="md" />
@@ -97,11 +97,11 @@ export const Modal: React.FC<ModalProps> = ({
         )}
 
         {/* Body */}
-        <div className="px-6 py-4 max-h-[calc(100vh-200px)] overflow-y-auto">{children}</div>
+        <div className="px-6 py-4 max-h-[calc(100vh-200px)] overflow-y-auto dark:text-neutral-300">{children}</div>
 
         {/* Footer */}
         {actions && (
-          <div className="px-6 py-4 border-t border-neutral-200 bg-neutral-50 flex gap-3 justify-end">
+          <div className="px-6 py-4 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-700 flex gap-3 justify-end">
             {actions}
           </div>
         )}
