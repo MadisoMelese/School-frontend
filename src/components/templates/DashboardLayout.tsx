@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from '@hooks/useMediaQuery';
 import { useUIStore } from '@store/uiStore';
 import { useAuth } from '@hooks/useAuth';
@@ -13,6 +14,7 @@ import { Navigation, NavItem } from '@components/organisms/Navigation';
  * - Header with user menu and notifications
  * - Scrollable content area
  * - Theme support
+ * - Role-based navigation
  * - Accessibility compliant
  */
 
@@ -27,19 +29,57 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   title,
   description,
 }) => {
+  const navigate = useNavigate();
   const isMobile = useMediaQuery('(max-width: 768px)');
   const { sidebarOpen, setSidebarOpen } = useUIStore();
   const { user, logout } = useAuth();
   const [hideNavOnScroll, setHideNavOnScroll] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  // Default navigation items
-  const defaultNavItems: NavItem[] = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', href: '/dashboard' },
-    { id: 'grades', label: 'Grades', icon: 'BookOpen', href: '/grades' },
-    { id: 'attendance', label: 'Attendance', icon: 'Calendar', href: '/attendance' },
-    { id: 'messages', label: 'Messages', icon: 'Mail', href: '/messages' },
-  ];
+  // Role-based navigation items
+  const getNavItems = (): NavItem[] => {
+    const baseItems: NavItem[] = [];
+
+    if (user?.role === 'student') {
+      return [
+        { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', href: '/student' },
+        { id: 'grades', label: 'Grades', icon: 'BookOpen', href: '/student/grades' },
+        { id: 'attendance', label: 'Attendance', icon: 'Calendar', href: '/student/attendance' },
+        { id: 'exams', label: 'Exams', icon: 'ClipboardList', href: '/student/exams' },
+        { id: 'fees', label: 'Fees', icon: 'CreditCard', href: '/student/fees' },
+        { id: 'messages', label: 'Messages', icon: 'Mail', href: '/student/messages' },
+        { id: 'timetable', label: 'Timetable', icon: 'Clock', href: '/student/timetable' },
+      ];
+    } else if (user?.role === 'teacher') {
+      return [
+        { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', href: '/teacher' },
+        { id: 'classes', label: 'Classes', icon: 'Users', href: '/teacher/classes' },
+        { id: 'attendance', label: 'Attendance', icon: 'Calendar', href: '/teacher/attendance' },
+        { id: 'grades', label: 'Grades', icon: 'BookOpen', href: '/teacher/grades' },
+        { id: 'messages', label: 'Messages', icon: 'Mail', href: '/teacher/messages' },
+      ];
+    } else if (user?.role === 'parent') {
+      return [
+        { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', href: '/parent' },
+        { id: 'progress', label: 'Child Progress', icon: 'TrendingUp', href: '/parent/child-progress' },
+        { id: 'attendance', label: 'Attendance', icon: 'Calendar', href: '/parent/child-attendance' },
+        { id: 'exams', label: 'Exams', icon: 'ClipboardList', href: '/parent/child-exams' },
+        { id: 'fees', label: 'Fees', icon: 'CreditCard', href: '/parent/child-fees' },
+        { id: 'messages', label: 'Messages', icon: 'Mail', href: '/parent/messages' },
+      ];
+    } else if (user?.role === 'admin') {
+      return [
+        { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', href: '/admin' },
+        { id: 'users', label: 'User Management', icon: 'Users', href: '/admin/users' },
+        { id: 'settings', label: 'Settings', icon: 'Settings', href: '/admin/settings' },
+        { id: 'logs', label: 'System Logs', icon: 'FileText', href: '/admin/logs' },
+      ];
+    }
+
+    return baseItems;
+  };
+
+  const navItems = getNavItems();
 
   // Handle scroll to hide/show bottom nav on mobile
   useEffect(() => {
@@ -58,11 +98,16 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   }, [lastScrollY, isMobile]);
 
   const handleNavItemClick = (itemId: string) => {
-    // Navigate to the item's href
-    const item = defaultNavItems.find(i => i.id === itemId);
+    // Find the item and navigate to its href
+    const item = navItems.find(i => i.id === itemId);
     if (item) {
-      window.location.href = item.href;
+      navigate(item.href);
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
   return (
@@ -77,10 +122,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           aria-label="Main navigation"
         >
           <Navigation
-            items={defaultNavItems}
+            items={navItems}
             onItemClick={handleNavItemClick}
             user={user || undefined}
-            onLogout={logout}
+            onLogout={handleLogout}
           />
         </aside>
       )}
@@ -96,7 +141,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             title={title}
             user={user || undefined}
             onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
-            onLogout={logout}
+            onLogout={handleLogout}
           />
         </header>
 
@@ -140,10 +185,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           aria-label="Mobile navigation"
         >
           <Navigation
-            items={defaultNavItems}
+            items={navItems}
             onItemClick={handleNavItemClick}
             user={user || undefined}
-            onLogout={logout}
+            onLogout={handleLogout}
           />
         </nav>
       )}
@@ -166,10 +211,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           aria-label="Mobile navigation menu"
         >
           <Navigation
-            items={defaultNavItems}
+            items={navItems}
             onItemClick={handleNavItemClick}
             user={user || undefined}
-            onLogout={logout}
+            onLogout={handleLogout}
           />
         </aside>
       )}

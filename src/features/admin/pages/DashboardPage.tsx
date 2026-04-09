@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { DashboardLayout } from '@components/templates/DashboardLayout'
 import { Dashboard, Widget } from '@components/organisms/Dashboard'
-import { Card } from '@components/molecules/Card'
 import { Badge } from '@components/atoms/Badge'
 import { Icon } from '@components/atoms/Icon'
 import { useAuth } from '@hooks/useAuth'
 import { useLocalStorage } from '@hooks/useLocalStorage'
+import { adminService } from '@services/api/adminService'
 
 /**
  * Admin Dashboard Page
  * Displays role-specific widgets for admins:
  * - System statistics
  * - Recent user activity
- * - Pending approvals
  * - System health metrics
  */
 
@@ -30,81 +29,25 @@ export const AdminDashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [widgets, setWidgets] = useState<Widget[]>([])
+  const [statistics, setStatistics] = useState<any>(null)
+  const [healthMetrics, setHealthMetrics] = useState<any>(null)
 
-  // Mock data - replace with actual API calls
-  const mockStatistics = {
-    totalUsers: 1250,
-    activeUsers: 1180,
-    totalStudents: 850,
-    totalTeachers: 120,
-    totalParents: 280,
-  }
-
-  const mockUserActivity = [
-    {
-      id: '1',
-      userName: 'John Doe',
-      action: 'Logged in',
-      timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-    },
-    {
-      id: '2',
-      userName: 'Jane Smith',
-      action: 'Submitted grades',
-      timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
-    },
-    {
-      id: '3',
-      userName: 'Admin User',
-      action: 'Created new user',
-      timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-    },
-    {
-      id: '4',
-      userName: 'Teacher Account',
-      action: 'Marked attendance',
-      timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-    },
-  ]
-
-  const mockPendingApprovals = [
-    {
-      id: '1',
-      type: 'User Registration',
-      description: 'New teacher account pending approval',
-      submittedBy: 'Principal',
-      submittedDate: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-      priority: 'high',
-    },
-    {
-      id: '2',
-      type: 'Fee Waiver',
-      description: 'Student fee waiver request',
-      submittedBy: 'Parent',
-      submittedDate: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-      priority: 'medium',
-    },
-  ]
-
-  const mockHealthMetrics = {
-    systemUptime: 99.8,
-    databaseStatus: 'healthy',
-    apiResponseTime: 145,
-    errorRate: 0.02,
-    activeConnections: 342,
-  }
-
-  // Load dashboard data
+  // Load dashboard data from backend
   useEffect(() => {
     const loadDashboard = async () => {
       try {
         setLoading(true)
         setError(null)
 
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        // Fetch dashboard statistics
+        const stats = await adminService.getDashboardStats()
+        setStatistics(stats)
 
-        // Create widgets
+        // Fetch system health metrics
+        const health = await adminService.getSystemHealth()
+        setHealthMetrics(health)
+
+        // Create widgets with real data
         const dashboardWidgets: Widget[] = [
           {
             id: 'statistics',
@@ -116,28 +59,28 @@ export const AdminDashboardPage: React.FC = () => {
                 <div className="bg-primary-50 rounded-lg p-4">
                   <p className="text-xs text-primary-600 font-medium mb-1">Total Users</p>
                   <p className="text-2xl font-bold text-primary-900">
-                    {mockStatistics.totalUsers}
+                    {stats.totalUsers}
                   </p>
                   <p className="text-xs text-primary-600 mt-2">
-                    {mockStatistics.activeUsers} active
+                    {stats.activeUsers} active
                   </p>
                 </div>
                 <div className="bg-success-50 rounded-lg p-4">
                   <p className="text-xs text-success-600 font-medium mb-1">Students</p>
                   <p className="text-2xl font-bold text-success-900">
-                    {mockStatistics.totalStudents}
+                    {stats.totalStudents}
                   </p>
                 </div>
                 <div className="bg-info-50 rounded-lg p-4">
                   <p className="text-xs text-info-600 font-medium mb-1">Teachers</p>
                   <p className="text-2xl font-bold text-info-900">
-                    {mockStatistics.totalTeachers}
+                    {stats.totalTeachers}
                   </p>
                 </div>
                 <div className="bg-warning-50 rounded-lg p-4">
                   <p className="text-xs text-warning-600 font-medium mb-1">Parents</p>
                   <p className="text-2xl font-bold text-warning-900">
-                    {mockStatistics.totalParents}
+                    {stats.totalParents}
                   </p>
                 </div>
                 <div className="bg-neutral-50 rounded-lg p-4 md:col-span-2">
@@ -148,21 +91,21 @@ export const AdminDashboardPage: React.FC = () => {
                     <div
                       className="flex-1 bg-success-500 rounded-t"
                       style={{
-                        height: `${(mockStatistics.totalStudents / mockStatistics.totalUsers) * 100}%`,
+                        height: `${(stats.totalStudents / stats.totalUsers) * 100}%`,
                       }}
                       title="Students"
                     />
                     <div
                       className="flex-1 bg-info-500 rounded-t"
                       style={{
-                        height: `${(mockStatistics.totalTeachers / mockStatistics.totalUsers) * 100}%`,
+                        height: `${(stats.totalTeachers / stats.totalUsers) * 100}%`,
                       }}
                       title="Teachers"
                     />
                     <div
                       className="flex-1 bg-warning-500 rounded-t"
                       style={{
-                        height: `${(mockStatistics.totalParents / mockStatistics.totalUsers) * 100}%`,
+                        height: `${(stats.totalParents / stats.totalUsers) * 100}%`,
                       }}
                       title="Parents"
                     />
@@ -178,65 +121,25 @@ export const AdminDashboardPage: React.FC = () => {
             size: 'medium',
             content: (
               <div className="space-y-3">
-                {mockUserActivity.map((activity) => (
-                  <div
-                    key={activity.id}
-                    className="flex items-start justify-between p-3 bg-neutral-50 rounded-lg"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-neutral-900">{activity.userName}</p>
-                      <p className="text-sm text-neutral-600 mt-1">{activity.action}</p>
-                      <p className="text-xs text-neutral-500 mt-1">
-                        {new Date(activity.timestamp).toLocaleString()}
-                      </p>
-                    </div>
-                    <Icon name="Activity" size={20} className="text-neutral-400 flex-shrink-0" />
-                  </div>
-                ))}
-              </div>
-            ),
-          },
-          {
-            id: 'pending-approvals',
-            title: 'Pending Approvals',
-            type: 'list',
-            size: 'medium',
-            content: (
-              <div className="space-y-3">
-                {mockPendingApprovals.length > 0 ? (
-                  mockPendingApprovals.map((approval) => (
+                {stats.recentActivity && stats.recentActivity.length > 0 ? (
+                  stats.recentActivity.map((activity: any, index: number) => (
                     <div
-                      key={approval.id}
-                      className="p-3 bg-neutral-50 rounded-lg border-l-4 border-warning-500"
+                      key={activity.userId + index}
+                      className="flex items-start justify-between p-3 bg-neutral-50 rounded-lg"
                     >
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <div>
-                          <p className="font-medium text-neutral-900">{approval.type}</p>
-                          <p className="text-xs text-neutral-600 mt-1">
-                            {approval.description}
-                          </p>
-                        </div>
-                        <Badge
-                          variant={
-                            approval.priority === 'high'
-                              ? 'danger'
-                              : approval.priority === 'medium'
-                                ? 'warning'
-                                : 'info'
-                          }
-                        >
-                          {approval.priority}
-                        </Badge>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-neutral-900">{activity.userName}</p>
+                        <p className="text-sm text-neutral-600 mt-1">{activity.action}</p>
+                        <p className="text-xs text-neutral-500 mt-1">
+                          {new Date(activity.timestamp).toLocaleString()}
+                        </p>
                       </div>
-                      <p className="text-xs text-neutral-500">
-                        By {approval.submittedBy} •{' '}
-                        {new Date(approval.submittedDate).toLocaleString()}
-                      </p>
+                      <Icon name="Activity" size={20} className="text-neutral-400 flex-shrink-0" />
                     </div>
                   ))
                 ) : (
                   <div className="p-4 text-center">
-                    <p className="text-neutral-600">No pending approvals</p>
+                    <p className="text-neutral-600">No recent activity</p>
                   </div>
                 )}
               </div>
@@ -251,38 +154,44 @@ export const AdminDashboardPage: React.FC = () => {
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-neutral-600">System Uptime</span>
-                    <Badge variant="success">{mockHealthMetrics.systemUptime}%</Badge>
-                  </div>
-                  <div className="w-full bg-neutral-200 rounded-full h-2 overflow-hidden">
-                    <div
-                      className="h-full bg-success-500"
-                      style={{ width: `${mockHealthMetrics.systemUptime}%` }}
-                    />
+                    <span className="text-sm text-neutral-600">System Status</span>
+                    <Badge
+                      variant={
+                        health.status === 'healthy'
+                          ? 'success'
+                          : health.status === 'degraded'
+                            ? 'warning'
+                            : 'danger'
+                      }
+                    >
+                      {health.status}
+                    </Badge>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-neutral-50 rounded-lg p-3">
-                    <p className="text-xs text-neutral-600 mb-1">Database</p>
-                    <Badge variant="success">{mockHealthMetrics.databaseStatus}</Badge>
+                    <p className="text-xs text-neutral-600 mb-1">Uptime</p>
+                    <p className="text-lg font-bold text-neutral-900">
+                      {(health.uptime * 100).toFixed(2)}%
+                    </p>
                   </div>
                   <div className="bg-neutral-50 rounded-lg p-3">
                     <p className="text-xs text-neutral-600 mb-1">API Response</p>
                     <p className="text-lg font-bold text-neutral-900">
-                      {mockHealthMetrics.apiResponseTime}ms
+                      {health.responseTime}ms
                     </p>
                   </div>
                   <div className="bg-neutral-50 rounded-lg p-3">
                     <p className="text-xs text-neutral-600 mb-1">Error Rate</p>
                     <p className="text-lg font-bold text-neutral-900">
-                      {mockHealthMetrics.errorRate}%
+                      {(health.errorRate * 100).toFixed(2)}%
                     </p>
                   </div>
                   <div className="bg-neutral-50 rounded-lg p-3">
-                    <p className="text-xs text-neutral-600 mb-1">Connections</p>
-                    <p className="text-lg font-bold text-neutral-900">
-                      {mockHealthMetrics.activeConnections}
+                    <p className="text-xs text-neutral-600 mb-1">Last Checked</p>
+                    <p className="text-xs font-bold text-neutral-900">
+                      {new Date(health.lastChecked).toLocaleTimeString()}
                     </p>
                   </div>
                 </div>
