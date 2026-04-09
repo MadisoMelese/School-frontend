@@ -21,8 +21,24 @@ export const authService = {
    * Login with email and password
    */
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
-    const response = await apiClient.post<LoginResponse>('/sessions', credentials);
-    return response.data;
+    const response = await apiClient.post<{
+      success: boolean;
+      message: string;
+      data: {
+        user: any;
+        accessToken: string;
+      };
+    }>('/sessions', credentials);
+    
+    // Transform backend response to match frontend expectations
+    const { data } = response.data;
+    return {
+      user: data.user,
+      accessToken: data.accessToken,
+      refreshToken: '', // Backend stores refresh token in httpOnly cookie
+      expiresIn: 3600, // Default 1 hour
+      refreshExpiresIn: 604800, // Default 7 days
+    };
   },
 
   /**

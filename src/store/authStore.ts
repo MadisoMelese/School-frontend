@@ -44,7 +44,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // Store tokens
       setTokens(
         response.accessToken,
-        response.refreshToken,
+        response.refreshToken || 'cookie-based', // Use placeholder if refresh token is in httpOnly cookie
         response.expiresIn,
         response.refreshExpiresIn
       );
@@ -53,7 +53,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({
         user: response.user,
         accessToken: response.accessToken,
-        refreshTokenValue: response.refreshToken,
+        refreshTokenValue: response.refreshToken || 'cookie-based',
         isAuthenticated: true,
         isLoading: false,
         error: null,
