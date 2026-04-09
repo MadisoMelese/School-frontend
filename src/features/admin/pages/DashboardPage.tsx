@@ -10,9 +10,9 @@ import { apiClient } from '@services/api/client'
  * Admin Dashboard Page
  * Displays comprehensive admin dashboard with all system resources
  * - HR Summary (Staff management)
- * - Students, Teachers, Parents counts
- * - Classes, Exams, Grades, Fees, Attendance
- * - Announcements, Library, Timetables
+ * - Students, Teachers, Classes
+ * - Exams, Grades, Fees, Attendance
+ * - Announcements, Library, Timetables, Messages
  */
 
 interface DashboardState {
@@ -31,6 +31,9 @@ interface ResourceStats {
   announcements?: number
   books?: number
   timetables?: number
+  messages?: number
+  staff?: number
+  borrows?: number
 }
 
 export const AdminDashboardPage: React.FC = () => {
@@ -136,6 +139,30 @@ export const AdminDashboardPage: React.FC = () => {
           stats.timetables = Array.isArray(timetablesData) ? timetablesData.length : timetablesData?.timetables?.length || 0
         } catch (e) {
           stats.timetables = 0
+        }
+
+        try {
+          const messagesRes = await apiClient.get('/messages/inbox')
+          const messagesData = messagesRes.data.data
+          stats.messages = Array.isArray(messagesData) ? messagesData.length : messagesData?.messages?.length || 0
+        } catch (e) {
+          stats.messages = 0
+        }
+
+        try {
+          const staffRes = await apiClient.get('/hr')
+          const staffData = staffRes.data.data
+          stats.staff = Array.isArray(staffData) ? staffData.length : staffData?.staff?.length || 0
+        } catch (e) {
+          stats.staff = 0
+        }
+
+        try {
+          const borrowsRes = await apiClient.get('/library/borrows')
+          const borrowsData = borrowsRes.data.data
+          stats.borrows = Array.isArray(borrowsData) ? borrowsData.length : borrowsData?.borrows?.length || 0
+        } catch (e) {
+          stats.borrows = 0
         }
 
         setResourceStats(stats)
@@ -263,6 +290,40 @@ export const AdminDashboardPage: React.FC = () => {
                   <p className="text-xs text-amber-600 font-medium mb-1">Library Books</p>
                   <p className="text-2xl font-bold text-amber-900">
                     {stats.books || 0}
+                  </p>
+                </div>
+                <div className="bg-orange-50 rounded-lg p-4">
+                  <p className="text-xs text-orange-600 font-medium mb-1">Book Borrows</p>
+                  <p className="text-2xl font-bold text-orange-900">
+                    {stats.borrows || 0}
+                  </p>
+                </div>
+                <div className="bg-red-50 rounded-lg p-4">
+                  <p className="text-xs text-red-600 font-medium mb-1">Messages</p>
+                  <p className="text-2xl font-bold text-red-900">
+                    {stats.messages || 0}
+                  </p>
+                </div>
+              </div>
+            ),
+          },
+          {
+            id: 'staff-resources',
+            title: 'Staff Management',
+            type: 'stats',
+            size: 'medium',
+            content: (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-violet-50 rounded-lg p-4">
+                  <p className="text-xs text-violet-600 font-medium mb-1">Total Staff</p>
+                  <p className="text-2xl font-bold text-violet-900">
+                    {stats.staff || 0}
+                  </p>
+                </div>
+                <div className="bg-slate-50 rounded-lg p-4">
+                  <p className="text-xs text-slate-600 font-medium mb-1">HR Records</p>
+                  <p className="text-2xl font-bold text-slate-900">
+                    {summary?.totalStaff || 0}
                   </p>
                 </div>
               </div>
