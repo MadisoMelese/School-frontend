@@ -45,7 +45,6 @@ export const AdminDashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [widgets, setWidgets] = useState<Widget[]>([])
-  const [resourceStats, setResourceStats] = useState<ResourceStats>({})
 
   // Load dashboard data from backend
   useEffect(() => {
@@ -164,8 +163,6 @@ export const AdminDashboardPage: React.FC = () => {
         } catch (e) {
           stats.borrows = 0
         }
-
-        setResourceStats(stats)
 
         // Create widgets with real data
         const dashboardWidgets: Widget[] = [
