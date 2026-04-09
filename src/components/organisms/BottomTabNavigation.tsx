@@ -47,7 +47,7 @@ export const BottomTabNavigation: React.FC<BottomTabNavigationProps> = ({
 
   return (
     <nav
-      className={`fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-neutral-200 flex items-center justify-around z-40 safe-bottom transition-transform duration-300 ease-in-out ${
+      className={`fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-700 flex items-center justify-around z-40 safe-bottom transition-transform duration-300 ease-in-out ${
         enableScrollHiding && !isHeaderVisible ? 'translate-y-full' : 'translate-y-0'
       }`}
       role="navigation"
@@ -59,8 +59,8 @@ export const BottomTabNavigation: React.FC<BottomTabNavigationProps> = ({
           onClick={() => handleItemClick(item.id)}
           className={`flex flex-col items-center justify-center gap-1 px-3 py-2 min-h-16 transition-colors relative ${
             activeItem === item.id
-              ? 'text-primary-600'
-              : 'text-neutral-600 hover:text-neutral-900'
+              ? 'text-primary-600 dark:text-primary-400'
+              : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200'
           }`}
           aria-current={activeItem === item.id ? 'page' : undefined}
           aria-label={item.label}
@@ -69,7 +69,7 @@ export const BottomTabNavigation: React.FC<BottomTabNavigationProps> = ({
           <Icon
             name={item.icon as keyof typeof import('lucide-react')}
             size={24}
-            className={activeItem === item.id ? 'text-primary-600' : 'text-neutral-600'}
+            className={activeItem === item.id ? 'text-primary-600 dark:text-primary-400' : 'text-neutral-600 dark:text-neutral-400'}
           />
           <span className="text-xs font-medium">{item.label}</span>
           {item.badge && item.badge > 0 && (
