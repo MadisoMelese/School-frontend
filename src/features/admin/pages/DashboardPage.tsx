@@ -63,70 +63,80 @@ export const AdminDashboardPage: React.FC = () => {
         
         try {
           const studentsRes = await apiClient.get('/students')
-          stats.students = studentsRes.data.data?.length || 0
+          const studentsData = studentsRes.data.data
+          stats.students = Array.isArray(studentsData) ? studentsData.length : studentsData?.students?.length || 0
         } catch (e) {
           stats.students = 0
         }
 
         try {
           const teachersRes = await apiClient.get('/teachers')
-          stats.teachers = teachersRes.data.data?.length || 0
+          const teachersData = teachersRes.data.data
+          stats.teachers = Array.isArray(teachersData) ? teachersData.length : teachersData?.teachers?.length || 0
         } catch (e) {
           stats.teachers = 0
         }
 
         try {
           const classesRes = await apiClient.get('/classes')
-          stats.classes = classesRes.data.data?.length || 0
+          const classesData = classesRes.data.data
+          stats.classes = Array.isArray(classesData) ? classesData.length : classesData?.classes?.length || 0
         } catch (e) {
           stats.classes = 0
         }
 
         try {
           const examsRes = await apiClient.get('/exams')
-          stats.exams = examsRes.data.data?.length || 0
+          const examsData = examsRes.data.data
+          stats.exams = Array.isArray(examsData) ? examsData.length : examsData?.exams?.length || 0
         } catch (e) {
           stats.exams = 0
         }
 
         try {
           const gradesRes = await apiClient.get('/grades')
-          stats.grades = gradesRes.data.data?.length || 0
+          const gradesData = gradesRes.data.data
+          stats.grades = Array.isArray(gradesData) ? gradesData.length : gradesData?.grades?.length || 0
         } catch (e) {
           stats.grades = 0
         }
 
         try {
           const feesRes = await apiClient.get('/fees')
-          stats.fees = feesRes.data.data?.length || 0
+          const feesData = feesRes.data.data
+          stats.fees = Array.isArray(feesData) ? feesData.length : feesData?.fees?.length || 0
         } catch (e) {
           stats.fees = 0
         }
 
         try {
           const attendanceRes = await apiClient.get('/attendance')
-          stats.attendance = attendanceRes.data.data?.length || 0
+          const attendanceData = attendanceRes.data.data
+          stats.attendance = Array.isArray(attendanceData) ? attendanceData.length : attendanceData?.attendance?.length || 0
         } catch (e) {
           stats.attendance = 0
         }
 
         try {
           const announcementsRes = await apiClient.get('/announcements')
-          stats.announcements = announcementsRes.data.data?.length || 0
+          const announcementsData = announcementsRes.data.data
+          stats.announcements = Array.isArray(announcementsData) ? announcementsData.length : announcementsData?.announcements?.length || 0
         } catch (e) {
           stats.announcements = 0
         }
 
         try {
           const booksRes = await apiClient.get('/library/books')
-          stats.books = booksRes.data.data?.length || 0
+          const booksData = booksRes.data.data
+          stats.books = Array.isArray(booksData) ? booksData.length : booksData?.books?.length || 0
         } catch (e) {
           stats.books = 0
         }
 
         try {
           const timetablesRes = await apiClient.get('/timetables')
-          stats.timetables = timetablesRes.data.data?.length || 0
+          const timetablesData = timetablesRes.data.data
+          stats.timetables = Array.isArray(timetablesData) ? timetablesData.length : timetablesData?.timetables?.length || 0
         } catch (e) {
           stats.timetables = 0
         }
