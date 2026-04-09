@@ -46,14 +46,12 @@ export const UserDetailsModal: React.FC<UserDetailsModalProps> = ({ user, onClos
             <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">Status</p>
             <Badge
               variant={
-                user.status === 'active'
-                  ? 'success'
-                  : user.status === 'blocked'
-                    ? 'danger'
-                    : 'warning'
+                user.isBlocked
+                  ? 'danger'
+                  : 'success'
               }
             >
-              {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+              {user.isBlocked ? 'Blocked' : 'Active'}
             </Badge>
           </div>
           <div>
