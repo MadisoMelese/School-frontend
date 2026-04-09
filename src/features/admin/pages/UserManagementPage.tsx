@@ -148,7 +148,7 @@ export const UserManagementPage: React.FC = () => {
   // Handle block/unblock
   const handleToggleBlock = async (user: User) => {
     try {
-      if (user.status === 'blocked') {
+      if (user.isBlocked) {
         await unblockUser(user.id)
       } else {
         await blockUser(user.id)
@@ -210,22 +210,25 @@ export const UserManagementPage: React.FC = () => {
       ),
     },
     {
-      key: 'status',
+      key: 'isBlocked',
       label: 'Status',
       sortable: true,
-      render: (value: UserStatus) => (
-        <Badge
-          variant={
-            value === 'active'
-              ? 'success'
-              : value === 'blocked'
-                ? 'danger'
-                : 'warning'
-          }
-        >
-          {value.charAt(0).toUpperCase() + value.slice(1)}
-        </Badge>
-      ),
+      render: (value: boolean) => {
+        const status = value ? 'blocked' : 'active'
+        return (
+          <Badge
+            variant={
+              status === 'active'
+                ? 'success'
+                : status === 'blocked'
+                  ? 'danger'
+                  : 'warning'
+            }
+          >
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </Badge>
+        )
+      },
     },
     {
       key: 'createdAt',
@@ -257,14 +260,14 @@ export const UserManagementPage: React.FC = () => {
           <button
             onClick={() => handleToggleBlock(row)}
             className={`p-1 rounded transition-colors ${
-              row.status === 'blocked'
+              row.isBlocked
                 ? 'text-success-600 dark:text-success-400 hover:bg-success-50 dark:hover:bg-success-900'
                 : 'text-warning-600 dark:text-warning-400 hover:bg-warning-50 dark:hover:bg-warning-900'
             }`}
-            title={row.status === 'blocked' ? 'Unblock user' : 'Block user'}
-            aria-label={row.status === 'blocked' ? `Unblock ${row.name}` : `Block ${row.name}`}
+            title={row.isBlocked ? 'Unblock user' : 'Block user'}
+            aria-label={row.isBlocked ? `Unblock ${row.firstname} ${row.lastname}` : `Block ${row.firstname} ${row.lastname}`}
           >
-            <Icon name={row.status === 'blocked' ? 'Unlock' : 'Lock'} size={16} />
+            <Icon name={row.isBlocked ? 'Unlock' : 'Lock'} size={16} />
           </button>
           <button
             onClick={() => openDeleteConfirm(row.id)}

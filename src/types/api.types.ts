@@ -67,7 +67,6 @@ export interface User {
   username: string;
   role: UserRole;
   avatar?: string;
-  status: UserStatus;
   isBlocked: boolean;
   isVerified: boolean;
   isActive: boolean;
