@@ -4,6 +4,7 @@
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
+    "moduleResolution": "bundler",
     "skipLibCheck": true,
     "strict": true,
     "esModuleInterop": true,
@@ -14,17 +15,20 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
     "paths": {
+      "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
       "@features/*": ["src/features/*"],
       "@hooks/*": ["src/hooks/*"],
       "@services/*": ["src/services/*"],
       "@store/*": ["src/store/*"],
+      "@types": ["src/types"],
       "@types/*": ["src/types/*"],
       "@utils/*": ["src/utils/*"],
       "@styles/*": ["src/styles/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "tests"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
