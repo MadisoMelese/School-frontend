@@ -44,6 +44,11 @@ export const TeachersManagementPage: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(10)
+  const [totalPages, setTotalPages] = useState(1)
   const [formData, setFormData] = useState<FormData>({
     userId: '',
     teacherId: '',
@@ -61,14 +66,28 @@ export const TeachersManagementPage: React.FC = () => {
     status: 'active',
   })
 
-  // Load teachers
-  const loadTeachers = async () => {
+  // Load teachers with filters
+  const loadTeachers = async (searchVal = '', statusVal = '', pageVal = 1) => {
     try {
       setLoading(true)
       setError(null)
-      const response = await apiClient.get('/teachers')
+      const params = new URLSearchParams()
+      if (searchVal) params.append('search', searchVal)
+      if (statusVal) params.append('status', statusVal)
+      params.append('page', pageVal.toString())
+      params.append('limit', limit.toString())
+
+      const response = await apiClient.get(`/teachers?${params.toString()}`)
       const data = response.data.data
-      setTeachers(Array.isArray(data) ? data : data?.teachers || [])
+      
+      if (Array.isArray(data)) {
+        setTeachers(data)
+      } else if (data?.teachers) {
+        setTeachers(data.teachers)
+        setTotalPages(data.totalPages || 1)
+      } else {
+        setTeachers([])
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load teachers')
     } finally {
@@ -77,8 +96,8 @@ export const TeachersManagementPage: React.FC = () => {
   }
 
   useEffect(() => {
-    loadTeachers()
-  }, [])
+    loadTeachers(searchTerm, statusFilter, page)
+  }, [page, limit])
 
   // Handle form input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -113,7 +132,8 @@ export const TeachersManagementPage: React.FC = () => {
         status: 'active',
       })
       setShowForm(false)
-      await loadTeachers()
+      await loadTeachers(searchTerm, statusFilter, 1)
+      setPage(1)
       setTimeout(() => setSuccess(null), 3000)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create teacher')
@@ -169,7 +189,7 @@ export const TeachersManagementPage: React.FC = () => {
       })
       setEditingId(null)
       setShowForm(false)
-      await loadTeachers()
+      await loadTeachers(searchTerm, statusFilter, page)
       setTimeout(() => setSuccess(null), 3000)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update teacher')
@@ -184,7 +204,7 @@ export const TeachersManagementPage: React.FC = () => {
       setError(null)
       await apiClient.delete(`/teachers/${id}`)
       setSuccess('Teacher deleted successfully')
-      await loadTeachers()
+      await loadTeachers(searchTerm, statusFilter, page)
       setTimeout(() => setSuccess(null), 3000)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete teacher')
@@ -211,6 +231,20 @@ export const TeachersManagementPage: React.FC = () => {
       joinDate: '',
       status: 'active',
     })
+  }
+
+  // Handle search
+  const handleSearch = (value: string) => {
+    setSearchTerm(value)
+    setPage(1)
+    loadTeachers(value, statusFilter, 1)
+  }
+
+  // Handle status filter
+  const handleStatusFilter = (value: string) => {
+    setStatusFilter(value)
+    setPage(1)
+    loadTeachers(searchTerm, value, 1)
   }
 
   return (
@@ -242,6 +276,55 @@ export const TeachersManagementPage: React.FC = () => {
             </Button>
           )}
         </div>
+
+        {/* Search and Filter */}
+        {!showForm && (
+          <div className="bg-white rounded-lg shadow p-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  Search by Name
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Search teachers..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearch(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  Filter by Status
+                </label>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => handleStatusFilter(e.target.value)}
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="">All Status</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  <option value="suspended">Suspended</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  Items per Page
+                </label>
+                <select
+                  value={limit}
+                  onChange={(e) => setLimit(Number(e.target.value))}
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Create/Edit Form */}
         {showForm && (
@@ -506,6 +589,31 @@ export const TeachersManagementPage: React.FC = () => {
             </div>
           )}
         </div>
+
+        {/* Pagination */}
+        {!loading && teachers.length > 0 && totalPages > 1 && (
+          <div className="bg-white rounded-lg shadow p-4 flex items-center justify-between">
+            <div className="text-sm text-neutral-600">
+              Page {page} of {totalPages}
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="secondary"
+                onClick={() => setPage(Math.max(1, page - 1))}
+                disabled={page === 1}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => setPage(Math.min(totalPages, page + 1))}
+                disabled={page === totalPages}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   )
