@@ -90,8 +90,13 @@ const NotFoundPage = () => (
 )
 
 function App() {
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated, initializeAuth } = useAuth()
   const { theme } = useTheme()
+
+  // Initialize auth from stored tokens on app load
+  useEffect(() => {
+    initializeAuth()
+  }, [initializeAuth])
 
   // Apply theme to document
   useEffect(() => {

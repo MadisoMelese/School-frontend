@@ -17,6 +17,7 @@ export const useAuth = () => {
     refreshTokenAction,
     setUser,
     setError,
+    initializeAuth,
   } = useAuthStore();
 
   return {
@@ -31,6 +32,7 @@ export const useAuth = () => {
     refreshTokenAction,
     setUser,
     setError,
+    initializeAuth,
   };
 };
 
