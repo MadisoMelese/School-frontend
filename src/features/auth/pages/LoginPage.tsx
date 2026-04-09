@@ -38,7 +38,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isLoading, error: authError } = useAuth();
+  const { login, isLoading, error: authError, user } = useAuth();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
@@ -59,18 +59,23 @@ export const LoginPage: React.FC = () => {
   useEffect(() => {
     const isAuthenticated = localStorage.getItem('accessToken');
     if (isAuthenticated) {
-      navigate('/student');
+      navigate('/');
     }
   }, [navigate]);
+
+  // Redirect after successful login
+  useEffect(() => {
+    if (user && user.role) {
+      const from = location.state?.from?.pathname || `/${user.role}`;
+      navigate(from);
+    }
+  }, [user, navigate, location]);
 
   const onSubmit = async (data: LoginFormData) => {
     try {
       setSubmitError(null);
       await login(data.email, data.password);
-
-      // Redirect to dashboard or intended page
-      const from = location.state?.from?.pathname || '/student';
-      navigate(from);
+      // Navigation will happen via the useEffect above when user is set
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Login failed. Please try again.';
