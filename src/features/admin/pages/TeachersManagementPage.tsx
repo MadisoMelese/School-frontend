@@ -113,10 +113,38 @@ export const TeachersManagementPage: React.FC = () => {
     e.preventDefault()
     try {
       setError(null)
+      
+      // Validate required fields
+      if (!formData.userId.trim()) {
+        setError('User ID is required')
+        return
+      }
+      if (!formData.teacherId.trim()) {
+        setError('Teacher ID is required')
+        return
+      }
+      if (!formData.firstName.trim()) {
+        setError('First name is required')
+        return
+      }
+      if (!formData.lastName.trim()) {
+        setError('Last name is required')
+        return
+      }
+      if (!formData.dateOfBirth) {
+        setError('Date of birth is required')
+        return
+      }
+      if (!formData.gender) {
+        setError('Gender is required')
+        return
+      }
+
       // Only send fields that are not empty
       const dataToSend = Object.fromEntries(
         Object.entries(formData).filter(([_, value]) => value !== '')
       )
+      
       await apiClient.post('/teachers', dataToSend)
       setSuccess('Teacher created successfully')
       setFormData({
@@ -344,26 +372,28 @@ export const TeachersManagementPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
-                    User ID
+                    User ID *
                   </label>
                   <Input
                     type="text"
                     name="userId"
                     value={formData.userId}
                     onChange={handleInputChange}
-                    placeholder="Enter user ID (optional)"
+                    placeholder="Enter user ID"
+                    required
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
-                    Teacher ID
+                    Teacher ID *
                   </label>
                   <Input
                     type="text"
                     name="teacherId"
                     value={formData.teacherId}
                     onChange={handleInputChange}
-                    placeholder="Enter teacher ID (optional)"
+                    placeholder="Enter teacher ID"
+                    required
                   />
                 </div>
                 <div>
