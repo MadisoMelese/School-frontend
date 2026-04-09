@@ -102,13 +102,13 @@ export const Dropdown: React.FC<DropdownProps> = ({
         id={dropdownId}
         onClick={() => setIsOpen(!isOpen)}
         disabled={disabled}
-        className="w-full px-3 py-2.5 text-base rounded-lg border-2 border-neutral-300 bg-white text-left flex items-center justify-between transition-colors duration-200 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-200 disabled:bg-neutral-100 disabled:text-neutral-500 disabled:cursor-not-allowed min-h-[44px]"
+        className="w-full px-3 py-2.5 text-base rounded-lg border-2 border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-left flex items-center justify-between transition-colors duration-200 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-200 disabled:bg-neutral-100 dark:disabled:bg-neutral-700 disabled:text-neutral-500 dark:disabled:text-neutral-400 disabled:cursor-not-allowed min-h-[44px]"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-controls={`${dropdownId}-listbox`}
         onKeyDown={handleKeyDown}
       >
-        <span className={selectedOption ? 'text-neutral-900' : 'text-neutral-500'}>
+        <span className={selectedOption ? 'text-neutral-900 dark:text-white' : 'text-neutral-500 dark:text-neutral-400'}>
           {selectedOption?.label || placeholder}
         </span>
         <Icon
@@ -119,9 +119,9 @@ export const Dropdown: React.FC<DropdownProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg z-50">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg z-50">
           {searchable && (
-            <div className="p-2 border-b border-neutral-200">
+            <div className="p-2 border-b border-neutral-200 dark:border-neutral-700">
               <input
                 ref={searchInputRef}
                 type="text"
@@ -132,7 +132,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
                   setHighlightedIndex(0)
                 }}
                 onKeyDown={handleKeyDown}
-                className="w-full px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:border-primary-500"
+                className="w-full px-3 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:border-primary-500"
               />
             </div>
           )}
@@ -143,7 +143,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
             className="max-h-60 overflow-y-auto"
           >
             {filteredOptions.length === 0 ? (
-              <li className="px-3 py-2 text-sm text-neutral-500 text-center">No options</li>
+              <li className="px-3 py-2 text-sm text-neutral-500 dark:text-neutral-400 text-center">No options</li>
             ) : (
               filteredOptions.map((option, index) => (
                 <li key={option.value} role="presentation">
@@ -155,11 +155,11 @@ export const Dropdown: React.FC<DropdownProps> = ({
                     }}
                     disabled={option.disabled}
                     className={`w-full text-left px-3 py-2.5 text-sm transition-colors min-h-[44px] flex items-center ${
-                      index === highlightedIndex ? 'bg-primary-50' : ''
+                      index === highlightedIndex ? 'bg-primary-50 dark:bg-primary-900/20' : ''
                     } ${
                       option.value === value
-                        ? 'bg-primary-100 text-primary-900 font-medium'
-                        : 'text-neutral-900 hover:bg-neutral-50'
+                        ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-900 dark:text-primary-300 font-medium'
+                        : 'text-neutral-900 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700'
                     } ${option.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                     role="option"
                     aria-selected={option.value === value}
