@@ -9,12 +9,29 @@ import { apiClient } from '@services/api/client'
 
 /**
  * Admin Dashboard Page
- * Displays admin dashboard with HR summary and system info
+ * Displays comprehensive admin dashboard with all system resources
+ * - HR Summary (Staff management)
+ * - Students, Teachers, Parents counts
+ * - Classes, Exams, Grades, Fees, Attendance
+ * - Announcements, Library, Timetables
  */
 
 interface DashboardState {
   scrollPosition: number
   lastUpdated: number
+}
+
+interface ResourceStats {
+  students?: number
+  teachers?: number
+  classes?: number
+  exams?: number
+  grades?: number
+  fees?: number
+  attendance?: number
+  announcements?: number
+  books?: number
+  timetables?: number
 }
 
 export const AdminDashboardPage: React.FC = () => {
@@ -27,7 +44,7 @@ export const AdminDashboardPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [widgets, setWidgets] = useState<Widget[]>([])
   const [hrSummary, setHrSummary] = useState<any>(null)
-  const [dashboardInfo, setDashboardInfo] = useState<any>(null)
+  const [resourceStats, setResourceStats] = useState<ResourceStats>({})
 
   // Load dashboard data from backend
   useEffect(() => {
@@ -36,14 +53,85 @@ export const AdminDashboardPage: React.FC = () => {
         setLoading(true)
         setError(null)
 
-        // Fetch admin dashboard info
-        const dashboardResponse = await apiClient.get('/admin/dashboard')
-        setDashboardInfo(dashboardResponse.data.data || dashboardResponse.data)
-
         // Fetch HR summary
         const hrResponse = await apiClient.get('/hr/summary')
         const summary = hrResponse.data.data || hrResponse.data
         setHrSummary(summary)
+
+        // Fetch resource counts
+        const stats: ResourceStats = {}
+        
+        try {
+          const studentsRes = await apiClient.get('/students')
+          stats.students = studentsRes.data.data?.length || 0
+        } catch (e) {
+          stats.students = 0
+        }
+
+        try {
+          const teachersRes = await apiClient.get('/teachers')
+          stats.teachers = teachersRes.data.data?.length || 0
+        } catch (e) {
+          stats.teachers = 0
+        }
+
+        try {
+          const classesRes = await apiClient.get('/classes')
+          stats.classes = classesRes.data.data?.length || 0
+        } catch (e) {
+          stats.classes = 0
+        }
+
+        try {
+          const examsRes = await apiClient.get('/exams')
+          stats.exams = examsRes.data.data?.length || 0
+        } catch (e) {
+          stats.exams = 0
+        }
+
+        try {
+          const gradesRes = await apiClient.get('/grades')
+          stats.grades = gradesRes.data.data?.length || 0
+        } catch (e) {
+          stats.grades = 0
+        }
+
+        try {
+          const feesRes = await apiClient.get('/fees')
+          stats.fees = feesRes.data.data?.length || 0
+        } catch (e) {
+          stats.fees = 0
+        }
+
+        try {
+          const attendanceRes = await apiClient.get('/attendance')
+          stats.attendance = attendanceRes.data.data?.length || 0
+        } catch (e) {
+          stats.attendance = 0
+        }
+
+        try {
+          const announcementsRes = await apiClient.get('/announcements')
+          stats.announcements = announcementsRes.data.data?.length || 0
+        } catch (e) {
+          stats.announcements = 0
+        }
+
+        try {
+          const booksRes = await apiClient.get('/library/books')
+          stats.books = booksRes.data.data?.length || 0
+        } catch (e) {
+          stats.books = 0
+        }
+
+        try {
+          const timetablesRes = await apiClient.get('/timetables')
+          stats.timetables = timetablesRes.data.data?.length || 0
+        } catch (e) {
+          stats.timetables = 0
+        }
+
+        setResourceStats(stats)
 
         // Create widgets with real data
         const dashboardWidgets: Widget[] = [
@@ -88,6 +176,86 @@ export const AdminDashboardPage: React.FC = () => {
                   <p className="text-xs text-danger-600 font-medium mb-1">Inactive</p>
                   <p className="text-2xl font-bold text-danger-900">
                     {summary?.inactiveStaff || 0}
+                  </p>
+                </div>
+              </div>
+            ),
+          },
+          {
+            id: 'academic-resources',
+            title: 'Academic Resources',
+            type: 'stats',
+            size: 'large',
+            content: (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <p className="text-xs text-blue-600 font-medium mb-1">Students</p>
+                  <p className="text-2xl font-bold text-blue-900">
+                    {stats.students || 0}
+                  </p>
+                </div>
+                <div className="bg-purple-50 rounded-lg p-4">
+                  <p className="text-xs text-purple-600 font-medium mb-1">Teachers</p>
+                  <p className="text-2xl font-bold text-purple-900">
+                    {stats.teachers || 0}
+                  </p>
+                </div>
+                <div className="bg-indigo-50 rounded-lg p-4">
+                  <p className="text-xs text-indigo-600 font-medium mb-1">Classes</p>
+                  <p className="text-2xl font-bold text-indigo-900">
+                    {stats.classes || 0}
+                  </p>
+                </div>
+                <div className="bg-cyan-50 rounded-lg p-4">
+                  <p className="text-xs text-cyan-600 font-medium mb-1">Exams</p>
+                  <p className="text-2xl font-bold text-cyan-900">
+                    {stats.exams || 0}
+                  </p>
+                </div>
+                <div className="bg-teal-50 rounded-lg p-4">
+                  <p className="text-xs text-teal-600 font-medium mb-1">Grades</p>
+                  <p className="text-2xl font-bold text-teal-900">
+                    {stats.grades || 0}
+                  </p>
+                </div>
+                <div className="bg-emerald-50 rounded-lg p-4">
+                  <p className="text-xs text-emerald-600 font-medium mb-1">Timetables</p>
+                  <p className="text-2xl font-bold text-emerald-900">
+                    {stats.timetables || 0}
+                  </p>
+                </div>
+              </div>
+            ),
+          },
+          {
+            id: 'operational-data',
+            title: 'Operational Data',
+            type: 'stats',
+            size: 'large',
+            content: (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="bg-rose-50 rounded-lg p-4">
+                  <p className="text-xs text-rose-600 font-medium mb-1">Attendance Records</p>
+                  <p className="text-2xl font-bold text-rose-900">
+                    {stats.attendance || 0}
+                  </p>
+                </div>
+                <div className="bg-pink-50 rounded-lg p-4">
+                  <p className="text-xs text-pink-600 font-medium mb-1">Fees</p>
+                  <p className="text-2xl font-bold text-pink-900">
+                    {stats.fees || 0}
+                  </p>
+                </div>
+                <div className="bg-fuchsia-50 rounded-lg p-4">
+                  <p className="text-xs text-fuchsia-600 font-medium mb-1">Announcements</p>
+                  <p className="text-2xl font-bold text-fuchsia-900">
+                    {stats.announcements || 0}
+                  </p>
+                </div>
+                <div className="bg-amber-50 rounded-lg p-4">
+                  <p className="text-xs text-amber-600 font-medium mb-1">Library Books</p>
+                  <p className="text-2xl font-bold text-amber-900">
+                    {stats.books || 0}
                   </p>
                 </div>
               </div>
@@ -187,7 +355,7 @@ export const AdminDashboardPage: React.FC = () => {
   return (
     <DashboardLayout
       title="Admin Dashboard"
-      description="System overview and HR management."
+      description="Complete system overview with HR, academic, and operational data."
     >
       <Dashboard widgets={widgets} loading={loading} error={error || undefined} />
     </DashboardLayout>
