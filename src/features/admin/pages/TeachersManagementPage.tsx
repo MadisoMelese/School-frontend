@@ -291,20 +291,20 @@ export const TeachersManagementPage: React.FC = () => {
       <div className="space-y-6">
         {/* Messages */}
         {error && (
-          <div className="bg-danger-50 border border-danger-200 rounded-lg p-4">
-            <p className="text-danger-700">{error}</p>
+          <div className="bg-danger-50 dark:bg-danger-950 border border-danger-200 dark:border-danger-900 rounded-lg p-4">
+            <p className="text-danger-700 dark:text-danger-200">{error}</p>
           </div>
         )}
         {success && (
-          <div className="bg-success-50 border border-success-200 rounded-lg p-4">
-            <p className="text-success-700">{success}</p>
+          <div className="bg-success-50 dark:bg-success-950 border border-success-200 dark:border-success-900 rounded-lg p-4">
+            <p className="text-success-700 dark:text-success-200">{success}</p>
           </div>
         )}
 
         {/* Header with Create Button */}
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-neutral-600">Total Teachers: {teachers.length}</p>
+            <p className="text-neutral-600 dark:text-neutral-400">Total Teachers: {teachers.length}</p>
           </div>
           {!showForm && (
             <Button onClick={() => setShowForm(true)} variant="primary">
@@ -315,10 +315,10 @@ export const TeachersManagementPage: React.FC = () => {
 
         {/* Search and Filter */}
         {!showForm && (
-          <div className="bg-white rounded-lg shadow p-4">
+          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   Search by Name
                 </label>
                 <Input
@@ -329,33 +329,33 @@ export const TeachersManagementPage: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   Filter by Status
                 </label>
                 <select
                   value={statusFilter}
                   onChange={(e) => handleStatusFilter(e.target.value)}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
-                  <option key="all-status" value="">All Status</option>
-                  <option key="active-status" value="active">Active</option>
-                  <option key="inactive-status" value="inactive">Inactive</option>
-                  <option key="suspended-status" value="suspended">Suspended</option>
+                  <option value="">All Status</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  <option value="suspended">Suspended</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   Items per Page
                 </label>
                 <select
                   value={limit}
                   onChange={(e) => setLimit(Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
-                  <option key="limit-5" value="5">5</option>
-                  <option key="limit-10" value="10">10</option>
-                  <option key="limit-20" value="20">20</option>
-                  <option key="limit-50" value="50">50</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
                 </select>
               </div>
             </div>
@@ -364,14 +364,14 @@ export const TeachersManagementPage: React.FC = () => {
 
         {/* Create/Edit Form */}
         {showForm && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold mb-4">
+          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
               {editingId ? 'Edit Teacher' : 'Create New Teacher'}
             </h3>
             <form onSubmit={editingId ? handleUpdate : handleCreate} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     User ID *
                   </label>
                   <Input
@@ -384,7 +384,7 @@ export const TeachersManagementPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Teacher ID *
                   </label>
                   <Input
@@ -397,7 +397,7 @@ export const TeachersManagementPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     First Name *
                   </label>
                   <Input
@@ -410,7 +410,7 @@ export const TeachersManagementPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Last Name *
                   </label>
                   <Input
@@ -423,7 +423,7 @@ export const TeachersManagementPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Date of Birth *
                   </label>
                   <Input
@@ -435,22 +435,22 @@ export const TeachersManagementPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Gender *
                   </label>
                   <select
                     name="gender"
                     value={formData.gender}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
                     required
                   >
-                    <option key="male-gender" value="male">Male</option>
-                    <option key="female-gender" value="female">Female</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Phone
                   </label>
                   <Input
@@ -462,7 +462,7 @@ export const TeachersManagementPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Subject
                   </label>
                   <Input
@@ -474,7 +474,7 @@ export const TeachersManagementPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Qualification
                   </label>
                   <Input
@@ -486,7 +486,7 @@ export const TeachersManagementPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Experience (years)
                   </label>
                   <Input
@@ -498,7 +498,7 @@ export const TeachersManagementPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Salary
                   </label>
                   <Input
@@ -510,7 +510,7 @@ export const TeachersManagementPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Join Date
                   </label>
                   <Input
@@ -521,22 +521,22 @@ export const TeachersManagementPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Status
                   </label>
                   <select
                     name="status"
                     value={formData.status}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
-                    <option key="active-form-status" value="active">Active</option>
-                    <option key="inactive-form-status" value="inactive">Inactive</option>
-                    <option key="suspended-form-status" value="suspended">Suspended</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="suspended">Suspended</option>
                   </select>
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Address
                   </label>
                   <Input
@@ -562,39 +562,39 @@ export const TeachersManagementPage: React.FC = () => {
         )}
 
         {/* Teachers List */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          {loading && <p className="p-6 text-neutral-600">Loading teachers...</p>}
+        <div className="bg-white dark:bg-neutral-800 rounded-lg shadow overflow-hidden">
+          {loading && <p className="p-6 text-neutral-600 dark:text-neutral-400">Loading teachers...</p>}
           {!loading && teachers.length === 0 && (
-            <p className="p-6 text-neutral-600">No teachers found. Create one to get started.</p>
+            <p className="p-6 text-neutral-600 dark:text-neutral-400">No teachers found. Create one to get started.</p>
           )}
           {!loading && teachers.length > 0 && (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-neutral-50 border-b">
+                <thead className="bg-neutral-50 dark:bg-neutral-700 border-b border-neutral-200 dark:border-neutral-600">
                   <tr>
-                    <th className="px-4 py-3 text-left font-semibold text-neutral-700">Name</th>
-                    <th className="px-4 py-3 text-left font-semibold text-neutral-700">Email</th>
-                    <th className="px-4 py-3 text-left font-semibold text-neutral-700">Department</th>
-                    <th className="px-4 py-3 text-left font-semibold text-neutral-700">Qualification</th>
-                    <th className="px-4 py-3 text-left font-semibold text-neutral-700">Status</th>
-                    <th className="px-4 py-3 text-left font-semibold text-neutral-700">Actions</th>
+                    <th className="px-4 py-3 text-left font-semibold text-neutral-700 dark:text-neutral-300">Name</th>
+                    <th className="px-4 py-3 text-left font-semibold text-neutral-700 dark:text-neutral-300">Email</th>
+                    <th className="px-4 py-3 text-left font-semibold text-neutral-700 dark:text-neutral-300">Department</th>
+                    <th className="px-4 py-3 text-left font-semibold text-neutral-700 dark:text-neutral-300">Qualification</th>
+                    <th className="px-4 py-3 text-left font-semibold text-neutral-700 dark:text-neutral-300">Status</th>
+                    <th className="px-4 py-3 text-left font-semibold text-neutral-700 dark:text-neutral-300">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {teachers.map((teacher) => (
-                    <tr key={teacher.id} className="border-t hover:bg-neutral-50">
-                      <td className="px-4 py-3">{teacher.name}</td>
-                      <td className="px-4 py-3">{teacher.email}</td>
-                      <td className="px-4 py-3">{teacher.department}</td>
-                      <td className="px-4 py-3">{teacher.qualification}</td>
+                    <tr key={teacher.id} className="border-t border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-700">
+                      <td className="px-4 py-3 text-neutral-900 dark:text-white">{teacher.name}</td>
+                      <td className="px-4 py-3 text-neutral-900 dark:text-white">{teacher.email}</td>
+                      <td className="px-4 py-3 text-neutral-900 dark:text-white">{teacher.department}</td>
+                      <td className="px-4 py-3 text-neutral-900 dark:text-white">{teacher.qualification}</td>
                       <td className="px-4 py-3">
                         <span
                           className={`px-2 py-1 rounded text-xs font-medium ${
                             teacher.status === 'active'
-                              ? 'bg-success-100 text-success-700'
+                              ? 'bg-success-100 dark:bg-success-900 text-success-700 dark:text-success-200'
                               : teacher.status === 'on_leave'
-                                ? 'bg-warning-100 text-warning-700'
-                                : 'bg-neutral-100 text-neutral-700'
+                                ? 'bg-warning-100 dark:bg-warning-900 text-warning-700 dark:text-warning-200'
+                                : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300'
                           }`}
                         >
                           {teacher.status}
@@ -628,8 +628,8 @@ export const TeachersManagementPage: React.FC = () => {
 
         {/* Pagination */}
         {!loading && teachers.length > 0 && totalPages > 1 && (
-          <div className="bg-white rounded-lg shadow p-4 flex items-center justify-between">
-            <div className="text-sm text-neutral-600">
+          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-4 flex items-center justify-between">
+            <div className="text-sm text-neutral-600 dark:text-neutral-400">
               Page {page} of {totalPages}
             </div>
             <div className="flex gap-2">
