@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { userService, type UserFilters } from '@services/admin/userService'
-import type { User, UserRole, UserStatus } from '@types/api.types'
+import type { User, UserRole, UserStatus } from 'api.types'
 
 interface UseUsersState {
   users: User[]
