@@ -71,6 +71,17 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       return [
         { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', href: '/admin' },
         { id: 'users', label: 'User Management', icon: 'Users', href: '/admin/users' },
+        { id: 'students', label: 'Students', icon: 'BookOpen', href: '/admin/students' },
+        { id: 'teachers', label: 'Teachers', icon: 'Users', href: '/admin/teachers' },
+        { id: 'classes', label: 'Classes', icon: 'Grid', href: '/admin/classes' },
+        { id: 'exams', label: 'Exams', icon: 'ClipboardList', href: '/admin/exams' },
+        { id: 'grades', label: 'Grades', icon: 'TrendingUp', href: '/admin/grades' },
+        { id: 'fees', label: 'Fees', icon: 'CreditCard', href: '/admin/fees' },
+        { id: 'attendance', label: 'Attendance', icon: 'Calendar', href: '/admin/attendance' },
+        { id: 'announcements', label: 'Announcements', icon: 'Bell', href: '/admin/announcements' },
+        { id: 'library', label: 'Library', icon: 'BookMarked', href: '/admin/library' },
+        { id: 'timetables', label: 'Timetables', icon: 'Clock', href: '/admin/timetables' },
+        { id: 'staff', label: 'Staff', icon: 'Users', href: '/admin/staff' },
         { id: 'settings', label: 'Settings', icon: 'Settings', href: '/admin/settings' },
         { id: 'logs', label: 'System Logs', icon: 'FileText', href: '/admin/logs' },
       ];

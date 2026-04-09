@@ -41,6 +41,17 @@ import AdminDashboard from '@features/admin/pages/DashboardPage'
 import { UserManagementPage } from '@features/admin/pages/UserManagementPage'
 import { SettingsPage } from '@features/admin/pages/SettingsPage'
 import { SystemLogsPage } from '@features/admin/pages/SystemLogsPage'
+import { StudentsManagementPage } from '@features/admin/pages/StudentsManagementPage'
+import { TeachersManagementPage } from '@features/admin/pages/TeachersManagementPage'
+import { ClassesManagementPage } from '@features/admin/pages/ClassesManagementPage'
+import { ExamsManagementPage } from '@features/admin/pages/ExamsManagementPage'
+import { GradesManagementPage } from '@features/admin/pages/GradesManagementPage'
+import { FeesManagementPage } from '@features/admin/pages/FeesManagementPage'
+import { AttendanceManagementPage } from '@features/admin/pages/AttendanceManagementPage'
+import { AnnouncementsManagementPage } from '@features/admin/pages/AnnouncementsManagementPage'
+import { LibraryManagementPage } from '@features/admin/pages/LibraryManagementPage'
+import { TimetablesManagementPage } from '@features/admin/pages/TimetablesManagementPage'
+import { StaffManagementPage } from '@features/admin/pages/StaffManagementPage'
 
 // Auth Layout Wrapper
 const AuthLayoutWrapper = () => (
@@ -289,6 +300,94 @@ function App() {
           element={
             <ProtectedRoute requiredRole="admin">
               <UserManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/students"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <StudentsManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/teachers"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <TeachersManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/classes"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <ClassesManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/exams"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <ExamsManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/grades"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <GradesManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/fees"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <FeesManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/attendance"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AttendanceManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/announcements"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AnnouncementsManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/library"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <LibraryManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/timetables"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <TimetablesManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/staff"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <StaffManagementPage />
             </ProtectedRoute>
           }
         />
