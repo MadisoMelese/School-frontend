@@ -21,13 +21,20 @@ interface Teacher {
 }
 
 interface FormData {
-  name: string
-  email: string
-  department: string
-  qualification: string
-  status: string
+  userId: string
+  teacherId: string
+  firstName: string
+  lastName: string
+  dateOfBirth: string
+  gender: string
   phone: string
   address: string
+  subject: string
+  qualification: string
+  experience: string
+  salary: string
+  joinDate: string
+  status: string
 }
 
 export const TeachersManagementPage: React.FC = () => {
@@ -38,13 +45,20 @@ export const TeachersManagementPage: React.FC = () => {
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [formData, setFormData] = useState<FormData>({
-    name: '',
-    email: '',
-    department: '',
-    qualification: '',
-    status: 'active',
+    userId: '',
+    teacherId: '',
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    gender: 'male',
     phone: '',
     address: '',
+    subject: '',
+    qualification: '',
+    experience: '',
+    salary: '',
+    joinDate: '',
+    status: 'active',
   })
 
   // Load teachers
@@ -83,13 +97,20 @@ export const TeachersManagementPage: React.FC = () => {
       await apiClient.post('/teachers', formData)
       setSuccess('Teacher created successfully')
       setFormData({
-        name: '',
-        email: '',
-        department: '',
-        qualification: '',
-        status: 'active',
+        userId: '',
+        teacherId: '',
+        firstName: '',
+        lastName: '',
+        dateOfBirth: '',
+        gender: 'male',
         phone: '',
         address: '',
+        subject: '',
+        qualification: '',
+        experience: '',
+        salary: '',
+        joinDate: '',
+        status: 'active',
       })
       setShowForm(false)
       await loadTeachers()
@@ -103,13 +124,20 @@ export const TeachersManagementPage: React.FC = () => {
   const handleEdit = (teacher: Teacher) => {
     setEditingId(teacher.id)
     setFormData({
-      name: teacher.name,
-      email: teacher.email,
-      department: teacher.department,
-      qualification: teacher.qualification,
-      status: teacher.status,
+      userId: '',
+      teacherId: '',
+      firstName: teacher.name.split(' ')[0] || '',
+      lastName: teacher.name.split(' ')[1] || '',
+      dateOfBirth: '',
+      gender: 'male',
       phone: teacher.phone || '',
       address: teacher.address || '',
+      subject: '',
+      qualification: teacher.qualification || '',
+      experience: '',
+      salary: '',
+      joinDate: '',
+      status: teacher.status,
     })
     setShowForm(true)
   }
@@ -124,13 +152,20 @@ export const TeachersManagementPage: React.FC = () => {
       await apiClient.put(`/teachers/${editingId}`, formData)
       setSuccess('Teacher updated successfully')
       setFormData({
-        name: '',
-        email: '',
-        department: '',
-        qualification: '',
-        status: 'active',
+        userId: '',
+        teacherId: '',
+        firstName: '',
+        lastName: '',
+        dateOfBirth: '',
+        gender: 'male',
         phone: '',
         address: '',
+        subject: '',
+        qualification: '',
+        experience: '',
+        salary: '',
+        joinDate: '',
+        status: 'active',
       })
       setEditingId(null)
       setShowForm(false)
@@ -161,13 +196,20 @@ export const TeachersManagementPage: React.FC = () => {
     setShowForm(false)
     setEditingId(null)
     setFormData({
-      name: '',
-      email: '',
-      department: '',
-      qualification: '',
-      status: 'active',
+      userId: '',
+      teacherId: '',
+      firstName: '',
+      lastName: '',
+      dateOfBirth: '',
+      gender: 'male',
       phone: '',
       address: '',
+      subject: '',
+      qualification: '',
+      experience: '',
+      salary: '',
+      joinDate: '',
+      status: 'active',
     })
   }
 
@@ -209,59 +251,86 @@ export const TeachersManagementPage: React.FC = () => {
             </h3>
             <form onSubmit={editingId ? handleUpdate : handleCreate} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
+                <div key="userId-field">
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
-                    Name *
+                    User ID *
                   </label>
                   <Input
                     type="text"
-                    name="name"
-                    value={formData.name}
+                    name="userId"
+                    value={formData.userId}
                     onChange={handleInputChange}
-                    placeholder="Enter teacher name"
+                    placeholder="Enter user ID"
                     required
                   />
                 </div>
-                <div>
+                <div key="teacherId-field">
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
-                    Email *
-                  </label>
-                  <Input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="Enter email address"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
-                    Department *
+                    Teacher ID *
                   </label>
                   <Input
                     type="text"
-                    name="department"
-                    value={formData.department}
+                    name="teacherId"
+                    value={formData.teacherId}
                     onChange={handleInputChange}
-                    placeholder="Enter department"
+                    placeholder="Enter teacher ID"
                     required
                   />
                 </div>
-                <div>
+                <div key="firstName-field">
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
-                    Qualification *
+                    First Name *
                   </label>
                   <Input
                     type="text"
-                    name="qualification"
-                    value={formData.qualification}
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleInputChange}
-                    placeholder="Enter qualification"
+                    placeholder="Enter first name"
                     required
                   />
                 </div>
-                <div>
+                <div key="lastName-field">
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                    Last Name *
+                  </label>
+                  <Input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    placeholder="Enter last name"
+                    required
+                  />
+                </div>
+                <div key="dateOfBirth-field">
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                    Date of Birth *
+                  </label>
+                  <Input
+                    type="date"
+                    name="dateOfBirth"
+                    value={formData.dateOfBirth}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div key="gender-field">
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                    Gender *
+                  </label>
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    required
+                  >
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+                <div key="phone-field">
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     Phone
                   </label>
@@ -273,23 +342,81 @@ export const TeachersManagementPage: React.FC = () => {
                     placeholder="Enter phone number"
                   />
                 </div>
-                <div>
+                <div key="subject-field">
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
-                    Status *
+                    Subject
+                  </label>
+                  <Input
+                    type="text"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleInputChange}
+                    placeholder="Enter subject"
+                  />
+                </div>
+                <div key="qualification-field">
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                    Qualification
+                  </label>
+                  <Input
+                    type="text"
+                    name="qualification"
+                    value={formData.qualification}
+                    onChange={handleInputChange}
+                    placeholder="Enter qualification"
+                  />
+                </div>
+                <div key="experience-field">
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                    Experience (years)
+                  </label>
+                  <Input
+                    type="number"
+                    name="experience"
+                    value={formData.experience}
+                    onChange={handleInputChange}
+                    placeholder="Enter years of experience"
+                  />
+                </div>
+                <div key="salary-field">
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                    Salary
+                  </label>
+                  <Input
+                    type="number"
+                    name="salary"
+                    value={formData.salary}
+                    onChange={handleInputChange}
+                    placeholder="Enter salary"
+                  />
+                </div>
+                <div key="joinDate-field">
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                    Join Date
+                  </label>
+                  <Input
+                    type="date"
+                    name="joinDate"
+                    value={formData.joinDate}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div key="status-field">
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                    Status
                   </label>
                   <select
                     name="status"
                     value={formData.status}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    required
                   >
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
-                    <option value="on_leave">On Leave</option>
+                    <option value="suspended">Suspended</option>
                   </select>
                 </div>
-                <div className="md:col-span-2">
+                <div key="address-field" className="md:col-span-2">
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     Address
                   </label>
