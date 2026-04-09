@@ -46,58 +46,58 @@ export const userService = {
     if (filters?.page) params.append('page', filters.page.toString())
     if (filters?.limit) params.append('limit', filters.limit.toString())
 
-    const response = await apiClient.get<UserListResponse>('/users', { params })
-    return response.data
+    const response = await apiClient.get<{ success: boolean; data: UserListResponse; message: string }>('/users', { params })
+    return response.data.data
   },
 
   /**
    * Get a single user by ID
    */
   async getUserById(userId: string) {
-    const response = await apiClient.get<{ user: User }>(`/users/${userId}`)
-    return response.data.user
+    const response = await apiClient.get<{ success: boolean; data: { user: User }; message: string }>(`/users/${userId}`)
+    return response.data.data.user
   },
 
   /**
    * Create a new user
    */
   async createUser(data: CreateUserRequest) {
-    const response = await apiClient.post<{ user: User }>('/users', data)
-    return response.data.user
+    const response = await apiClient.post<{ success: boolean; data: { user: User }; message: string }>('/users', data)
+    return response.data.data.user
   },
 
   /**
    * Update a user
    */
   async updateUser(userId: string, data: UpdateUserRequest) {
-    const response = await apiClient.put<{ user: User }>(`/users/${userId}`, data)
-    return response.data.user
+    const response = await apiClient.put<{ success: boolean; data: { user: User }; message: string }>(`/users/${userId}`, data)
+    return response.data.data.user
   },
 
   /**
    * Change user role
    */
   async changeUserRole(userId: string, role: UserRole) {
-    const response = await apiClient.patch<{ user: User }>(`/users/${userId}/role`, {
+    const response = await apiClient.patch<{ success: boolean; data: { user: User }; message: string }>(`/users/${userId}/role`, {
       role,
     })
-    return response.data.user
+    return response.data.data.user
   },
 
   /**
    * Block a user
    */
   async blockUser(userId: string) {
-    const response = await apiClient.patch<{ user: User }>(`/users/${userId}/block`, {})
-    return response.data.user
+    const response = await apiClient.patch<{ success: boolean; data: { user: User }; message: string }>(`/users/${userId}/block`, {})
+    return response.data.data.user
   },
 
   /**
    * Unblock a user
    */
   async unblockUser(userId: string) {
-    const response = await apiClient.patch<{ user: User }>(`/users/${userId}/unblock`, {})
-    return response.data.user
+    const response = await apiClient.patch<{ success: boolean; data: { user: User }; message: string }>(`/users/${userId}/unblock`, {})
+    return response.data.data.user
   },
 
   /**
