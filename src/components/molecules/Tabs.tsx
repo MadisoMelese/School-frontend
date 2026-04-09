@@ -65,8 +65,8 @@ export const Tabs: React.FC<TabsProps> = ({
       {/* Tab list */}
       <div
         role="tablist"
-        className={`flex gap-1 border-b border-neutral-200 overflow-x-auto ${
-          variant === 'pill' ? 'bg-neutral-100 p-1 rounded-lg border-0' : ''
+        className={`flex gap-1 border-b border-neutral-200 dark:border-neutral-700 overflow-x-auto ${
+          variant === 'pill' ? 'bg-neutral-100 dark:bg-neutral-800 p-1 rounded-lg border-0' : ''
         }`}
       >
         {tabs.map((tab, index) => (
@@ -81,11 +81,11 @@ export const Tabs: React.FC<TabsProps> = ({
             className={`flex items-center gap-2 px-4 py-3 font-medium text-sm whitespace-nowrap transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] ${
               tab.id === activeTab
                 ? variant === 'pill'
-                  ? 'bg-white text-primary-600 rounded-lg shadow-sm'
-                  : 'text-primary-600 border-b-2 border-primary-600'
+                  ? 'bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 rounded-lg shadow-sm'
+                  : 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400'
                 : variant === 'pill'
-                  ? 'text-neutral-600 hover:text-neutral-900'
-                  : 'text-neutral-600 hover:text-neutral-900 border-b-2 border-transparent'
+                  ? 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200'
+                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 border-b-2 border-transparent'
             }`}
           >
             {tab.icon && <span className="flex-shrink-0">{tab.icon}</span>}
