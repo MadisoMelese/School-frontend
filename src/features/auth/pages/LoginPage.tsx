@@ -49,8 +49,8 @@ export const LoginPage: React.FC = () => {
     resolver: zodResolver(loginSchema),
     mode: 'onBlur',
     defaultValues: {
-      email: '',
-      password: '',
+      email: 'madisomelese2@gmail.com',
+      password: '@madisha5423$$',
       rememberMe: false,
     },
   });
