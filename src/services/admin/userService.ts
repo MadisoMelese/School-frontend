@@ -1,5 +1,5 @@
 import { apiClient } from '../api/client'
-import type { User, UserRole, UserStatus } from '@types/api.types'
+import type { User, UserRole, UserStatus } from 'api.types'
 
 export interface UserListResponse {
   users: User[]
@@ -46,7 +46,7 @@ export const userService = {
     if (filters?.page) params.append('page', filters.page.toString())
     if (filters?.limit) params.append('limit', filters.limit.toString())
 
-    const response = await apiClient.get<UserListResponse>('/admin/users', { params })
+    const response = await apiClient.get<UserListResponse>('/users', { params })
     return response.data
   },
 
@@ -54,7 +54,7 @@ export const userService = {
    * Get a single user by ID
    */
   async getUserById(userId: string) {
-    const response = await apiClient.get<{ user: User }>(`/admin/users/${userId}`)
+    const response = await apiClient.get<{ user: User }>(`/users/${userId}`)
     return response.data.user
   },
 
@@ -62,7 +62,7 @@ export const userService = {
    * Create a new user
    */
   async createUser(data: CreateUserRequest) {
-    const response = await apiClient.post<{ user: User }>('/admin/users', data)
+    const response = await apiClient.post<{ user: User }>('/users', data)
     return response.data.user
   },
 
@@ -70,7 +70,7 @@ export const userService = {
    * Update a user
    */
   async updateUser(userId: string, data: UpdateUserRequest) {
-    const response = await apiClient.put<{ user: User }>(`/admin/users/${userId}`, data)
+    const response = await apiClient.put<{ user: User }>(`/users/${userId}`, data)
     return response.data.user
   },
 
@@ -78,7 +78,7 @@ export const userService = {
    * Change user role
    */
   async changeUserRole(userId: string, role: UserRole) {
-    const response = await apiClient.patch<{ user: User }>(`/admin/users/${userId}/role`, {
+    const response = await apiClient.patch<{ user: User }>(`/users/${userId}/role`, {
       role,
     })
     return response.data.user
@@ -88,7 +88,7 @@ export const userService = {
    * Block a user
    */
   async blockUser(userId: string) {
-    const response = await apiClient.patch<{ user: User }>(`/admin/users/${userId}/block`, {})
+    const response = await apiClient.patch<{ user: User }>(`/users/${userId}/block`, {})
     return response.data.user
   },
 
@@ -96,7 +96,7 @@ export const userService = {
    * Unblock a user
    */
   async unblockUser(userId: string) {
-    const response = await apiClient.patch<{ user: User }>(`/admin/users/${userId}/unblock`, {})
+    const response = await apiClient.patch<{ user: User }>(`/users/${userId}/unblock`, {})
     return response.data.user
   },
 
@@ -104,6 +104,6 @@ export const userService = {
    * Delete a user
    */
   async deleteUser(userId: string) {
-    await apiClient.delete(`/admin/users/${userId}`)
+    await apiClient.delete(`/users/${userId}`)
   },
 }
