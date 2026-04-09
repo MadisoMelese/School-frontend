@@ -113,7 +113,11 @@ export const TeachersManagementPage: React.FC = () => {
     e.preventDefault()
     try {
       setError(null)
-      await apiClient.post('/teachers', formData)
+      // Only send fields that are not empty
+      const dataToSend = Object.fromEntries(
+        Object.entries(formData).filter(([_, value]) => value !== '')
+      )
+      await apiClient.post('/teachers', dataToSend)
       setSuccess('Teacher created successfully')
       setFormData({
         userId: '',
@@ -169,7 +173,11 @@ export const TeachersManagementPage: React.FC = () => {
 
     try {
       setError(null)
-      await apiClient.put(`/teachers/${editingId}`, formData)
+      // Only send fields that are not empty
+      const dataToSend = Object.fromEntries(
+        Object.entries(formData).filter(([_, value]) => value !== '')
+      )
+      await apiClient.put(`/teachers/${editingId}`, dataToSend)
       setSuccess('Teacher updated successfully')
       setFormData({
         userId: '',
@@ -301,10 +309,10 @@ export const TeachersManagementPage: React.FC = () => {
                   onChange={(e) => handleStatusFilter(e.target.value)}
                   className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
-                  <option value="">All Status</option>
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="suspended">Suspended</option>
+                  <option key="all-status" value="">All Status</option>
+                  <option key="active-status" value="active">Active</option>
+                  <option key="inactive-status" value="inactive">Inactive</option>
+                  <option key="suspended-status" value="suspended">Suspended</option>
                 </select>
               </div>
               <div>
@@ -316,10 +324,10 @@ export const TeachersManagementPage: React.FC = () => {
                   onChange={(e) => setLimit(Number(e.target.value))}
                   className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                  <option value="50">50</option>
+                  <option key="limit-5" value="5">5</option>
+                  <option key="limit-10" value="10">10</option>
+                  <option key="limit-20" value="20">20</option>
+                  <option key="limit-50" value="50">50</option>
                 </select>
               </div>
             </div>
@@ -336,28 +344,26 @@ export const TeachersManagementPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div key="userId-field">
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
-                    User ID *
+                    User ID
                   </label>
                   <Input
                     type="text"
                     name="userId"
                     value={formData.userId}
                     onChange={handleInputChange}
-                    placeholder="Enter user ID"
-                    required
+                    placeholder="Enter user ID (optional)"
                   />
                 </div>
                 <div key="teacherId-field">
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
-                    Teacher ID *
+                    Teacher ID
                   </label>
                   <Input
                     type="text"
                     name="teacherId"
                     value={formData.teacherId}
                     onChange={handleInputChange}
-                    placeholder="Enter teacher ID"
-                    required
+                    placeholder="Enter teacher ID (optional)"
                   />
                 </div>
                 <div key="firstName-field">
@@ -409,8 +415,8 @@ export const TeachersManagementPage: React.FC = () => {
                     className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     required
                   >
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
+                    <option key="male-gender" value="male">Male</option>
+                    <option key="female-gender" value="female">Female</option>
                   </select>
                 </div>
                 <div key="phone-field">
@@ -494,9 +500,9 @@ export const TeachersManagementPage: React.FC = () => {
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="suspended">Suspended</option>
+                    <option key="active-form-status" value="active">Active</option>
+                    <option key="inactive-form-status" value="inactive">Inactive</option>
+                    <option key="suspended-form-status" value="suspended">Suspended</option>
                   </select>
                 </div>
                 <div key="address-field" className="md:col-span-2">
