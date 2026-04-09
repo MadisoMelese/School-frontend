@@ -72,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header
-      className={`sticky top-0 z-30 bg-white border-b border-neutral-200 shadow-sm transition-transform duration-300 ease-in-out ${
+      className={`sticky top-0 z-30 bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 shadow-sm transition-transform duration-300 ease-in-out ${
         enableScrollHiding && !isHeaderVisible ? '-translate-y-full' : 'translate-y-0'
       }`}
     >
@@ -81,12 +81,12 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-3 flex-1">
           <button
             onClick={onMenuToggle}
-            className="md:hidden p-2 hover:bg-neutral-100 rounded-lg"
+            className="md:hidden p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg"
             aria-label="Toggle menu"
           >
-            <Icon name="Menu" size={24} />
+            <Icon name="Menu" size={24} className="text-neutral-900 dark:text-white" />
           </button>
-          <h1 className="text-lg font-semibold text-neutral-900">{title}</h1>
+          <h1 className="text-lg font-semibold text-neutral-900 dark:text-white">{title}</h1>
         </div>
 
         {/* Right Section - Actions */}
@@ -95,10 +95,10 @@ export const Header: React.FC<HeaderProps> = ({
           {onThemeToggle && (
             <button
               onClick={onThemeToggle}
-              className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors"
               aria-label="Toggle theme"
             >
-              <Icon name="Moon" size={20} className="text-neutral-600" />
+              <Icon name="Moon" size={20} className="text-neutral-600 dark:text-neutral-400" />
             </button>
           )}
 
@@ -106,11 +106,11 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="relative">
             <button
               onClick={() => setNotificationsOpen(!notificationsOpen)}
-              className="relative p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+              className="relative p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors"
               aria-label="Notifications"
               aria-expanded={notificationsOpen}
             >
-              <Icon name="Bell" size={20} className="text-neutral-600" />
+              <Icon name="Bell" size={20} className="text-neutral-600 dark:text-neutral-400" />
               {unreadCount > 0 && (
                 <Badge
                   variant="danger"
@@ -123,14 +123,14 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Notifications Dropdown */}
             {notificationsOpen && (
-              <div className="absolute right-0 mt-2 w-80 bg-white border border-neutral-200 rounded-lg shadow-lg overflow-hidden">
-                <div className="px-4 py-3 border-b border-neutral-200 bg-neutral-50">
-                  <h3 className="font-semibold text-neutral-900">Notifications</h3>
+              <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg overflow-hidden">
+                <div className="px-4 py-3 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-700">
+                  <h3 className="font-semibold text-neutral-900 dark:text-white">Notifications</h3>
                 </div>
 
                 <div className="max-h-96 overflow-y-auto">
                   {notifications.length === 0 ? (
-                    <div className="px-4 py-6 text-center text-neutral-500">
+                    <div className="px-4 py-6 text-center text-neutral-500 dark:text-neutral-400">
                       No notifications
                     </div>
                   ) : (
@@ -143,8 +143,8 @@ export const Header: React.FC<HeaderProps> = ({
                           }
                           setNotificationsOpen(false)
                         }}
-                        className={`w-full px-4 py-3 border-b border-neutral-100 text-left hover:bg-neutral-50 transition-colors ${
-                          !notification.read ? 'bg-primary-50' : ''
+                        className={`w-full px-4 py-3 border-b border-neutral-100 dark:border-neutral-700 text-left hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors ${
+                          !notification.read ? 'bg-primary-50 dark:bg-primary-900' : ''
                         }`}
                       >
                         <div className="flex gap-3">
@@ -154,13 +154,13 @@ export const Header: React.FC<HeaderProps> = ({
                             className={getNotificationColor(notification.type)}
                           />
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-sm text-neutral-900">
+                            <p className="font-medium text-sm text-neutral-900 dark:text-white">
                               {notification.title}
                             </p>
-                            <p className="text-xs text-neutral-600 line-clamp-2">
+                            <p className="text-xs text-neutral-600 dark:text-neutral-400 line-clamp-2">
                               {notification.message}
                             </p>
-                            <p className="text-xs text-neutral-400 mt-1">
+                            <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
                               {new Date(notification.timestamp).toLocaleTimeString()}
                             </p>
                           </div>
@@ -181,7 +181,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative">
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-2 p-1 hover:bg-neutral-100 rounded-lg transition-colors"
+                className="flex items-center gap-2 p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors"
                 aria-expanded={userMenuOpen}
                 aria-label="User menu"
               >
@@ -189,16 +189,16 @@ export const Header: React.FC<HeaderProps> = ({
                 <Icon
                   name={userMenuOpen ? 'ChevronUp' : 'ChevronDown'}
                   size={16}
-                  className="text-neutral-400"
+                  className="text-neutral-400 dark:text-neutral-500"
                 />
               </button>
 
               {/* User Dropdown Menu */}
               {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-neutral-200 rounded-lg shadow-lg overflow-hidden">
-                  <div className="px-4 py-3 border-b border-neutral-200">
-                    <p className="text-sm font-medium text-neutral-900">{user.name}</p>
-                    <p className="text-xs text-neutral-500 capitalize">{user.role}</p>
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg overflow-hidden">
+                  <div className="px-4 py-3 border-b border-neutral-200 dark:border-neutral-700">
+                    <p className="text-sm font-medium text-neutral-900 dark:text-white">{user.name}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 capitalize">{user.role}</p>
                   </div>
 
                   <div className="py-1">
@@ -206,7 +206,7 @@ export const Header: React.FC<HeaderProps> = ({
                       onClick={() => {
                         setUserMenuOpen(false)
                       }}
-                      className="w-full px-4 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-100 transition-colors flex items-center gap-2"
+                      className="w-full px-4 py-2 text-left text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors flex items-center gap-2"
                     >
                       <Icon name="User" size={16} />
                       Profile
@@ -215,14 +215,14 @@ export const Header: React.FC<HeaderProps> = ({
                       onClick={() => {
                         setUserMenuOpen(false)
                       }}
-                      className="w-full px-4 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-100 transition-colors flex items-center gap-2"
+                      className="w-full px-4 py-2 text-left text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors flex items-center gap-2"
                     >
                       <Icon name="Settings" size={16} />
                       Settings
                     </button>
                   </div>
 
-                  <div className="border-t border-neutral-200 py-1">
+                  <div className="border-t border-neutral-200 dark:border-neutral-700 py-1">
                     <button
                       onClick={() => {
                         if (onLogout) {
@@ -230,7 +230,7 @@ export const Header: React.FC<HeaderProps> = ({
                         }
                         setUserMenuOpen(false)
                       }}
-                      className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 transition-colors flex items-center gap-2"
+                      className="w-full px-4 py-2 text-left text-sm text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900 transition-colors flex items-center gap-2"
                     >
                       <Icon name="LogOut" size={16} />
                       Logout
