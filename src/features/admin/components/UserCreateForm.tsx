@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Modal } from '@components/molecules/Modal'
 import { Button } from '@components/atoms/Button'
 import { Input } from '@components/atoms/Input'
-import type { UserRole } from 'api.types'
+import type { UserRole } from '@/types/api.types'
 
 interface UserCreateFormProps {
   onSubmit: (data: any) => Promise<void>

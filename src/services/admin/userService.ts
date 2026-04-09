@@ -1,5 +1,5 @@
 import { apiClient } from '../api/client'
-import type { User, UserRole, UserStatus } from 'api.types'
+import type { User, UserRole, UserStatus } from '@/types/api.types'
 
 export interface UserListResponse {
   users: User[]

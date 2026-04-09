@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal } from '@components/molecules/Modal'
 import { Badge } from '@components/atoms/Badge'
-import type { User } from 'api.types'
+import type { User } from '@/types/api.types'
 
 interface UserDetailsModalProps {
   user: User

@@ -3,7 +3,7 @@ import { Modal } from '@components/molecules/Modal'
 import { Button } from '@components/atoms/Button'
 import { Input } from '@components/atoms/Input'
 import { Dropdown } from '@components/molecules/Dropdown'
-import type { User, UserRole } from 'api.types'
+import type { User, UserRole } from '@/types/api.types'
 
 interface UserEditFormProps {
   user: User
