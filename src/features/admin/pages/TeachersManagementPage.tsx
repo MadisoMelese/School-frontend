@@ -342,7 +342,7 @@ export const TeachersManagementPage: React.FC = () => {
             </h3>
             <form onSubmit={editingId ? handleUpdate : handleCreate} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div key="userId-field">
+                <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     User ID
                   </label>
@@ -354,7 +354,7 @@ export const TeachersManagementPage: React.FC = () => {
                     placeholder="Enter user ID (optional)"
                   />
                 </div>
-                <div key="teacherId-field">
+                <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     Teacher ID
                   </label>
@@ -366,7 +366,7 @@ export const TeachersManagementPage: React.FC = () => {
                     placeholder="Enter teacher ID (optional)"
                   />
                 </div>
-                <div key="firstName-field">
+                <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     First Name *
                   </label>
@@ -379,7 +379,7 @@ export const TeachersManagementPage: React.FC = () => {
                     required
                   />
                 </div>
-                <div key="lastName-field">
+                <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     Last Name *
                   </label>
@@ -392,7 +392,7 @@ export const TeachersManagementPage: React.FC = () => {
                     required
                   />
                 </div>
-                <div key="dateOfBirth-field">
+                <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     Date of Birth *
                   </label>
@@ -404,7 +404,7 @@ export const TeachersManagementPage: React.FC = () => {
                     required
                   />
                 </div>
-                <div key="gender-field">
+                <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     Gender *
                   </label>
@@ -419,7 +419,7 @@ export const TeachersManagementPage: React.FC = () => {
                     <option key="female-gender" value="female">Female</option>
                   </select>
                 </div>
-                <div key="phone-field">
+                <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     Phone
                   </label>
@@ -431,7 +431,7 @@ export const TeachersManagementPage: React.FC = () => {
                     placeholder="Enter phone number"
                   />
                 </div>
-                <div key="subject-field">
+                <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     Subject
                   </label>
@@ -443,7 +443,7 @@ export const TeachersManagementPage: React.FC = () => {
                     placeholder="Enter subject"
                   />
                 </div>
-                <div key="qualification-field">
+                <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     Qualification
                   </label>
@@ -455,7 +455,7 @@ export const TeachersManagementPage: React.FC = () => {
                     placeholder="Enter qualification"
                   />
                 </div>
-                <div key="experience-field">
+                <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     Experience (years)
                   </label>
@@ -467,7 +467,7 @@ export const TeachersManagementPage: React.FC = () => {
                     placeholder="Enter years of experience"
                   />
                 </div>
-                <div key="salary-field">
+                <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     Salary
                   </label>
@@ -479,7 +479,7 @@ export const TeachersManagementPage: React.FC = () => {
                     placeholder="Enter salary"
                   />
                 </div>
-                <div key="joinDate-field">
+                <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     Join Date
                   </label>
@@ -490,7 +490,7 @@ export const TeachersManagementPage: React.FC = () => {
                     onChange={handleInputChange}
                   />
                 </div>
-                <div key="status-field">
+                <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     Status
                   </label>
@@ -505,7 +505,7 @@ export const TeachersManagementPage: React.FC = () => {
                     <option key="suspended-form-status" value="suspended">Suspended</option>
                   </select>
                 </div>
-                <div key="address-field" className="md:col-span-2">
+                <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
                     Address
                   </label>
