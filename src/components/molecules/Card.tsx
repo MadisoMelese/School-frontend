@@ -18,8 +18,8 @@ export const Card: React.FC<CardProps> = ({
   hoverable = false,
 }) => {
   const baseStyles =
-    'bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden transition-all duration-200'
-  const hoverStyles = hoverable ? 'hover:shadow-md hover:border-neutral-300 cursor-pointer' : ''
+    'bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden transition-all duration-200'
+  const hoverStyles = hoverable ? 'hover:shadow-md dark:hover:shadow-lg hover:border-neutral-300 dark:hover:border-neutral-600 cursor-pointer' : ''
   const clickableStyles = onClick ? 'cursor-pointer' : ''
 
   return (
@@ -47,15 +47,15 @@ export const Card: React.FC<CardProps> = ({
 }
 
 export const CardHeader: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="px-4 py-3 border-b border-neutral-200 bg-neutral-50">
-    <h3 className="text-sm font-semibold text-neutral-900">{children}</h3>
+  <div className="px-4 py-3 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-700">
+    <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">{children}</h3>
   </div>
 )
 
 export const CardBody: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="px-4 py-4">{children}</div>
+  <div className="px-4 py-4 text-neutral-900 dark:text-white">{children}</div>
 )
 
 export const CardFooter: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="px-4 py-3 border-t border-neutral-200 bg-neutral-50">{children}</div>
+  <div className="px-4 py-3 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white">{children}</div>
 )

@@ -10,13 +10,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles = {
   primary:
-    'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 disabled:bg-primary-300',
+    'bg-primary-500 dark:bg-primary-600 text-white hover:bg-primary-600 dark:hover:bg-primary-700 active:bg-primary-700 dark:active:bg-primary-800 disabled:bg-primary-300 dark:disabled:bg-primary-900',
   secondary:
-    'bg-secondary-500 text-white hover:bg-secondary-600 active:bg-secondary-700 disabled:bg-secondary-300',
+    'bg-secondary-500 dark:bg-secondary-600 text-white hover:bg-secondary-600 dark:hover:bg-secondary-700 active:bg-secondary-700 dark:active:bg-secondary-800 disabled:bg-secondary-300 dark:disabled:bg-secondary-900',
   danger:
-    'bg-danger-500 text-white hover:bg-danger-600 active:bg-danger-700 disabled:bg-danger-300',
+    'bg-danger-500 dark:bg-danger-600 text-white hover:bg-danger-600 dark:hover:bg-danger-700 active:bg-danger-700 dark:active:bg-danger-800 disabled:bg-danger-300 dark:disabled:bg-danger-900',
   ghost:
-    'bg-transparent text-neutral-700 hover:bg-neutral-100 active:bg-neutral-200 disabled:text-neutral-300',
+    'bg-transparent text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 active:bg-neutral-200 dark:active:bg-neutral-600 disabled:text-neutral-300 dark:disabled:text-neutral-600',
 }
 
 const sizeStyles = {
@@ -36,7 +36,7 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    'inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:cursor-not-allowed'
+    'inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 focus:ring-primary-500 dark:focus:ring-primary-400 disabled:cursor-not-allowed'
 
   const widthStyle = fullWidth ? 'w-full' : ''
   const disabledState = disabled || loading

@@ -12,11 +12,11 @@ interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  success: 'bg-success-100 text-success-800',
-  warning: 'bg-warning-100 text-warning-800',
-  danger: 'bg-danger-100 text-danger-800',
-  info: 'bg-primary-100 text-primary-800',
-  neutral: 'bg-neutral-100 text-neutral-800',
+  success: 'bg-success-100 dark:bg-success-900 text-success-800 dark:text-success-200',
+  warning: 'bg-warning-100 dark:bg-warning-900 text-warning-800 dark:text-warning-200',
+  danger: 'bg-danger-100 dark:bg-danger-900 text-danger-800 dark:text-danger-200',
+  info: 'bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200',
+  neutral: 'bg-neutral-100 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200',
 }
 
 const sizeStyles: Record<BadgeSize, string> = {
