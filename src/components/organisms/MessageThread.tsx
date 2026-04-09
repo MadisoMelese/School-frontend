@@ -58,10 +58,10 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-lg border border-neutral-200 overflow-hidden">
+    <div className="flex flex-col h-full bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden">
       {/* Header */}
-      <div className="px-4 py-4 border-b border-neutral-200 bg-neutral-50">
-        <h3 className="font-semibold text-neutral-900">
+      <div className="px-4 py-4 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-700">
+        <h3 className="font-semibold text-neutral-900 dark:text-white">
           {recipientName || 'Message Thread'}
         </h3>
       </div>
@@ -78,7 +78,7 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
             <Spinner size="md" />
           </div>
         ) : messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-neutral-500">
+          <div className="flex items-center justify-center h-full text-neutral-500 dark:text-neutral-400">
             <p>No messages yet. Start the conversation!</p>
           </div>
         ) : (
@@ -108,20 +108,20 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
                 {/* Message Bubble */}
                 <div className={`flex flex-col gap-1 max-w-xs ${isSent ? 'items-end' : 'items-start'}`}>
                   {showAvatar && (
-                    <p className="text-xs font-medium text-neutral-600">
+                    <p className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
                       {message.sender.name}
                     </p>
                   )}
                   <div
                     className={`px-4 py-2 rounded-lg ${
                       isSent
-                        ? 'bg-primary-600 text-white rounded-br-none'
-                        : 'bg-neutral-100 text-neutral-900 rounded-bl-none'
+                        ? 'bg-primary-600 dark:bg-primary-700 text-white rounded-br-none'
+                        : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 rounded-bl-none'
                     }`}
                   >
                     <p className="text-sm break-words">{message.content}</p>
                   </div>
-                  <p className="text-xs text-neutral-500">
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
                     {new Date(message.timestamp).toLocaleTimeString([], {
                       hour: '2-digit',
                       minute: '2-digit',
@@ -137,13 +137,13 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
 
       {/* Error Message */}
       {error && (
-        <div className="px-4 py-2 bg-danger-50 border-t border-danger-200 text-danger-700 text-sm">
+        <div className="px-4 py-2 bg-danger-50 dark:bg-danger-900/20 border-t border-danger-200 dark:border-danger-700 text-danger-700 dark:text-danger-400 text-sm">
           {error}
         </div>
       )}
 
       {/* Input Area */}
-      <div className="px-4 py-4 border-t border-neutral-200 bg-neutral-50">
+      <div className="px-4 py-4 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-700">
         <div className="flex gap-2">
           <Input
             type="text"
