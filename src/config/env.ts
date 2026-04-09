@@ -11,9 +11,9 @@ interface EnvConfig {
   isDevelopment: boolean
   isProduction: boolean
 }
-
+ 
 const getEnvVariable = (key: string, defaultValue?: string): string => {
-  const value = import.meta.env[`VITE_${key}`]
+  const value = (import.meta.env as Record<string, string>)[`VITE_${key}`]
   if (!value && !defaultValue) {
     console.warn(`Environment variable VITE_${key} is not set`)
     return ''
