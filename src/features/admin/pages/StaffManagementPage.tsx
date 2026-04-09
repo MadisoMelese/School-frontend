@@ -36,27 +36,27 @@ export const StaffManagementPage: React.FC = () => {
 
   return (
     <DashboardLayout title="Staff Management" description="Manage all staff members">
-      <div className="bg-white rounded-lg shadow p-6">
-        {loading && <p className="text-neutral-600">Loading staff...</p>}
-        {error && <p className="text-danger-600">{error}</p>}
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6">
+        {loading && <p className="text-neutral-600 dark:text-neutral-400">Loading staff...</p>}
+        {error && <p className="text-danger-600 dark:text-danger-200">{error}</p>}
         {!loading && !error && (
           <div>
-            <p className="text-neutral-600">Total Staff: {staff.length}</p>
+            <p className="text-neutral-600 dark:text-neutral-400">Total Staff: {staff.length}</p>
             <div className="mt-4 overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-neutral-50">
+                <thead className="bg-neutral-50 dark:bg-neutral-700">
                   <tr>
-                    <th className="px-4 py-2 text-left">Name</th>
-                    <th className="px-4 py-2 text-left">Email</th>
-                    <th className="px-4 py-2 text-left">Department</th>
-                    <th className="px-4 py-2 text-left">Position</th>
-                    <th className="px-4 py-2 text-left">Contract</th>
-                    <th className="px-4 py-2 text-left">Status</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Name</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Email</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Department</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Position</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Contract</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {staff.map((member) => (
-                    <tr key={member.id} className="border-t">
+                    <tr key={member.id} className="border-t border-neutral-200 dark:border-neutral-700 dark:hover:bg-neutral-700 dark:text-white">
                       <td className="px-4 py-2">{member.name}</td>
                       <td className="px-4 py-2">{member.email}</td>
                       <td className="px-4 py-2">{member.department}</td>

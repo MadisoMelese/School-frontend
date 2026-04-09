@@ -34,25 +34,25 @@ export const ExamsManagementPage: React.FC = () => {
 
   return (
     <DashboardLayout title="Exams Management" description="Manage all exams">
-      <div className="bg-white rounded-lg shadow p-6">
-        {loading && <p className="text-neutral-600">Loading exams...</p>}
-        {error && <p className="text-danger-600">{error}</p>}
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6">
+        {loading && <p className="text-neutral-600 dark:text-neutral-400">Loading exams...</p>}
+        {error && <p className="text-danger-600 dark:text-danger-200">{error}</p>}
         {!loading && !error && (
           <div>
-            <p className="text-neutral-600">Total Exams: {exams.length}</p>
+            <p className="text-neutral-600 dark:text-neutral-400">Total Exams: {exams.length}</p>
             <div className="mt-4 overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-neutral-50">
+                <thead className="bg-neutral-50 dark:bg-neutral-700">
                   <tr>
-                    <th className="px-4 py-2 text-left">Name</th>
-                    <th className="px-4 py-2 text-left">Class</th>
-                    <th className="px-4 py-2 text-left">Date</th>
-                    <th className="px-4 py-2 text-left">Total Marks</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Name</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Class</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Date</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Total Marks</th>
                   </tr>
                 </thead>
                 <tbody>
                   {exams.map((exam) => (
-                    <tr key={exam.id} className="border-t">
+                    <tr key={exam.id} className="border-t border-neutral-200 dark:border-neutral-700 dark:hover:bg-neutral-700 dark:text-white">
                       <td className="px-4 py-2">{exam.name}</td>
                       <td className="px-4 py-2">{exam.class}</td>
                       <td className="px-4 py-2">{exam.date}</td>

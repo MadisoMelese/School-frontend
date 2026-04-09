@@ -45,26 +45,26 @@ export const StudentsManagementPage: React.FC = () => {
       title="Students Management"
       description="Manage all students in the system"
     >
-      <div className="bg-white rounded-lg shadow p-6">
-        {loading && <p className="text-neutral-600">Loading students...</p>}
-        {error && <p className="text-danger-600">{error}</p>}
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6">
+        {loading && <p className="text-neutral-600 dark:text-neutral-400">Loading students...</p>}
+        {error && <p className="text-danger-600 dark:text-danger-200">Error: {error}</p>}
         {!loading && !error && (
           <div>
-            <p className="text-neutral-600">Total Students: {students.length}</p>
+            <p className="text-neutral-600 dark:text-neutral-400">Total Students: {students.length}</p>
             <div className="mt-4 overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-neutral-50">
+                <thead className="bg-neutral-50 dark:bg-neutral-700">
                   <tr>
-                    <th className="px-4 py-2 text-left">Name</th>
-                    <th className="px-4 py-2 text-left">Email</th>
-                    <th className="px-4 py-2 text-left">Roll Number</th>
-                    <th className="px-4 py-2 text-left">Class</th>
-                    <th className="px-4 py-2 text-left">Status</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Name</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Email</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Roll Number</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Class</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {students.map((student) => (
-                    <tr key={student.id} className="border-t">
+                    <tr key={student.id} className="border-t border-neutral-200 dark:border-neutral-700 dark:hover:bg-neutral-700 dark:text-white">
                       <td className="px-4 py-2">{student.name}</td>
                       <td className="px-4 py-2">{student.email}</td>
                       <td className="px-4 py-2">{student.rollNumber}</td>

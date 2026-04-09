@@ -35,26 +35,26 @@ export const LibraryManagementPage: React.FC = () => {
 
   return (
     <DashboardLayout title="Library Management" description="Manage library books">
-      <div className="bg-white rounded-lg shadow p-6">
-        {loading && <p className="text-neutral-600">Loading books...</p>}
-        {error && <p className="text-danger-600">{error}</p>}
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6">
+        {loading && <p className="text-neutral-600 dark:text-neutral-400">Loading books...</p>}
+        {error && <p className="text-danger-600 dark:text-danger-200">{error}</p>}
         {!loading && !error && (
           <div>
-            <p className="text-neutral-600">Total Books: {books.length}</p>
+            <p className="text-neutral-600 dark:text-neutral-400">Total Books: {books.length}</p>
             <div className="mt-4 overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-neutral-50">
+                <thead className="bg-neutral-50 dark:bg-neutral-700">
                   <tr>
-                    <th className="px-4 py-2 text-left">Title</th>
-                    <th className="px-4 py-2 text-left">Author</th>
-                    <th className="px-4 py-2 text-left">ISBN</th>
-                    <th className="px-4 py-2 text-left">Quantity</th>
-                    <th className="px-4 py-2 text-left">Available</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Title</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Author</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">ISBN</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Quantity</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Available</th>
                   </tr>
                 </thead>
                 <tbody>
                   {books.map((book) => (
-                    <tr key={book.id} className="border-t">
+                    <tr key={book.id} className="border-t border-neutral-200 dark:border-neutral-700 dark:hover:bg-neutral-700 dark:text-white">
                       <td className="px-4 py-2">{book.title}</td>
                       <td className="px-4 py-2">{book.author}</td>
                       <td className="px-4 py-2">{book.isbn}</td>

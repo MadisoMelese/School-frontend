@@ -38,19 +38,19 @@ export const ClassesManagementPage: React.FC = () => {
 
   return (
     <DashboardLayout title="Classes Management" description="Manage all classes">
-      <div className="bg-white rounded-lg shadow p-6">
-        {loading && <p className="text-neutral-600">Loading classes...</p>}
-        {error && <p className="text-danger-600">{error}</p>}
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6">
+        {loading && <p className="text-neutral-600 dark:text-neutral-400">Loading classes...</p>}
+        {error && <p className="text-danger-600 dark:text-danger-200">{error}</p>}
         {!loading && !error && (
           <div>
-            <p className="text-neutral-600">Total Classes: {classes.length}</p>
+            <p className="text-neutral-600 dark:text-neutral-400">Total Classes: {classes.length}</p>
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {classes.map((cls) => (
-                <div key={cls.id} className="border rounded-lg p-4">
-                  <h3 className="font-semibold text-neutral-900">{cls.name}</h3>
-                  <p className="text-sm text-neutral-600">Section: {cls.section}</p>
-                  <p className="text-sm text-neutral-600">Teacher: {cls.teacher}</p>
-                  <p className="text-sm text-neutral-600">Students: {cls.studentCount}</p>
+                <div key={cls.id} className="border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 dark:bg-neutral-700">
+                  <h3 className="font-semibold text-neutral-900 dark:text-white">{cls.name}</h3>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-400">Section: {cls.section}</p>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-400">Teacher: {cls.teacher}</p>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-400">Students: {cls.studentCount}</p>
                 </div>
               ))}
             </div>

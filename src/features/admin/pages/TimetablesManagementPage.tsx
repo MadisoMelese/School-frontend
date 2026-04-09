@@ -36,26 +36,26 @@ export const TimetablesManagementPage: React.FC = () => {
 
   return (
     <DashboardLayout title="Timetables Management" description="Manage all timetables">
-      <div className="bg-white rounded-lg shadow p-6">
-        {loading && <p className="text-neutral-600">Loading timetables...</p>}
-        {error && <p className="text-danger-600">{error}</p>}
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6">
+        {loading && <p className="text-neutral-600 dark:text-neutral-400">Loading timetables...</p>}
+        {error && <p className="text-danger-600 dark:text-danger-200">{error}</p>}
         {!loading && !error && (
           <div>
-            <p className="text-neutral-600">Total Timetables: {timetables.length}</p>
+            <p className="text-neutral-600 dark:text-neutral-400">Total Timetables: {timetables.length}</p>
             <div className="mt-4 overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-neutral-50">
+                <thead className="bg-neutral-50 dark:bg-neutral-700">
                   <tr>
-                    <th className="px-4 py-2 text-left">Class</th>
-                    <th className="px-4 py-2 text-left">Day</th>
-                    <th className="px-4 py-2 text-left">Time</th>
-                    <th className="px-4 py-2 text-left">Subject</th>
-                    <th className="px-4 py-2 text-left">Teacher</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Class</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Day</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Time</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Subject</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Teacher</th>
                   </tr>
                 </thead>
                 <tbody>
                   {timetables.map((tt) => (
-                    <tr key={tt.id} className="border-t">
+                    <tr key={tt.id} className="border-t border-neutral-200 dark:border-neutral-700 dark:hover:bg-neutral-700 dark:text-white">
                       <td className="px-4 py-2">{tt.class}</td>
                       <td className="px-4 py-2">{tt.day}</td>
                       <td className="px-4 py-2">{tt.startTime} - {tt.endTime}</td>
