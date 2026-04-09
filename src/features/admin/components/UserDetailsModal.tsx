@@ -25,25 +25,25 @@ export const UserDetailsModal: React.FC<UserDetailsModalProps> = ({ user, onClos
               className="w-16 h-16 rounded-full object-cover"
             />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center text-2xl font-semibold text-primary-600">
+            <div className="w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-2xl font-semibold text-primary-600 dark:text-primary-300">
               {user.name.charAt(0).toUpperCase()}
             </div>
           )}
           <div>
-            <h3 className="text-lg font-semibold text-neutral-900">{user.name}</h3>
-            <p className="text-sm text-neutral-600">{user.email}</p>
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">{user.name}</h3>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">{user.email}</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 pt-4 border-t border-neutral-200">
+        <div className="grid grid-cols-2 gap-4 pt-4 border-t border-neutral-200 dark:border-neutral-700">
           <div>
-            <p className="text-xs font-medium text-neutral-500 uppercase">Role</p>
+            <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">Role</p>
             <Badge variant={user.role === 'admin' ? 'danger' : 'info'}>
               {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
             </Badge>
           </div>
           <div>
-            <p className="text-xs font-medium text-neutral-500 uppercase">Status</p>
+            <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">Status</p>
             <Badge
               variant={
                 user.status === 'active'
@@ -57,14 +57,14 @@ export const UserDetailsModal: React.FC<UserDetailsModalProps> = ({ user, onClos
             </Badge>
           </div>
           <div>
-            <p className="text-xs font-medium text-neutral-500 uppercase">Created</p>
-            <p className="text-sm text-neutral-900">
+            <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">Created</p>
+            <p className="text-sm text-neutral-900 dark:text-white">
               {new Date(user.createdAt).toLocaleDateString()}
             </p>
           </div>
           <div>
-            <p className="text-xs font-medium text-neutral-500 uppercase">Updated</p>
-            <p className="text-sm text-neutral-900">
+            <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">Updated</p>
+            <p className="text-sm text-neutral-900 dark:text-white">
               {new Date(user.updatedAt).toLocaleDateString()}
             </p>
           </div>

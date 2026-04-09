@@ -33,6 +33,7 @@ const roleOptions = [
   { value: 'teacher', label: 'Teacher' },
   { value: 'parent', label: 'Parent' },
   { value: 'admin', label: 'Admin' },
+  { value: 'user', label: 'User' },
 ]
 
 const statusOptions = [
@@ -175,12 +176,12 @@ export const UserManagementPage: React.FC = () => {
       sortable: true,
       render: (value, row) => (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-sm font-semibold text-primary-600">
+          <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-sm font-semibold text-primary-600 dark:text-primary-300">
             {value.charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="font-medium text-neutral-900">{value}</p>
-            <p className="text-xs text-neutral-500">{row.email}</p>
+            <p className="font-medium text-neutral-900 dark:text-white">{value}</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">{row.email}</p>
           </div>
         </div>
       ),
@@ -236,7 +237,7 @@ export const UserManagementPage: React.FC = () => {
         <div className="flex gap-2">
           <button
             onClick={() => openDetailsModal(row)}
-            className="p-1 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors"
+            className="p-1 text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900 rounded transition-colors"
             title="View details"
             aria-label={`View details for ${row.name}`}
           >
@@ -244,7 +245,7 @@ export const UserManagementPage: React.FC = () => {
           </button>
           <button
             onClick={() => openEditModal(row)}
-            className="p-1 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors"
+            className="p-1 text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900 rounded transition-colors"
             title="Edit user"
             aria-label={`Edit ${row.name}`}
           >
@@ -254,8 +255,8 @@ export const UserManagementPage: React.FC = () => {
             onClick={() => handleToggleBlock(row)}
             className={`p-1 rounded transition-colors ${
               row.status === 'blocked'
-                ? 'text-success-600 hover:bg-success-50'
-                : 'text-warning-600 hover:bg-warning-50'
+                ? 'text-success-600 dark:text-success-400 hover:bg-success-50 dark:hover:bg-success-900'
+                : 'text-warning-600 dark:text-warning-400 hover:bg-warning-50 dark:hover:bg-warning-900'
             }`}
             title={row.status === 'blocked' ? 'Unblock user' : 'Block user'}
             aria-label={row.status === 'blocked' ? `Unblock ${row.name}` : `Block ${row.name}`}
@@ -264,7 +265,7 @@ export const UserManagementPage: React.FC = () => {
           </button>
           <button
             onClick={() => openDeleteConfirm(row.id)}
-            className="p-1 text-danger-600 hover:bg-danger-50 rounded transition-colors"
+            className="p-1 text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900 rounded transition-colors"
             title="Delete user"
             aria-label={`Delete ${row.name}`}
           >
@@ -283,7 +284,7 @@ export const UserManagementPage: React.FC = () => {
       <div className="space-y-6">
         {/* Header with Create Button */}
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-neutral-900">Users</h1>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Users</h1>
           <Button
             variant="primary"
             onClick={openCreateModal}
@@ -297,7 +298,7 @@ export const UserManagementPage: React.FC = () => {
         {/* Filters Card */}
         <Card>
           <div className="space-y-4">
-            <h3 className="font-semibold text-neutral-900">Filters</h3>
+            <h3 className="font-semibold text-neutral-900 dark:text-white">Filters</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Input
                 type="text"
@@ -379,7 +380,7 @@ export const UserManagementPage: React.FC = () => {
             </>
           }
         >
-          <p className="text-neutral-600">
+          <p className="text-neutral-600 dark:text-neutral-400">
             Are you sure you want to delete this user? This action cannot be undone.
           </p>
         </Modal>
