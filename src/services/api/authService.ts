@@ -77,6 +77,18 @@ export const authService = {
     const response = await apiClient.post<ChangePasswordResponse>('/auth/change-password', data);
     return response.data;
   },
+
+  /**
+   * Get current user profile
+   */
+  getProfile: async (): Promise<{ user: any }> => {
+    const response = await apiClient.get<{
+      success: boolean;
+      message: string;
+      data: { user: any };
+    }>('/users/me');
+    return response.data.data;
+  },
 };
 
 export default authService;
