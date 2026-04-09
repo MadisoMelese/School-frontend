@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { DashboardLayout } from '@components/templates/DashboardLayout'
 import { Dashboard, Widget } from '@components/organisms/Dashboard'
 import { Badge } from '@components/atoms/Badge'
-import { Icon } from '@components/atoms/Icon'
 import { useAuth } from '@hooks/useAuth'
 import { useLocalStorage } from '@hooks/useLocalStorage'
 import { apiClient } from '@services/api/client'
@@ -43,7 +42,6 @@ export const AdminDashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [widgets, setWidgets] = useState<Widget[]>([])
-  const [hrSummary, setHrSummary] = useState<any>(null)
   const [resourceStats, setResourceStats] = useState<ResourceStats>({})
 
   // Load dashboard data from backend
@@ -56,7 +54,6 @@ export const AdminDashboardPage: React.FC = () => {
         // Fetch HR summary
         const hrResponse = await apiClient.get('/hr/summary')
         const summary = hrResponse.data.data || hrResponse.data
-        setHrSummary(summary)
 
         // Fetch resource counts
         const stats: ResourceStats = {}
