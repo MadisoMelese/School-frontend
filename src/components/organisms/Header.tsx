@@ -4,6 +4,8 @@ import { Avatar } from '../atoms/Avatar';
 import { Icon } from '../atoms/Icon';
 import { Badge } from '../atoms/Badge';
 import { useHeaderVisibility } from '../../hooks/useHeaderVisibility';
+import { SyncStatusIndicator } from './SyncStatusIndicator';
+import { ManualSyncButton } from './ManualSyncButton';
 
 export interface Notification {
   id: string;
@@ -90,6 +92,16 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Section - Actions */}
         <div className="flex items-center gap-2">
+          {/* Sync Status Indicator */}
+          <div className="hidden md:block">
+            <SyncStatusIndicator />
+          </div>
+
+          {/* Manual Sync Button */}
+          <div className="hidden sm:block">
+            <ManualSyncButton variant="secondary" size="sm" showLabel={false} />
+          </div>
+
           {/* Theme Toggle */}
           {onThemeToggle && (
             <button
