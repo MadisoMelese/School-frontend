@@ -115,7 +115,7 @@ export const DataTable: React.FC<DataTableProps<any>> = ({
 
       {/* Table Container - Responsive */}
       <div className="overflow-x-auto rounded-lg border border-neutral-200">
-        <table className="w-full text-sm" role="table" aria-label="Data table" aria-busy={loading}>
+        <table className="w-full text-sm" role="table" aria-label="Data table" aria-busy={loading ? "true" : "false"}>
           <thead>
             <tr className="bg-neutral-50 border-b border-neutral-200">
               {columns.map((column) => (
@@ -124,18 +124,22 @@ export const DataTable: React.FC<DataTableProps<any>> = ({
                   className="px-4 py-3 text-left font-semibold text-neutral-700"
                   style={{ width: column.width }}
                   scope="col"
+                  {...(column.sortable
+                    ? {
+                        'aria-sort':
+                          sortKey === String(column.key)
+                            ? sortDirection === 'asc'
+                              ? 'ascending'
+                              : 'descending'
+                            : 'none',
+                      }
+                    : {})}
                 >
                   {column.sortable ? (
                     <button
                       onClick={() => handleSort(String(column.key))}
                       className="flex items-center gap-2 hover:text-primary-600 transition-colors"
-                      aria-sort={
-                        sortKey === String(column.key)
-                          ? sortDirection === 'asc'
-                            ? 'ascending'
-                            : 'descending'
-                          : 'none'
-                      }
+                      type="button"
                     >
                       {column.label}
                       {sortKey === String(column.key) && (
