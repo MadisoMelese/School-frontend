@@ -29,3 +29,10 @@ export type { MessageThreadProps } from './MessageThread';
 
 export { ClassList } from './ClassList';
 export type { ClassListProps } from './ClassList';
+
+export { OfflineIndicator } from './OfflineIndicator';
+
+export { SyncStatusIndicator } from './SyncStatusIndicator';
+
+export { ManualSyncButton } from './ManualSyncButton';
+export { ErrorBoundary } from './ErrorBoundary';
