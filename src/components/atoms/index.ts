@@ -12,3 +12,8 @@ export { Tooltip } from './Tooltip';
 export { Tag } from './Tag';
 export { Checkbox } from './Checkbox';
 export { ResponsiveImage } from './ResponsiveImage';
+export { Skeleton } from './Skeleton';
+export { SkeletonCard } from './SkeletonCard';
+export { SkeletonTable } from './SkeletonTable';
+export { SkeletonList } from './SkeletonList';
+export { SkeletonDashboard } from './SkeletonDashboard';
