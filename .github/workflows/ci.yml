@@ -101,6 +101,9 @@ jobs:
       - name: Rebuild native modules
         run: npm rebuild
 
+      - name: Install PostCSS dependencies
+        run: npm install --save-optional @tailwindcss/postcss postcss autoprefixer
+
       - name: Run tests
         run: npm run test -- --run
 
