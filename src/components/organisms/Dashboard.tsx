@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card } from '../molecules/Card';
 import { Spinner } from '../atoms/Spinner';
+import { SkeletonDashboard } from '../atoms/SkeletonDashboard';
 
 export interface Widget {
   id: string;
@@ -54,42 +55,32 @@ export const Dashboard: React.FC<DashboardProps> = ({ widgets, loading = false, 
     <div className="space-y-6">
       {/* Dashboard Grid - Responsive from 1 column (mobile) to 3+ columns (desktop) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6 auto-rows-max">
-        {loading
-          ? // Loading skeleton
-            Array.from({ length: 4 }).map((_, index) => (
-              <div
-                key={index}
-                className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4 sm:p-5 md:p-6 h-48"
-              >
-                <div className="space-y-3">
-                  <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-1/3 animate-pulse" />
-                  <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded w-1/2 animate-pulse" />
-                  <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-2/3 animate-pulse" />
-                </div>
-              </div>
-            ))
-          : widgets.map((widget) => (
-              <div
-                key={widget.id}
-                className={`${getSizeClasses(widget.size)}`}
-                role="region"
-                aria-label={widget.title}
-              >
-                <Card header={widget.title} className={widget.loading ? 'opacity-75' : ''}>
-                  {widget.loading ? (
-                    <div className="flex items-center justify-center py-8">
-                      <Spinner size="md" />
-                    </div>
-                  ) : widget.error ? (
-                    <div className="p-4 text-center">
-                      <p className="text-danger-600 text-sm">{widget.error}</p>
-                    </div>
-                  ) : (
-                    widget.content
-                  )}
-                </Card>
-              </div>
-            ))}
+        {loading ? (
+          <SkeletonDashboard widgets={4} />
+        ) : (
+          widgets.map((widget) => (
+            <div
+              key={widget.id}
+              className={`${getSizeClasses(widget.size)}`}
+              role="region"
+              aria-label={widget.title}
+            >
+              <Card header={widget.title} className={widget.loading ? 'opacity-75' : ''}>
+                {widget.loading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Spinner size="md" />
+                  </div>
+                ) : widget.error ? (
+                  <div className="p-4 text-center">
+                    <p className="text-danger-600 text-sm">{widget.error}</p>
+                  </div>
+                ) : (
+                  widget.content
+                )}
+              </Card>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
