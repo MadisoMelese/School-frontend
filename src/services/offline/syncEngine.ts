@@ -9,6 +9,12 @@ import {
   SyncQueueItem,
 } from './syncQueue';
 import { reportOfflineSyncError } from '@/services/monitoring/errorReporter';
+import {
+  detectConflicts,
+  logConflict,
+  resolveConflictRemote,
+  mergeVersions,
+} from './conflictResolver';
 
 /**
  * Sync Engine
@@ -136,11 +142,53 @@ const syncCreate = async (item: SyncQueueItem): Promise<void> => {
 };
 
 /**
- * Sync update action
+ * Sync update action with conflict detection
  */
 const syncUpdate = async (item: SyncQueueItem): Promise<void> => {
   const endpoint = getEndpointForResource(item.resource, item.resourceId);
-  await apiClient.put(endpoint, item.data);
+  
+  try {
+    // First, fetch the current remote version
+    const remoteResponse = await apiClient.get(endpoint);
+    const remoteData = remoteResponse.data;
+    
+    // Detect conflicts between local and remote data
+    const localData = item.data as Record<string, unknown>;
+    const conflicts = await detectConflicts(item.resource, localData, remoteData);
+    
+    if (conflicts.length > 0) {
+      // Log conflicts for user review
+      console.warn(`Detected ${conflicts.length} conflicts for ${item.resource}:${item.resourceId}`);
+      
+      // Apply conflict resolution strategy: prefer remote (server wins)
+      const mergedData = mergeVersions(localData, remoteData);
+      
+      // Update with merged data
+      await apiClient.put(endpoint, mergedData);
+      
+      // Resolve conflicts as remote
+      for (const conflictId of conflicts) {
+        await resolveConflictRemote(conflictId);
+      }
+    } else {
+      // No conflicts, proceed with update
+      await apiClient.put(endpoint, item.data);
+    }
+  } catch (error) {
+    // If fetch fails (404), the resource might have been deleted remotely
+    // In this case, log a conflict and skip the update
+    if ((error as any)?.response?.status === 404) {
+      await logConflict(
+        item.resource,
+        item.resourceId || '',
+        item.data,
+        { deleted: true }
+      );
+      console.warn(`Resource ${item.resource}:${item.resourceId} was deleted remotely`);
+      return;
+    }
+    throw error;
+  }
 };
 
 /**
@@ -189,6 +237,27 @@ export const getSyncStatus = (): {
 };
 
 /**
+ * Get detailed sync status including conflicts
+ */
+export const getDetailedSyncStatus = async (): Promise<{
+  isOnline: boolean;
+  isSyncing: boolean;
+  pendingCount: number;
+  conflictCount: number;
+}> => {
+  const offlineStore = useOfflineStore.getState();
+  const { getUnresolvedConflicts } = await import('./conflictResolver');
+  const conflicts = await getUnresolvedConflicts();
+
+  return {
+    isOnline: offlineStore.isOnline,
+    isSyncing: isSyncing,
+    pendingCount: offlineStore.getPendingActionCount(),
+    conflictCount: conflicts.length,
+  };
+};
+
+/**
  * Manual sync trigger
  */
 export const manualSync = async (): Promise<void> => {
@@ -207,6 +276,7 @@ export default {
   initializeSyncEngine,
   syncPendingActions,
   getSyncStatus,
+  getDetailedSyncStatus,
   manualSync,
   cleanupSyncEngine,
 };
