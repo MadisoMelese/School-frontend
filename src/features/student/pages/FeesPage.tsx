@@ -7,6 +7,8 @@ import { Input } from '@components/atoms/Input';
 import { Badge } from '@components/atoms/Badge';
 import { Icon } from '@components/atoms/Icon';
 import { Spinner } from '@components/atoms/Spinner';
+import { SkeletonCard } from '@components/atoms/SkeletonCard';
+import { SkeletonTable } from '@components/atoms/SkeletonTable';
 import { useDebounce } from '@hooks/useDebounce';
 import { useMediaQuery } from '@hooks/useMediaQuery';
 import { studentService } from '@services/api/studentService';
@@ -256,8 +258,29 @@ export const FeesPage: React.FC = () => {
   if (loading) {
     return (
       <DashboardLayout title="Fees" description="View your fee status and payment history">
-        <div className="flex items-center justify-center py-12">
-          <Spinner size="lg" />
+        <div className="space-y-6">
+          {/* Summary Cards Skeleton */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <SkeletonCard key={index} lines={1} showHeader={false} />
+            ))}
+          </div>
+
+          {/* Filters Skeleton */}
+          <SkeletonCard lines={4} showHeader />
+
+          {/* Fees Table/Cards Skeleton */}
+          {isMobile ? (
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <SkeletonCard key={index} lines={3} showHeader />
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <SkeletonTable rows={5} columns={6} showHeader />
+            </Card>
+          )}
         </div>
       </DashboardLayout>
     );
