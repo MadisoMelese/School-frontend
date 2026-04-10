@@ -3,3 +3,4 @@ dist
 build
 .git
 *.lock
+src/components/RESPONSIVE_DESIGN.test.tsx
