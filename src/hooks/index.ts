@@ -14,3 +14,9 @@ export { useDeviceOrientation } from './useDeviceOrientation';
 export { useOrientationChange } from './useOrientationChange';
 export { useKeyboardHeight } from './useKeyboardHeight';
 export { useMobileKeyboard } from './useMobileKeyboard';
+export { useCachedQuery } from './useCachedQuery';
+export { useCachedDashboard } from './useCachedDashboard';
+export { useCachedGrades } from './useCachedGrades';
+export { useCachedAttendance } from './useCachedAttendance';
+export { useActionQueue } from './useActionQueue';
+
