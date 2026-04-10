@@ -157,7 +157,7 @@ interface ClassCardProps {
   onViewDetails: () => void;
 }
 
-// eslint-disable-next-line react/prop-types
+/* eslint-disable react/prop-types */
 const ClassCard: React.FC<ClassCardProps> = ({ classData, onViewDetails }) => {
   const formatSchedule = (schedule?: any[]) => {
     if (!schedule || schedule.length === 0) return 'No schedule';
@@ -209,6 +209,7 @@ const ClassCard: React.FC<ClassCardProps> = ({ classData, onViewDetails }) => {
     </Card>
   );
 };
+/* eslint-enable react/prop-types */
 
 ClassCard.displayName = 'ClassCard';
 

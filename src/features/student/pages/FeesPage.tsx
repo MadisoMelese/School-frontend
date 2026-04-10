@@ -41,11 +41,16 @@ export const FeesPage: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState<string>('');
   const [selectedTerm, setSelectedTerm] = useState<string>('');
   const [feeSummary, setFeeSummary] = useState<FeeSummary | null>(null);
-  const [paymentHistory, setPaymentHistory] = useState<any[]>([]);
   const [showPaymentHistory, setShowPaymentHistory] = useState(false);
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | null>(null);
   const [initiatingPayment, setInitiatingPayment] = useState<string | null>(null);
+
+  // Mock payment history data
+  const paymentHistory = [
+    { id: '1', method: 'Bank Transfer', date: '2024-01-15', amount: 50000 },
+    { id: '2', method: 'Card Payment', date: '2024-02-10', amount: 50000 },
+  ];
 
   // Debounce search query
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -315,7 +320,7 @@ export const FeesPage: React.FC = () => {
               <h3 className="font-semibold text-neutral-900">Payment History</h3>
               {paymentHistory.length > 0 ? (
                 <div className="space-y-3">
-                  {paymentHistory.map((payment) => (
+                  {paymentHistory.map((payment: any) => (
                     <div
                       key={payment.id}
                       className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg"

@@ -3,7 +3,6 @@ import { render, screen, waitFor, fireEvent, within } from '@testing-library/rea
 import userEvent from '@testing-library/user-event';
 import { ExamsPage } from './ExamsPage';
 import * as studentService from '@services/api/studentService';
-import type { Exam } from '@types';
 
 // Mock the service
 vi.mock('@services/api/studentService', () => ({

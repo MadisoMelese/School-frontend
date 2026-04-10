@@ -33,6 +33,15 @@ export const ClassDetailsPage = () => {
     enabled: !!classId,
   });
 
+  const filteredStudents = useMemo(() => {
+    if (!studentsData?.data) return [];
+    return studentsData.data.filter(
+      (student) =>
+        student.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        student.enrollmentNumber.toLowerCase().includes(debouncedSearch.toLowerCase())
+    );
+  }, [studentsData?.data, debouncedSearch]);
+
   if (!classId) {
     return (
       <PortalLayout title="Class Details">
@@ -42,15 +51,6 @@ export const ClassDetailsPage = () => {
       </PortalLayout>
     );
   }
-
-  const filteredStudents = useMemo(() => {
-    if (!studentsData?.data) return [];
-    return studentsData.data.filter(
-      (student) =>
-        student.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-        student.enrollmentNumber.toLowerCase().includes(debouncedSearch.toLowerCase())
-    );
-  }, [studentsData?.data, debouncedSearch]);
 
   const isLoading = classLoading || studentsLoading || statsLoading;
 

@@ -924,7 +924,7 @@ describe('Navigation Component - Sidebar Navigation for Desktop', () => {
     })
 
     it('should handle items without badges', () => {
-      const itemsWithoutBadges = mockNavItems.map(({ badge, ...item }) => item)
+      const itemsWithoutBadges = mockNavItems.map(({ badge: _badge, ...item }) => item)
 
       const { container } = render(
         <Navigation

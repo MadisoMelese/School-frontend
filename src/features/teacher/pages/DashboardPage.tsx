@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '@components/templates/DashboardLayout';
 import { Dashboard, Widget } from '@components/organisms/Dashboard';
-import { Card } from '@components/molecules/Card';
 import { Badge } from '@components/atoms/Badge';
 import { Icon } from '@components/atoms/Icon';
 import { useAuth } from '@hooks/useAuth';

@@ -8,7 +8,6 @@ import { Badge } from '@components/atoms/Badge';
 import { Icon } from '@components/atoms/Icon';
 import { Spinner } from '@components/atoms/Spinner';
 import { useDebounce } from '@hooks/useDebounce';
-import { useMediaQuery } from '@hooks/useMediaQuery';
 import { useExamNotifications } from '@hooks/useExamNotifications';
 import { studentService } from '@services/api/studentService';
 import type { Exam } from '@types';
