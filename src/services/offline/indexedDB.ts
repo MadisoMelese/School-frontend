@@ -102,13 +102,13 @@ export const initializeDB = async (): Promise<IDBPDatabase<SchoolOSDB>> => {
 
       // Sync queue store
       if (!db.objectStoreNames.contains('syncQueue')) {
-        const syncQueueStore = db.createObjectStore('syncQueue', { keyPath: 'id' });
+        const syncQueueStore = db.createObjectStore('syncQueue');
         syncQueueStore.createIndex('by-status', 'status');
       }
 
       // Conflict log store
       if (!db.objectStoreNames.contains('conflictLog')) {
-        db.createObjectStore('conflictLog', { keyPath: 'id' });
+        db.createObjectStore('conflictLog');
       }
     },
   });
