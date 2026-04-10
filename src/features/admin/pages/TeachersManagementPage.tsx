@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '@components/templates/DashboardLayout';
 import { Button } from '@components/atoms/Button';
 import { Input } from '@components/atoms/Input';
+import { SkeletonTable } from '@components/atoms/SkeletonTable';
 import { apiClient } from '@services/api/client';
 
 /**
@@ -600,7 +601,9 @@ export const TeachersManagementPage: React.FC = () => {
         {/* Teachers List */}
         <div className="bg-white dark:bg-neutral-800 rounded-lg shadow overflow-hidden">
           {loading && (
-            <p className="p-6 text-neutral-600 dark:text-neutral-400">Loading teachers...</p>
+            <div className="p-6">
+              <SkeletonTable rows={5} columns={7} showHeader />
+            </div>
           )}
           {!loading && teachers.length === 0 && (
             <p className="p-6 text-neutral-600 dark:text-neutral-400">
