@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { DashboardLayout } from '@components/templates/DashboardLayout'
-import { Dashboard, Widget } from '@components/organisms/Dashboard'
-import { GradeCard } from '@components/organisms/GradeCard'
-import { AttendanceCalendar } from '@components/organisms/AttendanceCalendar'
-import { MessageThread } from '@components/organisms/MessageThread'
-import { Card } from '@components/molecules/Card'
-import { Badge } from '@components/atoms/Badge'
-import { Icon } from '@components/atoms/Icon'
-import { useAuth } from '@hooks/useAuth'
-import { useLocalStorage } from '@hooks/useLocalStorage'
+import React, { useEffect, useState } from 'react';
+import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { Dashboard, Widget } from '@components/organisms/Dashboard';
+import { GradeCard } from '@components/organisms/GradeCard';
+import { AttendanceCalendar } from '@components/organisms/AttendanceCalendar';
+import { Card } from '@components/molecules/Card';
+import { Badge } from '@components/atoms/Badge';
+import { Icon } from '@components/atoms/Icon';
+import { useAuth } from '@hooks/useAuth';
+import { useLocalStorage } from '@hooks/useLocalStorage';
 
 /**
  * Student Dashboard Page
@@ -21,19 +20,19 @@ import { useLocalStorage } from '@hooks/useLocalStorage'
  */
 
 interface DashboardState {
-  scrollPosition: number
-  lastUpdated: number
+  scrollPosition: number;
+  lastUpdated: number;
 }
 
 export const StudentDashboardPage: React.FC = () => {
-  const { user } = useAuth()
+  const { user } = useAuth();
   const [dashboardState, setDashboardState] = useLocalStorage<DashboardState>(
     `dashboard-${user?.id}`,
     { scrollPosition: 0, lastUpdated: Date.now() }
-  )
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [widgets, setWidgets] = useState<Widget[]>([])
+  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [widgets, setWidgets] = useState<Widget[]>([]);
 
   // Mock data - replace with actual API calls
   const mockGrades = [
@@ -61,7 +60,7 @@ export const StudentDashboardPage: React.FC = () => {
       remarks: 'Excellent work',
       examDate: new Date('2024-01-17'),
     },
-  ]
+  ];
 
   const mockAttendance = [
     { date: '2024-01-15', status: 'present' as const },
@@ -69,7 +68,7 @@ export const StudentDashboardPage: React.FC = () => {
     { date: '2024-01-17', status: 'absent' as const },
     { date: '2024-01-18', status: 'late' as const },
     { date: '2024-01-19', status: 'present' as const },
-  ]
+  ];
 
   const mockExams = [
     {
@@ -90,7 +89,7 @@ export const StudentDashboardPage: React.FC = () => {
       totalMarks: 100,
       hallLocation: 'Hall B',
     },
-  ]
+  ];
 
   const mockFees = [
     {
@@ -111,28 +110,34 @@ export const StudentDashboardPage: React.FC = () => {
       status: 'pending' as const,
       academicYear: '2023-2024',
     },
-  ]
+  ];
 
   const mockMessages = [
     {
       id: '1',
-      sender: { id: '1', name: 'Mr. Smith', email: 'smith@school.com', role: 'teacher' as const, status: 'active' as const },
+      sender: {
+        id: '1',
+        name: 'Mr. Smith',
+        email: 'smith@school.com',
+        role: 'teacher' as const,
+        status: 'active' as const,
+      },
       subject: 'Great work on the project!',
       content: 'Your project submission was excellent...',
       timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
       isRead: false,
     },
-  ]
+  ];
 
   // Load dashboard data
   useEffect(() => {
     const loadDashboard = async () => {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
 
         // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Create widgets
         const dashboardWidgets: Widget[] = [
@@ -174,8 +179,15 @@ export const StudentDashboardPage: React.FC = () => {
             content: (
               <div className="space-y-3">
                 {mockExams.map((exam) => (
-                  <div key={exam.id} className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
-                    <Icon name="Calendar" size={20} className="text-primary-600 flex-shrink-0 mt-0.5" />
+                  <div
+                    key={exam.id}
+                    className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg"
+                  >
+                    <Icon
+                      name="Calendar"
+                      size={20}
+                      className="text-primary-600 flex-shrink-0 mt-0.5"
+                    />
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-neutral-900">{exam.subject}</p>
                       <p className="text-xs text-neutral-600 mt-1">
@@ -197,7 +209,10 @@ export const StudentDashboardPage: React.FC = () => {
             content: (
               <div className="space-y-3">
                 {mockFees.map((fee) => (
-                  <div key={fee.id} className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg">
+                  <div
+                    key={fee.id}
+                    className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg"
+                  >
                     <div>
                       <p className="font-medium text-neutral-900">{fee.title}</p>
                       <p className="text-xs text-neutral-600">
@@ -228,7 +243,10 @@ export const StudentDashboardPage: React.FC = () => {
             content: (
               <div className="space-y-3">
                 {mockMessages.map((msg) => (
-                  <div key={msg.id} className="p-3 bg-neutral-50 rounded-lg border-l-4 border-primary-500">
+                  <div
+                    key={msg.id}
+                    className="p-3 bg-neutral-50 rounded-lg border-l-4 border-primary-500"
+                  >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-neutral-900">{msg.sender.name}</p>
@@ -246,25 +264,25 @@ export const StudentDashboardPage: React.FC = () => {
               </div>
             ),
           },
-        ]
+        ];
 
-        setWidgets(dashboardWidgets)
+        setWidgets(dashboardWidgets);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load dashboard')
+        setError(err instanceof Error ? err.message : 'Failed to load dashboard');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadDashboard()
-  }, [])
+    loadDashboard();
+  }, []);
 
   // Restore scroll position
   useEffect(() => {
     if (dashboardState?.scrollPosition) {
-      window.scrollTo(0, dashboardState.scrollPosition)
+      window.scrollTo(0, dashboardState.scrollPosition);
     }
-  }, [dashboardState])
+  }, [dashboardState]);
 
   // Save scroll position on scroll
   useEffect(() => {
@@ -273,21 +291,18 @@ export const StudentDashboardPage: React.FC = () => {
         ...dashboardState,
         scrollPosition: window.scrollY,
         lastUpdated: Date.now(),
-      })
-    }
+      });
+    };
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [dashboardState, setDashboardState])
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [dashboardState, setDashboardState]);
 
   return (
-    <DashboardLayout
-      title="Dashboard"
-      description="Welcome back! Here's your academic overview."
-    >
+    <DashboardLayout title="Dashboard" description="Welcome back! Here's your academic overview.">
       <Dashboard widgets={widgets} loading={loading} error={error || undefined} />
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default StudentDashboardPage
+export default StudentDashboardPage;

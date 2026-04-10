@@ -22,10 +22,7 @@ describe('Breadcrumb', () => {
   });
 
   it('renders links for items with href', () => {
-    const items = [
-      { label: 'Home', href: '/' },
-      { label: 'Current' },
-    ];
+    const items = [{ label: 'Home', href: '/' }, { label: 'Current' }];
 
     render(<Breadcrumb items={items} />);
 
@@ -34,10 +31,7 @@ describe('Breadcrumb', () => {
   });
 
   it('renders text for items without href', () => {
-    const items = [
-      { label: 'Home', href: '/' },
-      { label: 'Current' },
-    ];
+    const items = [{ label: 'Home', href: '/' }, { label: 'Current' }];
 
     render(<Breadcrumb items={items} />);
 
@@ -46,10 +40,7 @@ describe('Breadcrumb', () => {
   });
 
   it('marks last item as current page', () => {
-    const items = [
-      { label: 'Home', href: '/' },
-      { label: 'Current' },
-    ];
+    const items = [{ label: 'Home', href: '/' }, { label: 'Current' }];
 
     render(<Breadcrumb items={items} />);
 
@@ -71,10 +62,7 @@ describe('Breadcrumb', () => {
   });
 
   it('has proper accessibility attributes', () => {
-    const items = [
-      { label: 'Home', href: '/' },
-      { label: 'Current' },
-    ];
+    const items = [{ label: 'Home', href: '/' }, { label: 'Current' }];
 
     render(<Breadcrumb items={items} />);
 
@@ -84,9 +72,7 @@ describe('Breadcrumb', () => {
 
   it('applies custom className', () => {
     const items = [{ label: 'Home', href: '/' }];
-    const { container } = render(
-      <Breadcrumb items={items} className="custom-class" />
-    );
+    const { container } = render(<Breadcrumb items={items} className="custom-class" />);
 
     const nav = container.querySelector('nav');
     expect(nav).toHaveClass('custom-class');
@@ -100,10 +86,7 @@ describe('Breadcrumb', () => {
   });
 
   it('has theme support classes', () => {
-    const items = [
-      { label: 'Home', href: '/' },
-      { label: 'Current' },
-    ];
+    const items = [{ label: 'Home', href: '/' }, { label: 'Current' }];
 
     const { container } = render(<Breadcrumb items={items} />);
 

@@ -1,15 +1,14 @@
-import React, { useState } from 'react'
-import { Modal } from '@components/molecules/Modal'
-import { Button } from '@components/atoms/Button'
-import { Input } from '@components/atoms/Input'
-import { Dropdown } from '@components/molecules/Dropdown'
-import type { User, UserRole } from '@/types/api.types'
+import React, { useState } from 'react';
+import { Modal } from '@components/molecules/Modal';
+import { Button } from '@components/atoms/Button';
+import { Input } from '@components/atoms/Input';
+import type { User, UserRole } from '@/types/api.types';
 
 interface UserEditFormProps {
-  user: User
-  onSubmit: (data: any) => Promise<void>
-  onClose: () => void
-  onRoleChange?: (userId: string, role: UserRole) => Promise<void>
+  user: User;
+  onSubmit: (data: any) => Promise<void>;
+  onClose: () => void;
+  onRoleChange?: (userId: string, role: UserRole) => Promise<void>;
 }
 
 const roleOptions = [
@@ -17,7 +16,7 @@ const roleOptions = [
   { value: 'teacher', label: 'Teacher' },
   { value: 'parent', label: 'Parent' },
   { value: 'admin', label: 'Admin' },
-]
+];
 
 export const UserEditForm: React.FC<UserEditFormProps> = ({
   user,
@@ -30,44 +29,44 @@ export const UserEditForm: React.FC<UserEditFormProps> = ({
     lastname: user.lastname,
     email: user.email,
     role: user.role,
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleRoleChange = async (newRole: UserRole) => {
-    setFormData((prev) => ({ ...prev, role: newRole }))
+    setFormData((prev) => ({ ...prev, role: newRole }));
     if (onRoleChange && newRole !== user.role) {
       try {
-        await onRoleChange(user.id, newRole)
+        await onRoleChange(user.id, newRole);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to change role')
-        setFormData((prev) => ({ ...prev, role: user.role }))
+        setError(err instanceof Error ? err.message : 'Failed to change role');
+        setFormData((prev) => ({ ...prev, role: user.role }));
       }
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     try {
       await onSubmit({
         firstname: formData.firstname,
         lastname: formData.lastname,
         email: formData.email,
-      })
+      });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update user')
+      setError(err instanceof Error ? err.message : 'Failed to update user');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Modal
@@ -154,7 +153,7 @@ export const UserEditForm: React.FC<UserEditFormProps> = ({
         </div>
       </form>
     </Modal>
-  )
-}
+  );
+};
 
-export default UserEditForm
+export default UserEditForm;

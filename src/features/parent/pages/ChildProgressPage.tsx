@@ -55,29 +55,21 @@ export const ChildProgressPage = () => {
     {
       key: 'percentage' as const,
       label: 'Percentage',
-      render: (value: number) => (
-        <span className="font-semibold">{value.toFixed(1)}%</span>
-      ),
+      render: (value: number) => <span className="font-semibold">{value.toFixed(1)}%</span>,
     },
     {
       key: 'grade' as const,
       label: 'Grade',
-      render: (value: string) => (
-        <Badge variant="info">{value}</Badge>
-      ),
+      render: (value: string) => <Badge variant="info">{value}</Badge>,
     },
     {
       key: 'remarks' as const,
       label: 'Remarks',
       render: (value?: string) => (
-        <span className="text-sm text-neutral-600 dark:text-neutral-400">
-          {value || '-'}
-        </span>
+        <span className="text-sm text-neutral-600 dark:text-neutral-400">{value || '-'}</span>
       ),
     },
   ];
-
-  const isLoading = gradesLoading || performanceLoading;
 
   return (
     <PortalLayout title="Child Progress">
@@ -85,9 +77,7 @@ export const ChildProgressPage = () => {
         {/* Child Selection */}
         <Card>
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
-              Select Child
-            </h2>
+            <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">Select Child</h2>
 
             <Dropdown
               options={children.map((child) => ({
@@ -133,9 +123,7 @@ export const ChildProgressPage = () => {
                     </div>
 
                     <div className="rounded-lg bg-secondary-50 p-4 dark:bg-secondary-950">
-                      <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                        Trend
-                      </p>
+                      <p className="text-sm text-neutral-600 dark:text-neutral-400">Trend</p>
                       <p className="mt-1 text-sm font-semibold text-secondary-600 dark:text-secondary-400">
                         {performanceData.performanceTrends.length > 0
                           ? `${performanceData.performanceTrends[performanceData.performanceTrends.length - 1].month}`
@@ -150,9 +138,7 @@ export const ChildProgressPage = () => {
             {/* Filters */}
             <Card>
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-                  Filters
-                </h3>
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Filters</h3>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <Dropdown
@@ -192,11 +178,7 @@ export const ChildProgressPage = () => {
                     Grades ({gradesData.data.length})
                   </h3>
 
-                  <DataTable
-                    columns={gradeColumns}
-                    data={gradesData.data}
-                    pageSize={10}
-                  />
+                  <DataTable columns={gradeColumns} data={gradesData.data} pageSize={10} />
                 </div>
               </Card>
             ) : (

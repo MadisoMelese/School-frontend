@@ -1,79 +1,85 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom'
-import { useEffect } from 'react'
-import { useAuth } from '@hooks/useAuth'
-import { useTheme } from '@hooks/useTheme'
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAuth } from '@hooks/useAuth';
+import { useTheme } from '@hooks/useTheme';
 
 // Layouts
-import { AuthLayout } from '@components/templates/AuthLayout'
+import { AuthLayout } from '@components/templates/AuthLayout';
 
 // Auth Pages
-import { LoginPage } from '@features/auth/pages/LoginPage'
-import { PasswordResetPage } from '@features/auth/pages/PasswordResetPage'
-import { ChangePasswordPage } from '@features/auth/pages/ChangePasswordPage'
+import { LoginPage } from '@features/auth/pages/LoginPage';
+import { PasswordResetPage } from '@features/auth/pages/PasswordResetPage';
+import { ChangePasswordPage } from '@features/auth/pages/ChangePasswordPage';
 
 // Student Portal Pages
-import StudentDashboard from '@features/student/pages/DashboardPage'
-import { GradesPage } from '@features/student/pages/GradesPage'
-import { AttendancePage } from '@features/student/pages/AttendancePage'
-import { ExamsPage } from '@features/student/pages/ExamsPage'
-import { FeesPage } from '@features/student/pages/FeesPage'
-import { MessagesPage as StudentMessagesPage } from '@features/student/pages/MessagesPage'
-import { TimetablePage } from '@features/student/pages/TimetablePage'
+import StudentDashboard from '@features/student/pages/DashboardPage';
+import { GradesPage } from '@features/student/pages/GradesPage';
+import { AttendancePage } from '@features/student/pages/AttendancePage';
+import { ExamsPage } from '@features/student/pages/ExamsPage';
+import { FeesPage } from '@features/student/pages/FeesPage';
+import { MessagesPage as StudentMessagesPage } from '@features/student/pages/MessagesPage';
+import { TimetablePage } from '@features/student/pages/TimetablePage';
 
 // Teacher Portal Pages
-import TeacherDashboard from '@features/teacher/pages/DashboardPage'
-import { ClassesPage } from '@features/teacher/pages/ClassesPage'
-import { ClassDetailsPage } from '@features/teacher/pages/ClassDetailsPage'
-import { AttendanceMarkingPage } from '@features/teacher/pages/AttendanceMarkingPage'
-import { GradeManagementPage } from '@features/teacher/pages/GradeManagementPage'
-import TeacherMessagesPage from '@features/teacher/pages/MessagesPage'
+import TeacherDashboard from '@features/teacher/pages/DashboardPage';
+import { ClassesPage } from '@features/teacher/pages/ClassesPage';
+import { ClassDetailsPage } from '@features/teacher/pages/ClassDetailsPage';
+import { AttendanceMarkingPage } from '@features/teacher/pages/AttendanceMarkingPage';
+import { GradeManagementPage } from '@features/teacher/pages/GradeManagementPage';
+import TeacherMessagesPage from '@features/teacher/pages/MessagesPage';
 
 // Parent Portal Pages
-import ParentDashboard from '@features/parent/pages/DashboardPage'
-import { ChildProgressPage } from '@features/parent/pages/ChildProgressPage'
-import { ChildAttendancePage } from '@features/parent/pages/ChildAttendancePage'
-import { ChildExamsPage } from '@features/parent/pages/ChildExamsPage'
-import { ChildFeesPage } from '@features/parent/pages/ChildFeesPage'
-import ParentMessagesPage from '@features/parent/pages/MessagesPage'
+import ParentDashboard from '@features/parent/pages/DashboardPage';
+import { ChildProgressPage } from '@features/parent/pages/ChildProgressPage';
+import { ChildAttendancePage } from '@features/parent/pages/ChildAttendancePage';
+import { ChildExamsPage } from '@features/parent/pages/ChildExamsPage';
+import { ChildFeesPage } from '@features/parent/pages/ChildFeesPage';
+import ParentMessagesPage from '@features/parent/pages/MessagesPage';
 
 // Admin Portal Pages
-import AdminDashboard from '@features/admin/pages/DashboardPage'
-import { UserManagementPage } from '@features/admin/pages/UserManagementPage'
-import { SettingsPage } from '@features/admin/pages/SettingsPage'
-import { SystemLogsPage } from '@features/admin/pages/SystemLogsPage'
-import { StudentsManagementPage } from '@features/admin/pages/StudentsManagementPage'
-import { TeachersManagementPage } from '@features/admin/pages/TeachersManagementPage'
-import { ClassesManagementPage } from '@features/admin/pages/ClassesManagementPage'
-import { ExamsManagementPage } from '@features/admin/pages/ExamsManagementPage'
-import { GradesManagementPage } from '@features/admin/pages/GradesManagementPage'
-import { FeesManagementPage } from '@features/admin/pages/FeesManagementPage'
-import { AttendanceManagementPage } from '@features/admin/pages/AttendanceManagementPage'
-import { AnnouncementsManagementPage } from '@features/admin/pages/AnnouncementsManagementPage'
-import { LibraryManagementPage } from '@features/admin/pages/LibraryManagementPage'
-import { TimetablesManagementPage } from '@features/admin/pages/TimetablesManagementPage'
-import { StaffManagementPage } from '@features/admin/pages/StaffManagementPage'
+import AdminDashboard from '@features/admin/pages/DashboardPage';
+import { UserManagementPage } from '@features/admin/pages/UserManagementPage';
+import { SettingsPage } from '@features/admin/pages/SettingsPage';
+import { SystemLogsPage } from '@features/admin/pages/SystemLogsPage';
+import { StudentsManagementPage } from '@features/admin/pages/StudentsManagementPage';
+import { TeachersManagementPage } from '@features/admin/pages/TeachersManagementPage';
+import { ClassesManagementPage } from '@features/admin/pages/ClassesManagementPage';
+import { ExamsManagementPage } from '@features/admin/pages/ExamsManagementPage';
+import { GradesManagementPage } from '@features/admin/pages/GradesManagementPage';
+import { FeesManagementPage } from '@features/admin/pages/FeesManagementPage';
+import { AttendanceManagementPage } from '@features/admin/pages/AttendanceManagementPage';
+import { AnnouncementsManagementPage } from '@features/admin/pages/AnnouncementsManagementPage';
+import { LibraryManagementPage } from '@features/admin/pages/LibraryManagementPage';
+import { TimetablesManagementPage } from '@features/admin/pages/TimetablesManagementPage';
+import { StaffManagementPage } from '@features/admin/pages/StaffManagementPage';
 
 // Auth Layout Wrapper
 const AuthLayoutWrapper = () => (
   <AuthLayout>
     <Outlet />
   </AuthLayout>
-)
+);
 
 // Protected Route Component
-const ProtectedRoute = ({ children, requiredRole }: { children: React.ReactNode; requiredRole?: string }) => {
-  const { user, isAuthenticated } = useAuth()
+const ProtectedRoute = ({
+  children,
+  requiredRole,
+}: {
+  children: React.ReactNode;
+  requiredRole?: string;
+}) => {
+  const { user, isAuthenticated } = useAuth();
 
   if (!isAuthenticated || !user) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/login" replace />;
   }
 
   if (requiredRole && user.role !== requiredRole) {
-    return <Navigate to="/unauthorized" replace />
+    return <Navigate to="/unauthorized" replace />;
   }
 
-  return <>{children}</>
-}
+  return <>{children}</>;
+};
 
 // Error Pages
 const UnauthorizedPage = () => (
@@ -82,11 +88,11 @@ const UnauthorizedPage = () => (
       <h1 className="text-4xl font-bold text-neutral-900 dark:text-white">403</h1>
       <p className="mt-2 text-lg text-neutral-600 dark:text-neutral-400">Unauthorized Access</p>
       <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-500">
-        You don't have permission to access this resource.
+        You don&apos;t have permission to access this resource.
       </p>
     </div>
   </div>
-)
+);
 
 const NotFoundPage = () => (
   <div className="flex h-screen items-center justify-center bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-neutral-900 dark:to-neutral-800">
@@ -94,29 +100,29 @@ const NotFoundPage = () => (
       <h1 className="text-4xl font-bold text-neutral-900 dark:text-white">404</h1>
       <p className="mt-2 text-lg text-neutral-600 dark:text-neutral-400">Page Not Found</p>
       <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-500">
-        The page you're looking for doesn't exist.
+        The page you&apos;re looking for doesn&apos;t exist.
       </p>
     </div>
   </div>
-)
+);
 
 function App() {
-  const { user, isAuthenticated, initializeAuth } = useAuth()
-  const { theme } = useTheme()
+  const { user, isAuthenticated, initializeAuth } = useAuth();
+  const { theme } = useTheme();
 
   // Initialize auth from stored tokens on app load
   useEffect(() => {
-    initializeAuth()
-  }, [])
+    initializeAuth();
+  }, [initializeAuth]);
 
   // Apply theme to document
   useEffect(() => {
     if (theme === 'dark') {
-      document.documentElement.classList.add('dark')
+      document.documentElement.classList.add('dark');
     } else {
-      document.documentElement.classList.remove('dark')
+      document.documentElement.classList.remove('dark');
     }
-  }, [theme])
+  }, [theme]);
 
   return (
     <Router>
@@ -425,7 +431,7 @@ function App() {
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

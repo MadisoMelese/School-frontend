@@ -1,13 +1,13 @@
-import React from 'react'
-import { Icon } from '../atoms/Icon'
+import React from 'react';
+import { Icon } from '../atoms/Icon';
 
 interface PaginationProps {
-  currentPage: number
-  totalPages: number
-  onChange: (page: number) => void
-  showInfo?: boolean
-  maxVisiblePages?: number
-  className?: string
+  currentPage: number;
+  totalPages: number;
+  onChange: (page: number) => void;
+  showInfo?: boolean;
+  maxVisiblePages?: number;
+  className?: string;
 }
 
 export const Pagination: React.FC<PaginationProps> = ({
@@ -19,46 +19,46 @@ export const Pagination: React.FC<PaginationProps> = ({
   className,
 }) => {
   const getPageNumbers = (): (number | string)[] => {
-    const pages: (number | string)[] = []
-    const halfVisible = Math.floor(maxVisiblePages / 2)
+    const pages: (number | string)[] = [];
+    const halfVisible = Math.floor(maxVisiblePages / 2);
 
-    let startPage = Math.max(1, currentPage - halfVisible)
-    let endPage = Math.min(totalPages, currentPage + halfVisible)
+    let startPage = Math.max(1, currentPage - halfVisible);
+    let endPage = Math.min(totalPages, currentPage + halfVisible);
 
     if (currentPage - halfVisible < 1) {
-      endPage = Math.min(totalPages, endPage + (halfVisible - currentPage + 1))
+      endPage = Math.min(totalPages, endPage + (halfVisible - currentPage + 1));
     }
     if (currentPage + halfVisible > totalPages) {
-      startPage = Math.max(1, startPage - (currentPage + halfVisible - totalPages))
+      startPage = Math.max(1, startPage - (currentPage + halfVisible - totalPages));
     }
 
     if (startPage > 1) {
-      pages.push(1)
-      if (startPage > 2) pages.push('...')
+      pages.push(1);
+      if (startPage > 2) pages.push('...');
     }
 
     for (let i = startPage; i <= endPage; i++) {
-      pages.push(i)
+      pages.push(i);
     }
 
     if (endPage < totalPages) {
-      if (endPage < totalPages - 1) pages.push('...')
-      pages.push(totalPages)
+      if (endPage < totalPages - 1) pages.push('...');
+      pages.push(totalPages);
     }
 
-    return pages
-  }
+    return pages;
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent, page: number) => {
     if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onChange(page)
+      e.preventDefault();
+      onChange(page);
     }
-  }
+  };
 
-  const pageNumbers = getPageNumbers()
-  const canGoPrev = currentPage > 1
-  const canGoNext = currentPage < totalPages
+  const pageNumbers = getPageNumbers();
+  const canGoPrev = currentPage > 1;
+  const canGoNext = currentPage < totalPages;
 
   return (
     <nav
@@ -93,11 +93,11 @@ export const Pagination: React.FC<PaginationProps> = ({
                 <span key={`ellipsis-${index}`} className="px-2 py-1 text-neutral-500">
                   ...
                 </span>
-              )
+              );
             }
 
-            const pageNum = page as number
-            const isActive = pageNum === currentPage
+            const pageNum = page as number;
+            const isActive = pageNum === currentPage;
 
             return (
               <button
@@ -113,7 +113,7 @@ export const Pagination: React.FC<PaginationProps> = ({
               >
                 {pageNum}
               </button>
-            )
+            );
           })}
         </div>
 
@@ -128,5 +128,5 @@ export const Pagination: React.FC<PaginationProps> = ({
         </button>
       </div>
     </nav>
-  )
-}
+  );
+};

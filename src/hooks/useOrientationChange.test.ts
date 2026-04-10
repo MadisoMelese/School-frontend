@@ -208,9 +208,7 @@ describe('useOrientationChange Hook', () => {
   });
 
   it('should accept custom throttle value', () => {
-    const { result } = renderHook(() =>
-      useOrientationChange(undefined, { throttleMs: 500 })
-    );
+    const { result } = renderHook(() => useOrientationChange(undefined, { throttleMs: 500 }));
     expect(result.current).toBeDefined();
   });
 
@@ -361,16 +359,18 @@ describe('useOrientationChange Hook', () => {
   it('should return state object with correct structure', () => {
     const { result } = renderHook(() => useOrientationChange());
     const state = result.current;
-    
-    expect(Object.keys(state).sort()).toEqual([
-      'angle',
-      'isLandscape',
-      'isPortrait',
-      'orientation',
-      'restoreFormState',
-      'restoreScrollPosition',
-      'saveFormState',
-      'saveScrollPosition',
-    ].sort());
+
+    expect(Object.keys(state).sort()).toEqual(
+      [
+        'angle',
+        'isLandscape',
+        'isPortrait',
+        'orientation',
+        'restoreFormState',
+        'restoreScrollPosition',
+        'saveFormState',
+        'saveScrollPosition',
+      ].sort()
+    );
   });
 });

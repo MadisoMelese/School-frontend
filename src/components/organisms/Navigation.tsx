@@ -1,29 +1,28 @@
-import React, { useState } from 'react'
-import type { User } from '../../types'
-import { Button } from '../atoms/Button'
-import { Avatar } from '../atoms/Avatar'
-import { Icon } from '../atoms/Icon'
-import { Badge } from '../atoms/Badge'
-import { BottomTabNavigation } from './BottomTabNavigation'
+import React, { useState } from 'react';
+import type { User } from '../../types';
+import { Avatar } from '../atoms/Avatar';
+import { Icon } from '../atoms/Icon';
+import { Badge } from '../atoms/Badge';
+import { BottomTabNavigation } from './BottomTabNavigation';
 
 export interface NavItem {
-  id: string
-  label: string
-  icon: string
-  href: string
-  roles?: string[]
-  badge?: number
+  id: string;
+  label: string;
+  icon: string;
+  href: string;
+  roles?: string[];
+  badge?: number;
 }
 
 export interface NavigationProps {
-  items: NavItem[]
-  activeItem?: string
-  onItemClick: (itemId: string) => void
-  user?: User
-  onLogout: () => void
-  useBottomTabNavigation?: boolean
-  enableScrollHiding?: boolean
-  scrollHideThreshold?: number
+  items: NavItem[];
+  activeItem?: string;
+  onItemClick: (itemId: string) => void;
+  user?: User;
+  onLogout: () => void;
+  useBottomTabNavigation?: boolean;
+  enableScrollHiding?: boolean;
+  scrollHideThreshold?: number;
 }
 
 export const Navigation: React.FC<NavigationProps> = ({
@@ -36,13 +35,13 @@ export const Navigation: React.FC<NavigationProps> = ({
   enableScrollHiding = true,
   scrollHideThreshold = 50,
 }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const handleNavClick = (itemId: string) => {
-    onItemClick(itemId)
-    setSidebarOpen(false)
-  }
+    onItemClick(itemId);
+    setSidebarOpen(false);
+  };
 
   return (
     <>
@@ -111,8 +110,12 @@ export const Navigation: React.FC<NavigationProps> = ({
               >
                 <Avatar name={`${user.firstname} ${user.lastname}`} src={user.avatar} size="md" />
                 <div className="flex-1 text-left">
-                  <p className="text-sm font-medium text-neutral-900 dark:text-white">{user.firstname} {user.lastname}</p>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400 capitalize">{user.role}</p>
+                  <p className="text-sm font-medium text-neutral-900 dark:text-white">
+                    {user.firstname} {user.lastname}
+                  </p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 capitalize">
+                    {user.role}
+                  </p>
                 </div>
                 <Icon
                   name={userMenuOpen ? 'ChevronUp' : 'ChevronDown'}
@@ -126,8 +129,8 @@ export const Navigation: React.FC<NavigationProps> = ({
                 <div className="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg overflow-hidden">
                   <button
                     onClick={() => {
-                      onLogout()
-                      setUserMenuOpen(false)
+                      onLogout();
+                      setUserMenuOpen(false);
                     }}
                     className="w-full px-4 py-2 text-left text-sm text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors flex items-center gap-2"
                   >
@@ -164,5 +167,5 @@ export const Navigation: React.FC<NavigationProps> = ({
         />
       )}
     </>
-  )
-}
+  );
+};

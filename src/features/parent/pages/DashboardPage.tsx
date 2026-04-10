@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { DashboardLayout } from '@components/templates/DashboardLayout'
-import { Dashboard, Widget } from '@components/organisms/Dashboard'
-import { GradeCard } from '@components/organisms/GradeCard'
-import { Card } from '@components/molecules/Card'
-import { Badge } from '@components/atoms/Badge'
-import { Icon } from '@components/atoms/Icon'
-import { useAuth } from '@hooks/useAuth'
-import { useLocalStorage } from '@hooks/useLocalStorage'
+import React, { useEffect, useState } from 'react';
+import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { Dashboard, Widget } from '@components/organisms/Dashboard';
+import { GradeCard } from '@components/organisms/GradeCard';
+import { Card } from '@components/molecules/Card';
+import { Badge } from '@components/atoms/Badge';
+import { Icon } from '@components/atoms/Icon';
+import { useAuth } from '@hooks/useAuth';
+import { useLocalStorage } from '@hooks/useLocalStorage';
 
 /**
  * Parent Dashboard Page
@@ -18,19 +18,19 @@ import { useLocalStorage } from '@hooks/useLocalStorage'
  */
 
 interface DashboardState {
-  scrollPosition: number
-  lastUpdated: number
+  scrollPosition: number;
+  lastUpdated: number;
 }
 
 export const ParentDashboardPage: React.FC = () => {
-  const { user } = useAuth()
+  const { user } = useAuth();
   const [dashboardState, setDashboardState] = useLocalStorage<DashboardState>(
     `dashboard-${user?.id}`,
     { scrollPosition: 0, lastUpdated: Date.now() }
-  )
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [widgets, setWidgets] = useState<Widget[]>([])
+  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [widgets, setWidgets] = useState<Widget[]>([]);
 
   // Mock data - replace with actual API calls
   const mockChildData = {
@@ -39,7 +39,7 @@ export const ParentDashboardPage: React.FC = () => {
     class: '10-A',
     currentGPA: 3.8,
     attendancePercentage: 92,
-  }
+  };
 
   const mockGrades = [
     {
@@ -66,15 +66,7 @@ export const ParentDashboardPage: React.FC = () => {
       remarks: 'Outstanding',
       examDate: new Date('2024-01-17'),
     },
-  ]
-
-  const mockAttendance = [
-    { date: '2024-01-15', status: 'present' as const },
-    { date: '2024-01-16', status: 'present' as const },
-    { date: '2024-01-17', status: 'present' as const },
-    { date: '2024-01-18', status: 'present' as const },
-    { date: '2024-01-19', status: 'absent' as const },
-  ]
+  ];
 
   const mockExams = [
     {
@@ -95,7 +87,7 @@ export const ParentDashboardPage: React.FC = () => {
       totalMarks: 100,
       hallLocation: 'Hall B',
     },
-  ]
+  ];
 
   const mockFees = [
     {
@@ -125,17 +117,17 @@ export const ParentDashboardPage: React.FC = () => {
       status: 'pending' as const,
       academicYear: '2023-2024',
     },
-  ]
+  ];
 
   // Load dashboard data
   useEffect(() => {
     const loadDashboard = async () => {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
 
         // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Create widgets
         const dashboardWidgets: Widget[] = [
@@ -203,10 +195,7 @@ export const ParentDashboardPage: React.FC = () => {
                     <span>4 / 5</span>
                   </div>
                   <div className="w-full bg-neutral-200 rounded-full h-2 overflow-hidden">
-                    <div
-                      className="h-full bg-success-500"
-                      style={{ width: '80%' }}
-                    />
+                    <div className="h-full bg-success-500" style={{ width: '80%' }} />
                   </div>
                 </div>
                 {mockChildData.attendancePercentage < 75 && (
@@ -227,8 +216,15 @@ export const ParentDashboardPage: React.FC = () => {
             content: (
               <div className="space-y-3">
                 {mockExams.map((exam) => (
-                  <div key={exam.id} className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg">
-                    <Icon name="Calendar" size={20} className="text-primary-600 flex-shrink-0 mt-0.5" />
+                  <div
+                    key={exam.id}
+                    className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg"
+                  >
+                    <Icon
+                      name="Calendar"
+                      size={20}
+                      className="text-primary-600 flex-shrink-0 mt-0.5"
+                    />
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-neutral-900">{exam.subject}</p>
                       <p className="text-xs text-neutral-600 mt-1">
@@ -249,7 +245,10 @@ export const ParentDashboardPage: React.FC = () => {
             content: (
               <div className="space-y-3">
                 {mockFees.map((fee) => (
-                  <div key={fee.id} className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg">
+                  <div
+                    key={fee.id}
+                    className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg"
+                  >
                     <div>
                       <p className="font-medium text-neutral-900">{fee.title}</p>
                       <p className="text-xs text-neutral-600">
@@ -272,25 +271,25 @@ export const ParentDashboardPage: React.FC = () => {
               </div>
             ),
           },
-        ]
+        ];
 
-        setWidgets(dashboardWidgets)
+        setWidgets(dashboardWidgets);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load dashboard')
+        setError(err instanceof Error ? err.message : 'Failed to load dashboard');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadDashboard()
-  }, [])
+    loadDashboard();
+  }, []);
 
   // Restore scroll position
   useEffect(() => {
     if (dashboardState?.scrollPosition) {
-      window.scrollTo(0, dashboardState.scrollPosition)
+      window.scrollTo(0, dashboardState.scrollPosition);
     }
-  }, [dashboardState])
+  }, [dashboardState]);
 
   // Save scroll position on scroll
   useEffect(() => {
@@ -299,21 +298,18 @@ export const ParentDashboardPage: React.FC = () => {
         ...dashboardState,
         scrollPosition: window.scrollY,
         lastUpdated: Date.now(),
-      })
-    }
+      });
+    };
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [dashboardState, setDashboardState])
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [dashboardState, setDashboardState]);
 
   return (
-    <DashboardLayout
-      title="Dashboard"
-      description="Monitor your child's academic progress."
-    >
+    <DashboardLayout title="Dashboard" description="Monitor your child's academic progress.">
       <Dashboard widgets={widgets} loading={loading} error={error || undefined} />
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default ParentDashboardPage
+export default ParentDashboardPage;

@@ -6,7 +6,7 @@ import { useMediaQuery } from './useMediaQuery';
  * useHeaderVisibility Hook
  * Manages header visibility state based on scroll direction
  * Only applies to mobile devices (below lg breakpoint)
- * 
+ *
  * @param scrollThreshold - Minimum pixels scrolled before hiding header (default: 50)
  * @returns Object with isHeaderVisible boolean and scrollDirection
  */

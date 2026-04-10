@@ -163,9 +163,7 @@ export const studentService = {
   /**
    * Get student's timetable
    */
-  getTimetable: async (params?: {
-    week?: string;
-  }): Promise<Timetable[]> => {
+  getTimetable: async (params?: { week?: string }): Promise<Timetable[]> => {
     const response = await apiClient.get<Timetable[]>('/student/timetable', {
       params,
     });

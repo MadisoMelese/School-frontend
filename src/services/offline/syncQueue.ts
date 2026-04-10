@@ -1,4 +1,4 @@
-import { setItem, getItem, deleteItem, getAllItems, getItemsByIndex } from './indexedDB';
+import { setItem, getItem, deleteItem, getAllItems } from './indexedDB';
 
 /**
  * Sync Queue Item
@@ -51,7 +51,9 @@ export const addToSyncQueue = async (
  */
 export const getPendingSyncItems = async (): Promise<SyncQueueItem[]> => {
   const allItems = await getAllItems(STORE_NAME);
-  return allItems.filter((item) => (item as unknown as SyncQueueItem).status === 'pending') as unknown as SyncQueueItem[];
+  return allItems.filter(
+    (item) => (item as unknown as SyncQueueItem).status === 'pending'
+  ) as unknown as SyncQueueItem[];
 };
 
 /**
@@ -130,7 +132,9 @@ export const clearSyncQueue = async (): Promise<void> => {
  */
 export const getFailedSyncItems = async (): Promise<SyncQueueItem[]> => {
   const allItems = await getAllItems(STORE_NAME);
-  return allItems.filter((item) => (item as unknown as SyncQueueItem).status === 'failed') as unknown as SyncQueueItem[];
+  return allItems.filter(
+    (item) => (item as unknown as SyncQueueItem).status === 'failed'
+  ) as unknown as SyncQueueItem[];
 };
 
 /**
@@ -138,7 +142,9 @@ export const getFailedSyncItems = async (): Promise<SyncQueueItem[]> => {
  */
 export const getSyncItemsByResource = async (resource: string): Promise<SyncQueueItem[]> => {
   const allItems = await getAllItems(STORE_NAME);
-  return allItems.filter((item) => (item as unknown as SyncQueueItem).resource === resource) as unknown as SyncQueueItem[];
+  return allItems.filter(
+    (item) => (item as unknown as SyncQueueItem).resource === resource
+  ) as unknown as SyncQueueItem[];
 };
 
 /**

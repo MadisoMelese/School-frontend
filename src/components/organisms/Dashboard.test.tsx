@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { Dashboard } from './Dashboard'
+import { describe, it, expect } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { Dashboard } from './Dashboard';
 
 describe('Dashboard Component', () => {
   const mockWidgets = [
@@ -24,43 +24,43 @@ describe('Dashboard Component', () => {
       content: <div>Exams content</div>,
       size: 'large' as const,
     },
-  ]
+  ];
 
   it('renders dashboard widgets', () => {
-    render(<Dashboard widgets={mockWidgets} />)
+    render(<Dashboard widgets={mockWidgets} />);
 
-    expect(screen.getByText('Recent Grades')).toBeInTheDocument()
-    expect(screen.getByText('Attendance')).toBeInTheDocument()
-    expect(screen.getByText('Upcoming Exams')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Recent Grades')).toBeInTheDocument();
+    expect(screen.getByText('Attendance')).toBeInTheDocument();
+    expect(screen.getByText('Upcoming Exams')).toBeInTheDocument();
+  });
 
   it('displays widget content', () => {
-    render(<Dashboard widgets={mockWidgets} />)
+    render(<Dashboard widgets={mockWidgets} />);
 
-    expect(screen.getByText('Grade content')).toBeInTheDocument()
-    expect(screen.getByText('Attendance content')).toBeInTheDocument()
-    expect(screen.getByText('Exams content')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Grade content')).toBeInTheDocument();
+    expect(screen.getByText('Attendance content')).toBeInTheDocument();
+    expect(screen.getByText('Exams content')).toBeInTheDocument();
+  });
 
   it('displays loading skeleton when loading', () => {
-    render(<Dashboard widgets={[]} loading={true} />)
+    render(<Dashboard widgets={[]} loading={true} />);
 
-    const skeletons = screen.getAllByRole('region')
-    expect(skeletons.length).toBeGreaterThan(0)
-  })
+    const skeletons = screen.getAllByRole('region');
+    expect(skeletons.length).toBeGreaterThan(0);
+  });
 
   it('displays error message when error prop is provided', () => {
-    const errorMsg = 'Failed to load dashboard'
-    render(<Dashboard widgets={[]} error={errorMsg} />)
+    const errorMsg = 'Failed to load dashboard';
+    render(<Dashboard widgets={[]} error={errorMsg} />);
 
-    expect(screen.getByText(errorMsg)).toBeInTheDocument()
-  })
+    expect(screen.getByText(errorMsg)).toBeInTheDocument();
+  });
 
   it('displays empty state when no widgets', () => {
-    render(<Dashboard widgets={[]} />)
+    render(<Dashboard widgets={[]} />);
 
-    expect(screen.getByText('No widgets available')).toBeInTheDocument()
-  })
+    expect(screen.getByText('No widgets available')).toBeInTheDocument();
+  });
 
   it('displays loading state for individual widgets', () => {
     const widgetsWithLoading = [
@@ -71,12 +71,12 @@ describe('Dashboard Component', () => {
         content: <div>Content</div>,
         loading: true,
       },
-    ]
+    ];
 
-    render(<Dashboard widgets={widgetsWithLoading} />)
+    render(<Dashboard widgets={widgetsWithLoading} />);
 
-    expect(screen.getByText('Loading Widget')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Loading Widget')).toBeInTheDocument();
+  });
 
   it('displays error state for individual widgets', () => {
     const widgetsWithError = [
@@ -87,24 +87,24 @@ describe('Dashboard Component', () => {
         content: <div>Content</div>,
         error: 'Widget failed to load',
       },
-    ]
+    ];
 
-    render(<Dashboard widgets={widgetsWithError} />)
+    render(<Dashboard widgets={widgetsWithError} />);
 
-    expect(screen.getByText('Widget failed to load')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Widget failed to load')).toBeInTheDocument();
+  });
 
   it('applies correct size classes to widgets', () => {
-    const { container } = render(<Dashboard widgets={mockWidgets} />)
+    const { container } = render(<Dashboard widgets={mockWidgets} />);
 
-    const largeWidget = container.querySelector('[class*="md:col-span-2"]')
-    expect(largeWidget).toBeInTheDocument()
-  })
+    const largeWidget = container.querySelector('[class*="md:col-span-2"]');
+    expect(largeWidget).toBeInTheDocument();
+  });
 
   it('has proper accessibility attributes', () => {
-    render(<Dashboard widgets={mockWidgets} />)
+    render(<Dashboard widgets={mockWidgets} />);
 
-    const regions = screen.getAllByRole('region')
-    expect(regions.length).toBeGreaterThan(0)
-  })
-})
+    const regions = screen.getAllByRole('region');
+    expect(regions.length).toBeGreaterThan(0);
+  });
+});

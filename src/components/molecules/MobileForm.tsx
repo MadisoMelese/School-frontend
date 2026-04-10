@@ -1,14 +1,14 @@
-import React, { useRef, useEffect, useCallback } from 'react'
-import { useMobileKeyboard } from '../../hooks/useMobileKeyboard'
+import React, { useRef, useEffect, useCallback } from 'react';
+import { useMobileKeyboard } from '../../hooks/useMobileKeyboard';
 
 interface MobileFormProps {
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
-  children: React.ReactNode
-  className?: string
-  dismissKeyboardOnSubmit?: boolean
-  maintainScrollPosition?: boolean
-  onKeyboardShow?: () => void
-  onKeyboardHide?: () => void
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  children: React.ReactNode;
+  className?: string;
+  dismissKeyboardOnSubmit?: boolean;
+  maintainScrollPosition?: boolean;
+  onKeyboardShow?: () => void;
+  onKeyboardHide?: () => void;
 }
 
 /**
@@ -29,65 +29,59 @@ export const MobileForm: React.FC<MobileFormProps> = ({
   onKeyboardShow,
   onKeyboardHide,
 }) => {
-  const formRef = useRef<HTMLFormElement>(null)
-  const { dismissKeyboard, maintainScrollPosition: maintainScroll, isKeyboardVisible } =
-    useMobileKeyboard({
-      onKeyboardShow,
-      onKeyboardHide,
-    })
+  const formRef = useRef<HTMLFormElement>(null);
+  const {
+    dismissKeyboard,
+    maintainScrollPosition: maintainScroll,
+    isKeyboardVisible,
+  } = useMobileKeyboard({
+    onKeyboardShow,
+    onKeyboardHide,
+  });
 
   // Handle form submission
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
+      e.preventDefault();
 
       if (dismissKeyboardOnSubmit) {
-        dismissKeyboard()
+        dismissKeyboard();
       }
 
       if (maintainScrollPosition) {
-        maintainScroll()
+        maintainScroll();
       }
 
-      onSubmit(e)
+      onSubmit(e);
     },
     [onSubmit, dismissKeyboardOnSubmit, maintainScrollPosition, dismissKeyboard, maintainScroll]
-  )
+  );
 
   // Handle keyboard events
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Escape key to dismiss keyboard
       if (e.key === 'Escape' && isKeyboardVisible) {
-        e.preventDefault()
-        dismissKeyboard()
+        e.preventDefault();
+        dismissKeyboard();
       }
 
       // Enter key to submit (only if not in textarea)
-      if (
-        e.key === 'Enter' &&
-        e.ctrlKey &&
-        (e.target as HTMLElement).tagName !== 'TEXTAREA'
-      ) {
-        e.preventDefault()
-        formRef.current?.dispatchEvent(new Event('submit', { bubbles: true }))
+      if (e.key === 'Enter' && e.ctrlKey && (e.target as HTMLElement).tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        formRef.current?.dispatchEvent(new Event('submit', { bubbles: true }));
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [isKeyboardVisible, dismissKeyboard])
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isKeyboardVisible, dismissKeyboard]);
 
   return (
-    <form
-      ref={formRef}
-      onSubmit={handleSubmit}
-      className={`w-full ${className}`}
-      noValidate
-    >
+    <form ref={formRef} onSubmit={handleSubmit} className={`w-full ${className}`} noValidate>
       {children}
     </form>
-  )
-}
+  );
+};

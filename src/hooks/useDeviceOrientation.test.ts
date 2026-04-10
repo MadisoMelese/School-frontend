@@ -163,14 +163,14 @@ describe('useDeviceOrientation Hook', () => {
   it('should have isPortrait and isLandscape be mutually exclusive or both false', () => {
     const { result } = renderHook(() => useDeviceOrientation());
     const { isPortrait, isLandscape } = result.current;
-    
+
     // Either portrait or landscape, but not both
     expect(isPortrait || isLandscape || (!isPortrait && !isLandscape)).toBe(true);
   });
 
   it('should initialize with correct boolean flags based on orientation', () => {
     const { result } = renderHook(() => useDeviceOrientation());
-    
+
     if (result.current.orientation === 'portrait') {
       expect(result.current.isPortrait).toBe(true);
       expect(result.current.isLandscape).toBe(false);
@@ -193,12 +193,9 @@ describe('useDeviceOrientation Hook', () => {
   it('should return state object with correct structure', () => {
     const { result } = renderHook(() => useDeviceOrientation());
     const state = result.current;
-    
-    expect(Object.keys(state).sort()).toEqual([
-      'angle',
-      'isLandscape',
-      'isPortrait',
-      'orientation',
-    ].sort());
+
+    expect(Object.keys(state).sort()).toEqual(
+      ['angle', 'isLandscape', 'isPortrait', 'orientation'].sort()
+    );
   });
 });

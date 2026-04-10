@@ -1,18 +1,17 @@
-import React, { useRef, useState } from 'react'
-import { Icon } from '../atoms/Icon'
-import { Button } from '../atoms/Button'
+import React, { useRef, useState } from 'react';
+import { Icon } from '../atoms/Icon';
 
 interface ImageUploadProps {
-  label: string
-  value?: string | File | null
-  onChange?: (file: File | null) => void
-  error?: string
-  required?: boolean
-  maxSize?: number // in bytes, default 5MB
-  acceptedFormats?: string[] // e.g., ['image/png', 'image/jpeg']
-  preview?: boolean
-  disabled?: boolean
-  helperText?: string
+  label: string;
+  value?: string | File | null;
+  onChange?: (file: File | null) => void;
+  error?: string;
+  required?: boolean;
+  maxSize?: number; // in bytes, default 5MB
+  acceptedFormats?: string[]; // e.g., ['image/png', 'image/jpeg']
+  preview?: boolean;
+  disabled?: boolean;
+  helperText?: string;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -27,87 +26,87 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   disabled = false,
   helperText,
 }) => {
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [fileName, setFileName] = useState<string>('')
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string>('');
 
   // Initialize preview if value is a string (URL)
   React.useEffect(() => {
     if (typeof value === 'string') {
-      setPreviewUrl(value)
+      setPreviewUrl(value);
     }
-  }, [value])
+  }, [value]);
 
   const handleFileSelect = (file: File | null) => {
     if (!file) {
-      setPreviewUrl(null)
-      setFileName('')
-      onChange?.(null)
-      return
+      setPreviewUrl(null);
+      setFileName('');
+      onChange?.(null);
+      return;
     }
 
     // Validate file format
     if (!acceptedFormats.includes(file.type)) {
-      return
+      return;
     }
 
     // Validate file size
     if (file.size > maxSize) {
-      return
+      return;
     }
 
-    setFileName(file.name)
-    onChange?.(file)
+    setFileName(file.name);
+    onChange?.(file);
 
     // Create preview
     if (preview) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewUrl(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null
-    handleFileSelect(file)
-  }
+    const file = e.target.files?.[0] || null;
+    handleFileSelect(file);
+  };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
-  }
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
-    const file = e.dataTransfer.files?.[0] || null
-    handleFileSelect(file)
-  }
+    e.preventDefault();
+    e.stopPropagation();
+    const file = e.dataTransfer.files?.[0] || null;
+    handleFileSelect(file);
+  };
 
   const handleClick = () => {
     if (!disabled) {
-      fileInputRef.current?.click()
+      fileInputRef.current?.click();
     }
-  }
+  };
 
   const handleRemove = () => {
-    setPreviewUrl(null)
-    setFileName('')
-    onChange?.(null)
+    setPreviewUrl(null);
+    setFileName('');
+    onChange?.(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = ''
+      fileInputRef.current.value = '';
     }
-  }
+  };
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes'
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
-  }
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+  };
 
   return (
     <div className="w-full">
@@ -171,14 +170,12 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       </div>
 
       {/* Error Message */}
-      {error && (
-        <span className="text-danger-600 text-sm mt-2 block">{error}</span>
-      )}
+      {error && <span className="text-danger-600 text-sm mt-2 block">{error}</span>}
 
       {/* Helper Text */}
       {helperText && !error && (
         <span className="text-neutral-500 text-sm mt-2 block">{helperText}</span>
       )}
     </div>
-  )
-}
+  );
+};

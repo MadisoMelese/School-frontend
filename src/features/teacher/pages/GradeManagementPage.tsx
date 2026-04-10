@@ -8,7 +8,7 @@ import { PortalLayout } from '@/components/templates';
 import { Card, Dropdown, NotificationToast } from '@/components/molecules';
 import { Button, Spinner } from '@/components/atoms';
 import { teacherService } from '@/services/api';
-import { Exam, SubmitGradesRequest } from '@/types/api.types';
+import { SubmitGradesRequest } from '@/types/api.types';
 
 const gradeSchema = z.object({
   examId: z.string().min(1, 'Please select an exam'),
@@ -153,9 +153,7 @@ export const GradeManagementPage = () => {
 
         <Card>
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
-              Select Exam
-            </h2>
+            <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">Select Exam</h2>
 
             <Dropdown
               options={
@@ -192,9 +190,7 @@ export const GradeManagementPage = () => {
                   </div>
                 ) : examDetailsData?.students && examDetailsData.students.length > 0 ? (
                   <div className="space-y-3">
-                    <h3 className="font-semibold text-neutral-900 dark:text-white">
-                      Enter Grades
-                    </h3>
+                    <h3 className="font-semibold text-neutral-900 dark:text-white">Enter Grades</h3>
                     {examDetailsData.students.map((student) => (
                       <div
                         key={student.id}
@@ -248,11 +244,7 @@ export const GradeManagementPage = () => {
                 )}
 
                 <div className="flex gap-2 pt-4">
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    loading={submitGradesMutation.isPending}
-                  >
+                  <Button type="submit" variant="primary" loading={submitGradesMutation.isPending}>
                     Submit Grades
                   </Button>
                   <Button
@@ -293,9 +285,7 @@ export const GradeManagementPage = () => {
                     </div>
 
                     <div className="rounded-lg bg-danger-50 p-4 dark:bg-danger-950">
-                      <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                        Lowest Score
-                      </p>
+                      <p className="text-sm text-neutral-600 dark:text-neutral-400">Lowest Score</p>
                       <p className="mt-1 text-2xl font-bold text-danger-600 dark:text-danger-400">
                         {statsData.lowestScore}
                       </p>

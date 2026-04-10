@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
 interface AvatarProps {
-  src?: string
-  alt?: string
-  name?: string
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-  className?: string
+  src?: string;
+  alt?: string;
+  name?: string;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  className?: string;
 }
 
 const sizeStyles = {
@@ -14,20 +14,20 @@ const sizeStyles = {
   md: 'w-10 h-10 text-base',
   lg: 'w-12 h-12 text-lg',
   xl: 'w-14 h-14 text-xl',
-}
+};
 
 const getInitials = (name?: string): string => {
-  if (!name) return '?'
+  if (!name) return '?';
   return name
     .split(' ')
     .map((part) => part[0])
     .join('')
     .toUpperCase()
-    .slice(0, 2)
-}
+    .slice(0, 2);
+};
 
 const getColorFromName = (name?: string): string => {
-  if (!name) return 'bg-neutral-300'
+  if (!name) return 'bg-neutral-300';
 
   const colors = [
     'bg-primary-300',
@@ -35,24 +35,18 @@ const getColorFromName = (name?: string): string => {
     'bg-success-300',
     'bg-warning-300',
     'bg-danger-300',
-  ]
+  ];
 
-  const hash = name.charCodeAt(0) + name.charCodeAt(name.length - 1)
-  return colors[hash % colors.length]
-}
+  const hash = name.charCodeAt(0) + name.charCodeAt(name.length - 1);
+  return colors[hash % colors.length];
+};
 
-export const Avatar: React.FC<AvatarProps> = ({
-  src,
-  alt,
-  name,
-  size = 'md',
-  className,
-}) => {
-  const [imageError, setImageError] = useState(false)
-  const initials = getInitials(name)
-  const bgColor = getColorFromName(name)
+export const Avatar: React.FC<AvatarProps> = ({ src, alt, name, size = 'md', className }) => {
+  const [imageError, setImageError] = useState(false);
+  const initials = getInitials(name);
+  const bgColor = getColorFromName(name);
 
-  const baseStyles = 'inline-flex items-center justify-center rounded-full font-semibold'
+  const baseStyles = 'inline-flex items-center justify-center rounded-full font-semibold';
 
   if (src && !imageError) {
     return (
@@ -63,7 +57,7 @@ export const Avatar: React.FC<AvatarProps> = ({
         onError={() => setImageError(true)}
         loading="lazy"
       />
-    )
+    );
   }
 
   return (
@@ -74,5 +68,5 @@ export const Avatar: React.FC<AvatarProps> = ({
     >
       {initials}
     </div>
-  )
-}
+  );
+};

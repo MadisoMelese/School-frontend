@@ -1,24 +1,24 @@
-import React from 'react'
-import { Icon } from '../atoms/Icon'
-import { Badge } from '../atoms/Badge'
-import { useHeaderVisibility } from '../../hooks/useHeaderVisibility'
+import React from 'react';
+import { Icon } from '../atoms/Icon';
+import { Badge } from '../atoms/Badge';
+import { useHeaderVisibility } from '../../hooks/useHeaderVisibility';
 
 export interface BottomTabItem {
-  id: string
-  label: string
-  icon: string
-  href: string
-  roles?: string[]
-  badge?: number
+  id: string;
+  label: string;
+  icon: string;
+  href: string;
+  roles?: string[];
+  badge?: number;
 }
 
 export interface BottomTabNavigationProps {
-  items: BottomTabItem[]
-  activeItem?: string
-  onItemClick: (itemId: string) => void
-  userRole?: string
-  enableScrollHiding?: boolean
-  scrollHideThreshold?: number
+  items: BottomTabItem[];
+  activeItem?: string;
+  onItemClick: (itemId: string) => void;
+  userRole?: string;
+  enableScrollHiding?: boolean;
+  scrollHideThreshold?: number;
 }
 
 export const BottomTabNavigation: React.FC<BottomTabNavigationProps> = ({
@@ -29,21 +29,21 @@ export const BottomTabNavigation: React.FC<BottomTabNavigationProps> = ({
   enableScrollHiding = true,
   scrollHideThreshold = 50,
 }) => {
-  const { isHeaderVisible } = useHeaderVisibility(scrollHideThreshold)
+  const { isHeaderVisible } = useHeaderVisibility(scrollHideThreshold);
   // Filter items based on user role
   const visibleItems = items.filter((item) => {
     if (!item.roles || item.roles.length === 0) {
-      return true
+      return true;
     }
-    return userRole && item.roles.includes(userRole)
-  })
+    return userRole && item.roles.includes(userRole);
+  });
 
   // Limit to 5 items for bottom tab navigation
-  const displayItems = visibleItems.slice(0, 5)
+  const displayItems = visibleItems.slice(0, 5);
 
   const handleItemClick = (itemId: string) => {
-    onItemClick(itemId)
-  }
+    onItemClick(itemId);
+  };
 
   return (
     <nav
@@ -69,7 +69,11 @@ export const BottomTabNavigation: React.FC<BottomTabNavigationProps> = ({
           <Icon
             name={item.icon as keyof typeof import('lucide-react')}
             size={24}
-            className={activeItem === item.id ? 'text-primary-600 dark:text-primary-400' : 'text-neutral-600 dark:text-neutral-400'}
+            className={
+              activeItem === item.id
+                ? 'text-primary-600 dark:text-primary-400'
+                : 'text-neutral-600 dark:text-neutral-400'
+            }
           />
           <span className="text-xs font-medium">{item.label}</span>
           {item.badge && item.badge > 0 && (
@@ -83,5 +87,5 @@ export const BottomTabNavigation: React.FC<BottomTabNavigationProps> = ({
         </button>
       ))}
     </nav>
-  )
-}
+  );
+};

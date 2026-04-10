@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { TimetablePage } from './TimetablePage'
-import * as studentService from '@services/api/studentService'
-import type { Timetable } from '@types'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { TimetablePage } from './TimetablePage';
+import * as studentService from '@services/api/studentService';
+import type { Timetable } from '@types';
 
 /**
  * Integration tests for TimetablePage
@@ -14,17 +14,17 @@ vi.mock('@services/api/studentService', () => ({
   studentService: {
     getTimetable: vi.fn(),
   },
-}))
+}));
 
 // Mock the hooks
 vi.mock('@hooks/useMediaQuery', () => ({
   useMediaQuery: vi.fn((query) => {
     if (query === '(max-width: 768px)') {
-      return false // Default to desktop view
+      return false; // Default to desktop view
     }
-    return false
+    return false;
   }),
-}))
+}));
 
 // Mock the components
 vi.mock('@components/templates/DashboardLayout', () => ({
@@ -34,7 +34,7 @@ vi.mock('@components/templates/DashboardLayout', () => ({
       {children}
     </div>
   ),
-}))
+}));
 
 vi.mock('@components/molecules/Card', () => ({
   Card: ({ children, className }: any) => (
@@ -42,7 +42,7 @@ vi.mock('@components/molecules/Card', () => ({
       {children}
     </div>
   ),
-}))
+}));
 
 vi.mock('@components/atoms/Button', () => ({
   Button: ({ children, onClick, disabled, ...props }: any) => (
@@ -50,25 +50,23 @@ vi.mock('@components/atoms/Button', () => ({
       {children}
     </button>
   ),
-}))
+}));
 
 vi.mock('@components/atoms/Badge', () => ({
-  Badge: ({ children, variant }: any) => (
-    <span data-testid={`badge-${variant}`}>{children}</span>
-  ),
-}))
+  Badge: ({ children, variant }: any) => <span data-testid={`badge-${variant}`}>{children}</span>,
+}));
 
 vi.mock('@components/atoms/Icon', () => ({
   Icon: ({ name }: any) => <span data-testid={`icon-${name}`}>{name}</span>,
-}))
+}));
 
 vi.mock('@components/atoms/Spinner', () => ({
   Spinner: () => <div data-testid="spinner">Loading...</div>,
-}))
+}));
 
 // Mock URL.createObjectURL for download tests
-global.URL.createObjectURL = vi.fn(() => 'blob:mock-url')
-global.URL.revokeObjectURL = vi.fn()
+global.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
+global.URL.revokeObjectURL = vi.fn();
 
 // Mock data
 const mockTimetableData: Timetable[] = [
@@ -112,217 +110,216 @@ const mockTimetableData: Timetable[] = [
     endTime: '12:00',
     roomNumber: 'Room 201',
   },
-]
+];
 
 describe('TimetablePage Integration Tests', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-    ;(studentService.studentService.getTimetable as any).mockResolvedValue(mockTimetableData)
-  })
+    vi.clearAllMocks();
+    (studentService.studentService.getTimetable as any).mockResolvedValue(mockTimetableData);
+  });
 
   it('loads and displays timetable data from API', async () => {
-    render(<TimetablePage />)
+    render(<TimetablePage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
-      expect(screen.getByText('English Literature')).toBeInTheDocument()
-      expect(screen.getByText('Physics Lab')).toBeInTheDocument()
-      expect(screen.getByText('Chemistry Lecture')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('Mathematics 101')).toBeInTheDocument();
+      expect(screen.getByText('English Literature')).toBeInTheDocument();
+      expect(screen.getByText('Physics Lab')).toBeInTheDocument();
+      expect(screen.getByText('Chemistry Lecture')).toBeInTheDocument();
+    });
+  });
 
   it('displays all class details from API response', async () => {
-    render(<TimetablePage />)
+    render(<TimetablePage />);
 
     await waitFor(() => {
       // Check teachers
-      expect(screen.getByText('Mr. Smith')).toBeInTheDocument()
-      expect(screen.getByText('Ms. Johnson')).toBeInTheDocument()
-      expect(screen.getByText('Dr. Brown')).toBeInTheDocument()
-      expect(screen.getByText('Prof. Davis')).toBeInTheDocument()
+      expect(screen.getByText('Mr. Smith')).toBeInTheDocument();
+      expect(screen.getByText('Ms. Johnson')).toBeInTheDocument();
+      expect(screen.getByText('Dr. Brown')).toBeInTheDocument();
+      expect(screen.getByText('Prof. Davis')).toBeInTheDocument();
 
       // Check rooms
-      expect(screen.getByText('Room 101')).toBeInTheDocument()
-      expect(screen.getByText('Room 102')).toBeInTheDocument()
-      expect(screen.getByText('Lab 1')).toBeInTheDocument()
-      expect(screen.getByText('Room 201')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('Room 101')).toBeInTheDocument();
+      expect(screen.getByText('Room 102')).toBeInTheDocument();
+      expect(screen.getByText('Lab 1')).toBeInTheDocument();
+      expect(screen.getByText('Room 201')).toBeInTheDocument();
+    });
+  });
 
   it('handles API errors gracefully', async () => {
     (studentService.studentService.getTimetable as any).mockRejectedValueOnce(
       new Error('Server error')
-    )
+    );
 
-    render(<TimetablePage />)
+    render(<TimetablePage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Server error')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('Server error')).toBeInTheDocument();
+    });
+  });
 
   it('handles empty timetable response', async () => {
-    (studentService.studentService.getTimetable as any).mockResolvedValueOnce([])
+    (studentService.studentService.getTimetable as any).mockResolvedValueOnce([]);
 
-    render(<TimetablePage />)
+    render(<TimetablePage />);
 
     await waitFor(() => {
-      expect(screen.getByText('No classes scheduled for this week')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('No classes scheduled for this week')).toBeInTheDocument();
+    });
+  });
 
   it('fetches timetable with correct week parameter', async () => {
-    render(<TimetablePage />)
+    render(<TimetablePage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
-    })
+      expect(screen.getByText('Mathematics 101')).toBeInTheDocument();
+    });
 
-    expect(studentService.studentService.getTimetable).toHaveBeenCalled()
-    const callArgs = (studentService.studentService.getTimetable as any).mock.calls[0][0]
-    expect(callArgs).toHaveProperty('week')
-  })
+    expect(studentService.studentService.getTimetable).toHaveBeenCalled();
+    const callArgs = (studentService.studentService.getTimetable as any).mock.calls[0][0];
+    expect(callArgs).toHaveProperty('week');
+  });
 
   it('refetches timetable when navigating weeks', async () => {
-    render(<TimetablePage />)
+    render(<TimetablePage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
-    })
+      expect(screen.getByText('Mathematics 101')).toBeInTheDocument();
+    });
 
-    const initialCallCount = (studentService.studentService.getTimetable as any).mock.calls.length
+    const initialCallCount = (studentService.studentService.getTimetable as any).mock.calls.length;
 
     // Navigate to next week
-    const nextButton = screen.getAllByText('Next')[0]
-    fireEvent.click(nextButton)
+    const nextButton = screen.getAllByText('Next')[0];
+    fireEvent.click(nextButton);
 
     await waitFor(() => {
       expect((studentService.studentService.getTimetable as any).mock.calls.length).toBeGreaterThan(
         initialCallCount
-      )
-    })
-  })
+      );
+    });
+  });
 
   it('exports calendar with all classes', async () => {
-    const createElementSpy = vi.spyOn(document, 'createElement')
-    const appendChildSpy = vi.spyOn(document.body, 'appendChild')
-    const removeChildSpy = vi.spyOn(document.body, 'removeChild')
+    const createElementSpy = vi.spyOn(document, 'createElement');
+    const appendChildSpy = vi.spyOn(document.body, 'appendChild');
+    const removeChildSpy = vi.spyOn(document.body, 'removeChild');
 
-    render(<TimetablePage />)
-
-    await waitFor(() => {
-      expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
-    })
-
-    const exportButton = screen.getByText('Export')
-    fireEvent.click(exportButton)
+    render(<TimetablePage />);
 
     await waitFor(() => {
-      expect(createElementSpy).toHaveBeenCalledWith('a')
-    })
+      expect(screen.getByText('Mathematics 101')).toBeInTheDocument();
+    });
 
-    createElementSpy.mockRestore()
-    appendChildSpy.mockRestore()
-    removeChildSpy.mockRestore()
-  })
+    const exportButton = screen.getByText('Export');
+    fireEvent.click(exportButton);
+
+    await waitFor(() => {
+      expect(createElementSpy).toHaveBeenCalledWith('a');
+    });
+
+    createElementSpy.mockRestore();
+    appendChildSpy.mockRestore();
+    removeChildSpy.mockRestore();
+  });
 
   it('displays week navigation controls', async () => {
-    render(<TimetablePage />)
+    render(<TimetablePage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
-    })
+      expect(screen.getByText('Mathematics 101')).toBeInTheDocument();
+    });
 
-    expect(screen.getByText('Previous')).toBeInTheDocument()
-    expect(screen.getByText('Today')).toBeInTheDocument()
-    expect(screen.getByText('Next')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Previous')).toBeInTheDocument();
+    expect(screen.getByText('Today')).toBeInTheDocument();
+    expect(screen.getByText('Next')).toBeInTheDocument();
+  });
 
   it('displays week range in header', async () => {
-    render(<TimetablePage />)
+    render(<TimetablePage />);
 
     await waitFor(() => {
-      const weekLabel = screen.getByText(/Week of/)
-      expect(weekLabel).toBeInTheDocument()
-    })
-  })
+      const weekLabel = screen.getByText(/Week of/);
+      expect(weekLabel).toBeInTheDocument();
+    });
+  });
 
   it('organizes classes by day of week', async () => {
-    render(<TimetablePage />)
+    render(<TimetablePage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
-      expect(screen.getByText('Physics Lab')).toBeInTheDocument()
-    })
+      expect(screen.getByText('Mathematics 101')).toBeInTheDocument();
+      expect(screen.getByText('Physics Lab')).toBeInTheDocument();
+    });
 
     // Verify classes are displayed (organization is tested in unit tests)
-    expect(screen.getByText('Mr. Smith')).toBeInTheDocument()
-    expect(screen.getByText('Dr. Brown')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Mr. Smith')).toBeInTheDocument();
+    expect(screen.getByText('Dr. Brown')).toBeInTheDocument();
+  });
 
   it('displays class times in readable format', async () => {
-    render(<TimetablePage />)
+    render(<TimetablePage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
-    })
+      expect(screen.getByText('Mathematics 101')).toBeInTheDocument();
+    });
 
     // Times should be displayed (exact format depends on locale)
-    const timeElements = screen.getAllByText(/\d{1,2}:\d{2}/)
-    expect(timeElements.length).toBeGreaterThan(0)
-  })
+    const timeElements = screen.getAllByText(/\d{1,2}:\d{2}/);
+    expect(timeElements.length).toBeGreaterThan(0);
+  });
 
   it('displays subject information for each class', async () => {
-    render(<TimetablePage />)
+    render(<TimetablePage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Mathematics')).toBeInTheDocument()
-      expect(screen.getByText('English')).toBeInTheDocument()
-      expect(screen.getByText('Physics')).toBeInTheDocument()
-      expect(screen.getByText('Chemistry')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('Mathematics')).toBeInTheDocument();
+      expect(screen.getByText('English')).toBeInTheDocument();
+      expect(screen.getByText('Physics')).toBeInTheDocument();
+      expect(screen.getByText('Chemistry')).toBeInTheDocument();
+    });
+  });
 
   it('displays room/location information for each class', async () => {
-    render(<TimetablePage />)
+    render(<TimetablePage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Room 101')).toBeInTheDocument()
-      expect(screen.getByText('Room 102')).toBeInTheDocument()
-      expect(screen.getByText('Lab 1')).toBeInTheDocument()
-      expect(screen.getByText('Room 201')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('Room 101')).toBeInTheDocument();
+      expect(screen.getByText('Room 102')).toBeInTheDocument();
+      expect(screen.getByText('Lab 1')).toBeInTheDocument();
+      expect(screen.getByText('Room 201')).toBeInTheDocument();
+    });
+  });
 
   it('displays teacher names for each class', async () => {
-    render(<TimetablePage />)
+    render(<TimetablePage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Mr. Smith')).toBeInTheDocument()
-      expect(screen.getByText('Ms. Johnson')).toBeInTheDocument()
-      expect(screen.getByText('Dr. Brown')).toBeInTheDocument()
-      expect(screen.getByText('Prof. Davis')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('Mr. Smith')).toBeInTheDocument();
+      expect(screen.getByText('Ms. Johnson')).toBeInTheDocument();
+      expect(screen.getByText('Dr. Brown')).toBeInTheDocument();
+      expect(screen.getByText('Prof. Davis')).toBeInTheDocument();
+    });
+  });
 
   it('handles retry on error', async () => {
     (studentService.studentService.getTimetable as any).mockRejectedValueOnce(
       new Error('Network error')
-    )
+    );
 
-    render(<TimetablePage />)
-
-    await waitFor(() => {
-      expect(screen.getByText('Network error')).toBeInTheDocument()
-    })
-
-    const tryAgainButton = screen.getByText('Try Again')
-    fireEvent.click(tryAgainButton)
-
-    ;(studentService.studentService.getTimetable as any).mockResolvedValueOnce(mockTimetableData)
+    render(<TimetablePage />);
 
     await waitFor(() => {
-      expect(studentService.studentService.getTimetable).toHaveBeenCalledTimes(2)
-    })
-  })
-})
+      expect(screen.getByText('Network error')).toBeInTheDocument();
+    });
+
+    const tryAgainButton = screen.getByText('Try Again');
+    fireEvent.click(tryAgainButton);
+    (studentService.studentService.getTimetable as any).mockResolvedValueOnce(mockTimetableData);
+
+    await waitFor(() => {
+      expect(studentService.studentService.getTimetable).toHaveBeenCalledTimes(2);
+    });
+  });
+});

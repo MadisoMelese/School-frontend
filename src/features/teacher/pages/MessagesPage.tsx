@@ -17,7 +17,10 @@ const messageSchema = z.object({
   recipientType: z.enum(['individual', 'class']),
   recipientId: z.string().min(1, 'Please select a recipient'),
   subject: z.string().min(1, 'Subject is required').min(3, 'Subject must be at least 3 characters'),
-  content: z.string().min(1, 'Message content is required').min(10, 'Message must be at least 10 characters'),
+  content: z
+    .string()
+    .min(1, 'Message content is required')
+    .min(10, 'Message must be at least 10 characters'),
 });
 
 type MessageFormData = z.infer<typeof messageSchema>;
@@ -75,7 +78,9 @@ export const TeacherMessagesPage = () => {
     if (!messagesData?.data) return [];
     return messagesData.data.filter(
       (msg) =>
-        `${msg.sender.firstname} ${msg.sender.lastname}`.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        `${msg.sender.firstname} ${msg.sender.lastname}`
+          .toLowerCase()
+          .includes(debouncedSearch.toLowerCase()) ||
         msg.subject.toLowerCase().includes(debouncedSearch.toLowerCase())
     );
   }, [messagesData?.data, debouncedSearch]);
@@ -99,7 +104,9 @@ export const TeacherMessagesPage = () => {
       key: 'sender' as const,
       label: 'From',
       render: (_: unknown, row: Message) => (
-        <span className="font-medium">{row.sender.firstname} {row.sender.lastname}</span>
+        <span className="font-medium">
+          {row.sender.firstname} {row.sender.lastname}
+        </span>
       ),
     },
     {
@@ -120,9 +127,7 @@ export const TeacherMessagesPage = () => {
       key: 'isRead' as const,
       label: 'Status',
       render: (value: boolean) => (
-        <Badge variant={value ? 'info' : 'warning'}>
-          {value ? 'Read' : 'Unread'}
-        </Badge>
+        <Badge variant={value ? 'info' : 'warning'}>{value ? 'Read' : 'Unread'}</Badge>
       ),
     },
   ];
@@ -174,11 +179,7 @@ export const TeacherMessagesPage = () => {
             <p className="text-neutral-600 dark:text-neutral-400">No messages found</p>
           </Card>
         ) : (
-          <DataTable
-            columns={messageColumns}
-            data={filteredMessages}
-            pageSize={10}
-          />
+          <DataTable columns={messageColumns} data={filteredMessages} pageSize={10} />
         )}
 
         {/* Compose Modal */}
@@ -269,18 +270,10 @@ export const TeacherMessagesPage = () => {
             </div>
 
             <div className="flex gap-2 pt-4">
-              <Button
-                type="submit"
-                variant="primary"
-                loading={sendMessageMutation.isPending}
-              >
+              <Button type="submit" variant="primary" loading={sendMessageMutation.isPending}>
                 Send Message
               </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => setShowComposeModal(false)}
-              >
+              <Button type="button" variant="secondary" onClick={() => setShowComposeModal(false)}>
                 Cancel
               </Button>
             </div>

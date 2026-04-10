@@ -85,13 +85,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               </span>
             )}
             {hasSubmenu && (
-              <span
-                className={`transition-transform ${
-                  isExpanded ? 'rotate-180' : ''
-                }`}
-              >
-                ▼
-              </span>
+              <span className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`}>▼</span>
             )}
           </div>
         </a>
@@ -119,9 +113,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       >
         {/* Sidebar header */}
         <div className="p-4 sm:p-6 border-b border-neutral-200 dark:border-neutral-700">
-          <h2 className="text-lg font-bold text-neutral-900 dark:text-white">
-            Admin Panel
-          </h2>
+          <h2 className="text-lg font-bold text-neutral-900 dark:text-white">Admin Panel</h2>
         </div>
 
         {/* Menu items */}
@@ -146,11 +138,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               aria-expanded={sidebarOpen}
               aria-controls="admin-sidebar"
             >
-              {sidebarOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
+              {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
 
             {/* Header content */}
@@ -174,9 +162,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                   {title}
                 </h1>
                 {description && (
-                  <p className="text-neutral-600 dark:text-neutral-400">
-                    {description}
-                  </p>
+                  <p className="text-neutral-600 dark:text-neutral-400">{description}</p>
                 )}
               </div>
             )}

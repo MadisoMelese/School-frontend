@@ -1,17 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { User, Message } from '../../types'
-import { Button } from '../atoms/Button'
-import { Input } from '../atoms/Input'
-import { Avatar } from '../atoms/Avatar'
-import { Icon } from '../atoms/Icon'
-import { Spinner } from '../atoms/Spinner'
+import React, { useState, useRef, useEffect } from 'react';
+import { User, Message } from '../../types';
+import { Button } from '../atoms/Button';
+import { Input } from '../atoms/Input';
+import { Avatar } from '../atoms/Avatar';
+import { Icon } from '../atoms/Icon';
+import { Spinner } from '../atoms/Spinner';
 
 export interface MessageThreadProps {
-  messages: Message[]
-  currentUser: User
-  onSendMessage: (content: string) => Promise<void>
-  loading?: boolean
-  recipientName?: string
+  messages: Message[];
+  currentUser: User;
+  onSendMessage: (content: string) => Promise<void>;
+  loading?: boolean;
+  recipientName?: string;
 }
 
 export const MessageThread: React.FC<MessageThreadProps> = ({
@@ -21,41 +21,41 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
   loading = false,
   recipientName,
 }) => {
-  const [messageContent, setMessageContent] = useState('')
-  const [sending, setSending] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [messageContent, setMessageContent] = useState('');
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (messagesEndRef.current && typeof messagesEndRef.current.scrollIntoView === 'function') {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages])
+  }, [messages]);
 
   const handleSendMessage = async () => {
     if (!messageContent.trim()) {
-      return
+      return;
     }
 
     try {
-      setSending(true)
-      setError(null)
-      await onSendMessage(messageContent)
-      setMessageContent('')
+      setSending(true);
+      setError(null);
+      await onSendMessage(messageContent);
+      setMessageContent('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send message')
+      setError(err instanceof Error ? err.message : 'Failed to send message');
     } finally {
-      setSending(false)
+      setSending(false);
     }
-  }
+  };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSendMessage()
+      e.preventDefault();
+      handleSendMessage();
     }
-  }
+  };
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden">
@@ -83,10 +83,8 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
           </div>
         ) : (
           messages.map((message, index) => {
-            const isSent = message.sender.id === currentUser.id
-            const showAvatar =
-              index === 0 ||
-              messages[index - 1].sender.id !== message.sender.id
+            const isSent = message.sender.id === currentUser.id;
+            const showAvatar = index === 0 || messages[index - 1].sender.id !== message.sender.id;
 
             return (
               <div
@@ -106,7 +104,9 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
                 )}
 
                 {/* Message Bubble */}
-                <div className={`flex flex-col gap-1 max-w-xs ${isSent ? 'items-end' : 'items-start'}`}>
+                <div
+                  className={`flex flex-col gap-1 max-w-xs ${isSent ? 'items-end' : 'items-start'}`}
+                >
                   {showAvatar && (
                     <p className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
                       {message.sender.firstname} {message.sender.lastname}
@@ -129,7 +129,7 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
                   </p>
                 </div>
               </div>
-            )
+            );
           })
         )}
         <div ref={messagesEndRef} />
@@ -168,5 +168,5 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

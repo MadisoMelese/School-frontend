@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Icon } from '../atoms/Icon'
+import React, { useEffect, useRef } from 'react';
+import { Icon } from '../atoms/Icon';
 
 interface SearchBarProps {
-  value: string
-  onChange: (value: string) => void
-  onSearch?: (value: string) => void
-  placeholder?: string
-  debounceDelay?: number
-  clearable?: boolean
-  disabled?: boolean
-  className?: string
-  id?: string
+  value: string;
+  onChange: (value: string) => void;
+  onSearch?: (value: string) => void;
+  placeholder?: string;
+  debounceDelay?: number;
+  clearable?: boolean;
+  disabled?: boolean;
+  className?: string;
+  id?: string;
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({
@@ -24,38 +24,36 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   className,
   id,
 }) => {
-  const [debouncedValue, setDebouncedValue] = useState(value)
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null)
-  const searchBarId = id || `searchbar-${Math.random().toString(36).substr(2, 9)}`
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const searchBarId = id || `searchbar-${Math.random().toString(36).substr(2, 9)}`;
 
   useEffect(() => {
     if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current)
+      clearTimeout(debounceTimer.current);
     }
 
     debounceTimer.current = setTimeout(() => {
-      setDebouncedValue(value)
       if (onSearch) {
-        onSearch(value)
+        onSearch(value);
       }
-    }, debounceDelay)
+    }, debounceDelay);
 
     return () => {
       if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current)
+        clearTimeout(debounceTimer.current);
       }
-    }
-  }, [value, debounceDelay, onSearch])
+    };
+  }, [value, debounceDelay, onSearch]);
 
   const handleClear = () => {
-    onChange('')
-  }
+    onChange('');
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Escape') {
-      handleClear()
+      handleClear();
     }
-  }
+  };
 
   return (
     <div className={`relative w-full ${className || ''}`}>
@@ -89,5 +87,5 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         )}
       </div>
     </div>
-  )
-}
+  );
+};

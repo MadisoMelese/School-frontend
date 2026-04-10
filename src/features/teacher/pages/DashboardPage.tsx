@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import { DashboardLayout } from '@components/templates/DashboardLayout'
-import { Dashboard, Widget } from '@components/organisms/Dashboard'
-import { ClassList } from '@components/organisms/ClassList'
-import { Card } from '@components/molecules/Card'
-import { Badge } from '@components/atoms/Badge'
-import { Icon } from '@components/atoms/Icon'
-import { useAuth } from '@hooks/useAuth'
-import { useLocalStorage } from '@hooks/useLocalStorage'
+import React, { useEffect, useState } from 'react';
+import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { Dashboard, Widget } from '@components/organisms/Dashboard';
+import { Card } from '@components/molecules/Card';
+import { Badge } from '@components/atoms/Badge';
+import { Icon } from '@components/atoms/Icon';
+import { useAuth } from '@hooks/useAuth';
+import { useLocalStorage } from '@hooks/useLocalStorage';
 
 /**
  * Teacher Dashboard Page
@@ -18,19 +17,19 @@ import { useLocalStorage } from '@hooks/useLocalStorage'
  */
 
 interface DashboardState {
-  scrollPosition: number
-  lastUpdated: number
+  scrollPosition: number;
+  lastUpdated: number;
 }
 
 export const TeacherDashboardPage: React.FC = () => {
-  const { user } = useAuth()
+  const { user } = useAuth();
   const [dashboardState, setDashboardState] = useLocalStorage<DashboardState>(
     `dashboard-${user?.id}`,
     { scrollPosition: 0, lastUpdated: Date.now() }
-  )
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [widgets, setWidgets] = useState<Widget[]>([])
+  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [widgets, setWidgets] = useState<Widget[]>([]);
 
   // Mock data - replace with actual API calls
   const mockClasses = [
@@ -58,7 +57,7 @@ export const TeacherDashboardPage: React.FC = () => {
       studentCount: 38,
       schedule: [],
     },
-  ]
+  ];
 
   const mockGradingTasks = [
     {
@@ -79,7 +78,7 @@ export const TeacherDashboardPage: React.FC = () => {
       gradedCount: 15,
       dueDate: '2024-01-25',
     },
-  ]
+  ];
 
   const mockAttendanceClasses = [
     {
@@ -94,7 +93,7 @@ export const TeacherDashboardPage: React.FC = () => {
       time: '10:30 AM',
       status: 'completed',
     },
-  ]
+  ];
 
   const mockMessages = [
     {
@@ -113,17 +112,17 @@ export const TeacherDashboardPage: React.FC = () => {
       timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
       isRead: true,
     },
-  ]
+  ];
 
   // Load dashboard data
   useEffect(() => {
     const loadDashboard = async () => {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
 
         // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Create widgets
         const dashboardWidgets: Widget[] = [
@@ -141,9 +140,7 @@ export const TeacherDashboardPage: React.FC = () => {
                   >
                     <div>
                       <p className="font-semibold text-neutral-900">{cls.name}</p>
-                      <p className="text-sm text-neutral-600 mt-1">
-                        {cls.studentCount} students
-                      </p>
+                      <p className="text-sm text-neutral-600 mt-1">{cls.studentCount} students</p>
                     </div>
                     <Icon name="ChevronRight" size={20} className="text-neutral-400" />
                   </div>
@@ -201,9 +198,7 @@ export const TeacherDashboardPage: React.FC = () => {
                       <p className="font-medium text-neutral-900">{cls.className}</p>
                       <p className="text-xs text-neutral-600">{cls.time}</p>
                     </div>
-                    <Badge
-                      variant={cls.status === 'completed' ? 'success' : 'warning'}
-                    >
+                    <Badge variant={cls.status === 'completed' ? 'success' : 'warning'}>
                       {cls.status === 'completed' ? 'Done' : 'Pending'}
                     </Badge>
                   </div>
@@ -230,9 +225,7 @@ export const TeacherDashboardPage: React.FC = () => {
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-neutral-900">{msg.senderName}</p>
-                        <p className="text-sm text-neutral-700 mt-1 truncate">
-                          {msg.subject}
-                        </p>
+                        <p className="text-sm text-neutral-700 mt-1 truncate">{msg.subject}</p>
                         <p className="text-xs text-neutral-500 mt-1">
                           {new Date(msg.timestamp).toLocaleString()}
                         </p>
@@ -246,25 +239,25 @@ export const TeacherDashboardPage: React.FC = () => {
               </div>
             ),
           },
-        ]
+        ];
 
-        setWidgets(dashboardWidgets)
+        setWidgets(dashboardWidgets);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load dashboard')
+        setError(err instanceof Error ? err.message : 'Failed to load dashboard');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadDashboard()
-  }, [])
+    loadDashboard();
+  }, []);
 
   // Restore scroll position
   useEffect(() => {
     if (dashboardState?.scrollPosition) {
-      window.scrollTo(0, dashboardState.scrollPosition)
+      window.scrollTo(0, dashboardState.scrollPosition);
     }
-  }, [dashboardState])
+  }, [dashboardState]);
 
   // Save scroll position on scroll
   useEffect(() => {
@@ -273,21 +266,18 @@ export const TeacherDashboardPage: React.FC = () => {
         ...dashboardState,
         scrollPosition: window.scrollY,
         lastUpdated: Date.now(),
-      })
-    }
+      });
+    };
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [dashboardState, setDashboardState])
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [dashboardState, setDashboardState]);
 
   return (
-    <DashboardLayout
-      title="Dashboard"
-      description="Welcome! Here's your teaching overview."
-    >
+    <DashboardLayout title="Dashboard" description="Welcome! Here's your teaching overview.">
       <Dashboard widgets={widgets} loading={loading} error={error || undefined} />
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default TeacherDashboardPage
+export default TeacherDashboardPage;

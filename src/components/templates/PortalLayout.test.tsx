@@ -44,10 +44,7 @@ describe('PortalLayout', () => {
   });
 
   it('renders breadcrumbs when provided', () => {
-    const breadcrumbs = [
-      { label: 'Home', href: '/' },
-      { label: 'Grades' },
-    ];
+    const breadcrumbs = [{ label: 'Home', href: '/' }, { label: 'Grades' }];
 
     render(
       <PortalLayout breadcrumbs={breadcrumbs}>

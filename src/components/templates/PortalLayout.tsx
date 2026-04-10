@@ -37,7 +37,6 @@ export const PortalLayout: React.FC<PortalLayoutProps> = ({
   showSidebar = true,
 }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const isTablet = useMediaQuery('(max-width: 1024px)');
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
@@ -83,17 +82,13 @@ export const PortalLayout: React.FC<PortalLayoutProps> = ({
                   {title}
                 </h1>
                 {description && (
-                  <p className="text-neutral-600 dark:text-neutral-400">
-                    {description}
-                  </p>
+                  <p className="text-neutral-600 dark:text-neutral-400">{description}</p>
                 )}
               </div>
             )}
 
             {/* Portal content */}
-            <div className="grid grid-cols-1 gap-6">
-              {children}
-            </div>
+            <div className="grid grid-cols-1 gap-6">{children}</div>
           </div>
         </main>
       </div>

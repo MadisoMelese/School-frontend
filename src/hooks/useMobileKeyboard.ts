@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { useKeyboardHeight } from './useKeyboardHeight'
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useKeyboardHeight } from './useKeyboardHeight';
 
 interface UseMobileKeyboardOptions {
-  onKeyboardShow?: () => void
-  onKeyboardHide?: () => void
-  scrollIntoViewOptions?: ScrollIntoViewOptions
+  onKeyboardShow?: () => void;
+  onKeyboardHide?: () => void;
+  scrollIntoViewOptions?: ScrollIntoViewOptions;
 }
 
 /**
@@ -17,24 +17,24 @@ interface UseMobileKeyboardOptions {
  * - Keyboard events (show/hide)
  */
 export const useMobileKeyboard = (options: UseMobileKeyboardOptions = {}) => {
-  const { onKeyboardShow, onKeyboardHide, scrollIntoViewOptions } = options
-  const [focusedElement, setFocusedElement] = useState<HTMLElement | null>(null)
-  const [isKeyboardDismissing, setIsKeyboardDismissing] = useState(false)
-  const { keyboardHeight, isKeyboardVisible } = useKeyboardHeight()
-  const previousKeyboardVisibleRef = useRef(isKeyboardVisible)
+  const { onKeyboardShow, onKeyboardHide, scrollIntoViewOptions } = options;
+  const [focusedElement, setFocusedElement] = useState<HTMLElement | null>(null);
+  const [isKeyboardDismissing, setIsKeyboardDismissing] = useState(false);
+  const { keyboardHeight, isKeyboardVisible } = useKeyboardHeight();
+  const previousKeyboardVisibleRef = useRef(isKeyboardVisible);
 
   // Track keyboard show/hide transitions
   useEffect(() => {
     if (isKeyboardVisible && !previousKeyboardVisibleRef.current) {
       // Keyboard appeared
-      onKeyboardShow?.()
+      onKeyboardShow?.();
     } else if (!isKeyboardVisible && previousKeyboardVisibleRef.current) {
       // Keyboard disappeared
-      onKeyboardHide?.()
-      setIsKeyboardDismissing(false)
+      onKeyboardHide?.();
+      setIsKeyboardDismissing(false);
     }
-    previousKeyboardVisibleRef.current = isKeyboardVisible
-  }, [isKeyboardVisible, onKeyboardShow, onKeyboardHide])
+    previousKeyboardVisibleRef.current = isKeyboardVisible;
+  }, [isKeyboardVisible, onKeyboardShow, onKeyboardHide]);
 
   // Scroll focused input into view when keyboard appears
   useEffect(() => {
@@ -43,54 +43,54 @@ export const useMobileKeyboard = (options: UseMobileKeyboardOptions = {}) => {
       requestAnimationFrame(() => {
         focusedElement.scrollIntoView(
           scrollIntoViewOptions || { behavior: 'smooth', block: 'center' }
-        )
-      })
+        );
+      });
     }
-  }, [isKeyboardVisible, focusedElement, scrollIntoViewOptions])
+  }, [isKeyboardVisible, focusedElement, scrollIntoViewOptions]);
 
   // Track focus changes
   useEffect(() => {
     const handleFocus = (e: FocusEvent) => {
-      const target = e.target as HTMLElement
+      const target = e.target as HTMLElement;
       if (
         target.tagName === 'INPUT' ||
         target.tagName === 'TEXTAREA' ||
         target.contentEditable === 'true'
       ) {
-        setFocusedElement(target)
+        setFocusedElement(target);
       }
-    }
+    };
 
     const handleBlur = () => {
-      setFocusedElement(null)
-    }
+      setFocusedElement(null);
+    };
 
-    document.addEventListener('focus', handleFocus, true)
-    document.addEventListener('blur', handleBlur, true)
+    document.addEventListener('focus', handleFocus, true);
+    document.addEventListener('blur', handleBlur, true);
 
     return () => {
-      document.removeEventListener('focus', handleFocus, true)
-      document.removeEventListener('blur', handleBlur, true)
-    }
-  }, [])
+      document.removeEventListener('focus', handleFocus, true);
+      document.removeEventListener('blur', handleBlur, true);
+    };
+  }, []);
 
   // Dismiss keyboard
   const dismissKeyboard = useCallback(() => {
-    setIsKeyboardDismissing(true)
+    setIsKeyboardDismissing(true);
     if (focusedElement) {
-      (focusedElement as HTMLInputElement | HTMLTextAreaElement).blur()
+      (focusedElement as HTMLInputElement | HTMLTextAreaElement).blur();
     }
-  }, [focusedElement])
+  }, [focusedElement]);
 
   // Maintain scroll position when keyboard dismisses
   const maintainScrollPosition = useCallback(() => {
     if (focusedElement) {
-      const scrollTop = window.scrollY
+      const scrollTop = window.scrollY;
       requestAnimationFrame(() => {
-        window.scrollTo(0, scrollTop)
-      })
+        window.scrollTo(0, scrollTop);
+      });
     }
-  }, [focusedElement])
+  }, [focusedElement]);
 
   return {
     keyboardHeight,
@@ -99,5 +99,5 @@ export const useMobileKeyboard = (options: UseMobileKeyboardOptions = {}) => {
     dismissKeyboard,
     maintainScrollPosition,
     isKeyboardDismissing,
-  }
-}
+  };
+};

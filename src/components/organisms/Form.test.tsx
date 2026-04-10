@@ -1,7 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { Form } from './Form'
-import { z } from 'zod'
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { Form } from './Form';
 
 describe('Form Component', () => {
   const mockFields = [
@@ -17,63 +16,40 @@ describe('Form Component', () => {
       type: 'password' as const,
       required: true,
     },
-  ]
+  ];
 
   it('renders submit button with custom text', () => {
-    const onSubmit = vi.fn()
-    render(
-      <Form
-        fields={mockFields}
-        onSubmit={onSubmit}
-        submitText="Login"
-      />
-    )
+    const onSubmit = vi.fn();
+    render(<Form fields={mockFields} onSubmit={onSubmit} submitText="Login" />);
 
-    expect(screen.getByText('Login')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Login')).toBeInTheDocument();
+  });
 
   it('renders cancel button when onCancel is provided', () => {
-    const onSubmit = vi.fn()
-    const onCancel = vi.fn()
+    const onSubmit = vi.fn();
+    const onCancel = vi.fn();
     render(
-      <Form
-        fields={mockFields}
-        onSubmit={onSubmit}
-        onCancel={onCancel}
-        cancelText="Cancel"
-      />
-    )
+      <Form fields={mockFields} onSubmit={onSubmit} onCancel={onCancel} cancelText="Cancel" />
+    );
 
-    expect(screen.getByText('Cancel')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Cancel')).toBeInTheDocument();
+  });
 
   it('displays global error message', () => {
-    const onSubmit = vi.fn()
-    const errorMsg = 'Authentication failed'
-    render(
-      <Form
-        fields={mockFields}
-        onSubmit={onSubmit}
-        error={errorMsg}
-      />
-    )
+    const onSubmit = vi.fn();
+    const errorMsg = 'Authentication failed';
+    render(<Form fields={mockFields} onSubmit={onSubmit} error={errorMsg} />);
 
-    expect(screen.getByText(errorMsg)).toBeInTheDocument()
-  })
+    expect(screen.getByText(errorMsg)).toBeInTheDocument();
+  });
 
   it('disables submit button when loading', () => {
-    const onSubmit = vi.fn()
-    render(
-      <Form
-        fields={mockFields}
-        onSubmit={onSubmit}
-        loading={true}
-      />
-    )
+    const onSubmit = vi.fn();
+    render(<Form fields={mockFields} onSubmit={onSubmit} loading={true} />);
 
-    const submitButton = screen.getByText('Submit')
-    expect(submitButton).toBeDisabled()
-  })
+    const submitButton = screen.getByText('Submit');
+    expect(submitButton).toBeDisabled();
+  });
 
   it('handles select field type', () => {
     const selectFields = [
@@ -86,14 +62,14 @@ describe('Form Component', () => {
           { value: 'teacher', label: 'Teacher' },
         ],
       },
-    ]
+    ];
 
-    const onSubmit = vi.fn()
-    render(<Form fields={selectFields} onSubmit={onSubmit} />)
+    const onSubmit = vi.fn();
+    render(<Form fields={selectFields} onSubmit={onSubmit} />);
 
-    const selectElement = screen.getByRole('combobox')
-    expect(selectElement).toBeInTheDocument()
-  })
+    const selectElement = screen.getByRole('combobox');
+    expect(selectElement).toBeInTheDocument();
+  });
 
   it('handles textarea field type', () => {
     const textareaFields = [
@@ -103,38 +79,32 @@ describe('Form Component', () => {
         type: 'textarea' as const,
         rows: 4,
       },
-    ]
+    ];
 
-    const onSubmit = vi.fn()
-    render(<Form fields={textareaFields} onSubmit={onSubmit} />)
+    const onSubmit = vi.fn();
+    render(<Form fields={textareaFields} onSubmit={onSubmit} />);
 
-    const textarea = screen.getByLabelText('Message')
-    expect(textarea.tagName).toBe('TEXTAREA')
-  })
+    const textarea = screen.getByLabelText('Message');
+    expect(textarea.tagName).toBe('TEXTAREA');
+  });
 
   it('calls onCancel when cancel button is clicked', () => {
-    const onSubmit = vi.fn()
-    const onCancel = vi.fn()
-    render(
-      <Form
-        fields={mockFields}
-        onSubmit={onSubmit}
-        onCancel={onCancel}
-      />
-    )
+    const onSubmit = vi.fn();
+    const onCancel = vi.fn();
+    render(<Form fields={mockFields} onSubmit={onSubmit} onCancel={onCancel} />);
 
-    const cancelButton = screen.getByText('Cancel')
-    fireEvent.click(cancelButton)
+    const cancelButton = screen.getByText('Cancel');
+    fireEvent.click(cancelButton);
 
-    expect(onCancel).toHaveBeenCalled()
-  })
+    expect(onCancel).toHaveBeenCalled();
+  });
 
   it('renders form element', () => {
-    const onSubmit = vi.fn()
-    const { container } = render(<Form fields={mockFields} onSubmit={onSubmit} />)
+    const onSubmit = vi.fn();
+    const { container } = render(<Form fields={mockFields} onSubmit={onSubmit} />);
 
-    const form = container.querySelector('form')
-    expect(form).toBeInTheDocument()
-    expect(form).toHaveAttribute('novalidate')
-  })
-})
+    const form = container.querySelector('form');
+    expect(form).toBeInTheDocument();
+    expect(form).toHaveAttribute('novalidate');
+  });
+});

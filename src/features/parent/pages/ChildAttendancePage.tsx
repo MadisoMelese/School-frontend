@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { PortalLayout } from '@/components/templates';
@@ -6,7 +6,6 @@ import { DataTable, AttendanceCalendar } from '@/components/organisms';
 import { Card, Tabs } from '@/components/molecules';
 import { Badge, Spinner } from '@/components/atoms';
 import { parentService } from '@/services/api';
-import { Attendance } from '@/types/api.types';
 import { formatDate } from '@/utils/formatters';
 
 export const ChildAttendancePage = () => {
@@ -42,9 +41,7 @@ export const ChildAttendancePage = () => {
       key: 'date' as const,
       label: 'Date',
       render: (value: string) => (
-        <span className="font-medium">
-          {formatDate(new Date(value), 'long')}
-        </span>
+        <span className="font-medium">{formatDate(new Date(value), 'long')}</span>
       ),
     },
     {
@@ -68,9 +65,7 @@ export const ChildAttendancePage = () => {
       key: 'notes' as const,
       label: 'Notes',
       render: (value?: string) => (
-        <span className="text-sm text-neutral-600 dark:text-neutral-400">
-          {value || '-'}
-        </span>
+        <span className="text-sm text-neutral-600 dark:text-neutral-400">{value || '-'}</span>
       ),
     },
   ];
@@ -117,9 +112,7 @@ export const ChildAttendancePage = () => {
 
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                 <div className="rounded-lg bg-primary-50 p-4 dark:bg-primary-950">
-                  <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                    Attendance Rate
-                  </p>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-400">Attendance Rate</p>
                   <p className="mt-1 text-2xl font-bold text-primary-600 dark:text-primary-400">
                     {(percentageData.percentage * 100).toFixed(1)}%
                   </p>
@@ -180,9 +173,7 @@ export const ChildAttendancePage = () => {
         {/* Month Selector */}
         <Card>
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-              Select Month
-            </h3>
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Select Month</h3>
 
             <input
               type="month"
@@ -202,11 +193,7 @@ export const ChildAttendancePage = () => {
                   Attendance Records ({attendanceData.data.length})
                 </h3>
 
-                <DataTable
-                  columns={attendanceColumns}
-                  data={attendanceData.data}
-                  pageSize={10}
-                />
+                <DataTable columns={attendanceColumns} data={attendanceData.data} pageSize={10} />
               </div>
             </Card>
           ) : (

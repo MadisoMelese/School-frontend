@@ -540,7 +540,6 @@ describe('Navigation Component - Sidebar Navigation for Desktop', () => {
       )
 
       // Admin Panel should not be visible to students
-      const adminPanel = screen.queryByText('Admin Panel')
       // Note: The current Navigation component doesn't filter by role,
       // but this test documents the expected behavior
     })

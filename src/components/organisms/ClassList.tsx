@@ -1,16 +1,16 @@
-import React from 'react'
-import { Class } from '../../types'
-import { Card } from '../molecules/Card'
-import { Button } from '../atoms/Button'
-import { Badge } from '../atoms/Badge'
-import { Icon } from '../atoms/Icon'
-import { Spinner } from '../atoms/Spinner'
+import React from 'react';
+import { Class } from '../../types';
+import { Card } from '../molecules/Card';
+import { Button } from '../atoms/Button';
+import { Badge } from '../atoms/Badge';
+import { Icon } from '../atoms/Icon';
+import { Spinner } from '../atoms/Spinner';
 
 export interface ClassListProps {
-  classes: Class[]
-  onClassClick?: (classId: string) => void
-  onAction?: (classId: string, action: string) => void
-  loading?: boolean
+  classes: Class[];
+  onClassClick?: (classId: string) => void;
+  onAction?: (classId: string, action: string) => void;
+  loading?: boolean;
 }
 
 export const ClassList: React.FC<ClassListProps> = ({
@@ -24,7 +24,7 @@ export const ClassList: React.FC<ClassListProps> = ({
       <div className="flex items-center justify-center py-12">
         <Spinner size="md" />
       </div>
-    )
+    );
   }
 
   if (classes.length === 0) {
@@ -33,7 +33,7 @@ export const ClassList: React.FC<ClassListProps> = ({
         <Icon name="BookOpen" size={48} className="mx-auto text-neutral-300 mb-4" />
         <p className="text-neutral-500">No classes available</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -116,11 +116,7 @@ export const ClassList: React.FC<ClassListProps> = ({
       {/* Mobile Card View */}
       <div className="md:hidden space-y-3">
         {classes.map((classItem) => (
-          <Card
-            key={classItem.id}
-            onClick={() => onClassClick?.(classItem.id)}
-            hoverable
-          >
+          <Card key={classItem.id} onClick={() => onClassClick?.(classItem.id)} hoverable>
             <div className="space-y-3">
               {/* Header */}
               <div className="flex items-start justify-between gap-2">
@@ -140,8 +136,8 @@ export const ClassList: React.FC<ClassListProps> = ({
                   size="sm"
                   fullWidth
                   onClick={(e) => {
-                    e.stopPropagation()
-                    onAction?.(classItem.id, 'attendance')
+                    e.stopPropagation();
+                    onAction?.(classItem.id, 'attendance');
                   }}
                   className="flex items-center justify-center gap-2"
                 >
@@ -153,8 +149,8 @@ export const ClassList: React.FC<ClassListProps> = ({
                   size="sm"
                   fullWidth
                   onClick={(e) => {
-                    e.stopPropagation()
-                    onAction?.(classItem.id, 'grades')
+                    e.stopPropagation();
+                    onAction?.(classItem.id, 'grades');
                   }}
                   className="flex items-center justify-center gap-2"
                 >
@@ -167,5 +163,5 @@ export const ClassList: React.FC<ClassListProps> = ({
         ))}
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,66 +1,38 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
-import { FormField } from './FormField'
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { FormField } from './FormField';
 
 describe('FormField Component', () => {
   it('renders label and input', () => {
-    render(
-      <FormField
-        label="Email"
-        name="email"
-        value=""
-        onChange={vi.fn()}
-      />
-    )
+    render(<FormField label="Email" name="email" value="" onChange={vi.fn()} />);
 
-    expect(screen.getByText('Email')).toBeInTheDocument()
-    expect(screen.getByRole('textbox')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Email')).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
+  });
 
   it('displays required indicator when required prop is true', () => {
-    render(
-      <FormField
-        label="Email"
-        name="email"
-        value=""
-        onChange={vi.fn()}
-        required
-      />
-    )
+    render(<FormField label="Email" name="email" value="" onChange={vi.fn()} required />);
 
-    expect(screen.getByLabelText('required')).toBeInTheDocument()
-  })
+    expect(screen.getByLabelText('required')).toBeInTheDocument();
+  });
 
   it('calls onChange when input value changes', () => {
-    const onChange = vi.fn()
-    render(
-      <FormField
-        label="Email"
-        name="email"
-        value=""
-        onChange={onChange}
-      />
-    )
+    const onChange = vi.fn();
+    render(<FormField label="Email" name="email" value="" onChange={onChange} />);
 
-    const input = screen.getByRole('textbox')
-    fireEvent.change(input, { target: { value: 'test@example.com' } })
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'test@example.com' } });
 
-    expect(onChange).toHaveBeenCalledWith('test@example.com')
-  })
+    expect(onChange).toHaveBeenCalledWith('test@example.com');
+  });
 
   it('displays error message when error prop is provided', () => {
     render(
-      <FormField
-        label="Email"
-        name="email"
-        value=""
-        onChange={vi.fn()}
-        error="Invalid email"
-      />
-    )
+      <FormField label="Email" name="email" value="" onChange={vi.fn()} error="Invalid email" />
+    );
 
-    expect(screen.getByText('Invalid email')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Invalid email')).toBeInTheDocument();
+  });
 
   it('displays helper text when provided', () => {
     render(
@@ -71,67 +43,40 @@ describe('FormField Component', () => {
         onChange={vi.fn()}
         helperText="Enter your email address"
       />
-    )
+    );
 
-    expect(screen.getByText('Enter your email address')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Enter your email address')).toBeInTheDocument();
+  });
 
   it('disables input when disabled prop is true', () => {
-    render(
-      <FormField
-        label="Email"
-        name="email"
-        value=""
-        onChange={vi.fn()}
-        disabled
-      />
-    )
+    render(<FormField label="Email" name="email" value="" onChange={vi.fn()} disabled />);
 
-    expect(screen.getByRole('textbox')).toBeDisabled()
-  })
+    expect(screen.getByRole('textbox')).toBeDisabled();
+  });
 
   it('sets correct input type', () => {
     render(
-      <FormField
-        label="Password"
-        name="password"
-        type="password"
-        value=""
-        onChange={vi.fn()}
-      />
-    )
+      <FormField label="Password" name="password" type="password" value="" onChange={vi.fn()} />
+    );
 
-    expect(screen.getByRole('textbox')).toHaveAttribute('type', 'password')
-  })
+    expect(screen.getByRole('textbox')).toHaveAttribute('type', 'password');
+  });
 
   it('sets placeholder text', () => {
     render(
-      <FormField
-        label="Email"
-        name="email"
-        value=""
-        onChange={vi.fn()}
-        placeholder="Enter email"
-      />
-    )
+      <FormField label="Email" name="email" value="" onChange={vi.fn()} placeholder="Enter email" />
+    );
 
-    expect(screen.getByPlaceholderText('Enter email')).toBeInTheDocument()
-  })
+    expect(screen.getByPlaceholderText('Enter email')).toBeInTheDocument();
+  });
 
   it('has proper accessibility attributes', () => {
     render(
-      <FormField
-        label="Email"
-        name="email"
-        value=""
-        onChange={vi.fn()}
-        required
-        error="Invalid"
-      />
-    )
+      <FormField label="Email" name="email" value="" onChange={vi.fn()} required error="Invalid" />
+    );
 
-    const input = screen.getByRole('textbox')
-    expect(input).toHaveAttribute('aria-required', 'true')
-    expect(input).toHaveAttribute('aria-invalid', 'true')
-  })
-})
+    const input = screen.getByRole('textbox');
+    expect(input).toHaveAttribute('aria-required', 'true');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+  });
+});

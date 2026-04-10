@@ -71,7 +71,7 @@ export const calculateGPA = (
  */
 export const calculateAverageGrade = (
   grades: Array<{ marksObtained: number; totalMarks: number }>,
-  gradeScale: GradeScale[] = DEFAULT_GRADE_SCALE
+  _gradeScale: GradeScale[] = DEFAULT_GRADE_SCALE
 ): number => {
   if (grades.length === 0) return 0;
 

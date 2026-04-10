@@ -1,5 +1,5 @@
-import { AxiosInstance, AxiosRequestConfig, AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { getAccessToken, setTokens, clearTokens, isAccessTokenExpired } from './tokenManager';
+import { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
+import { getAccessToken, setTokens, clearTokens } from './tokenManager';
 import { isAuthenticationError } from './errorHandler';
 
 /**

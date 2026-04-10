@@ -19,11 +19,7 @@ export const useOrientationChange = (
     throttleMs?: number;
   } = {}
 ) => {
-  const {
-    preserveScrollPosition = true,
-    preserveFormState = true,
-    throttleMs = 300,
-  } = options;
+  const { preserveScrollPosition = true, preserveFormState = true, throttleMs = 300 } = options;
 
   const orientationState = useDeviceOrientation(throttleMs);
   const previousOrientationRef = useRef<Orientation>(orientationState.orientation);

@@ -1,22 +1,22 @@
-import React, { useEffect, useRef } from 'react'
-import { Icon } from '../atoms/Icon'
+import React, { useEffect, useRef } from 'react';
+import { Icon } from '../atoms/Icon';
 
 interface ModalProps {
-  isOpen: boolean
-  onClose: () => void
-  title?: string
-  children: React.ReactNode
-  actions?: React.ReactNode
-  size?: 'sm' | 'md' | 'lg'
-  closeButton?: boolean
-  onBackdropClick?: () => void
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+  children: React.ReactNode;
+  actions?: React.ReactNode;
+  size?: 'sm' | 'md' | 'lg';
+  closeButton?: boolean;
+  onBackdropClick?: () => void;
 }
 
 const sizeStyles = {
   sm: 'max-w-sm',
   md: 'max-w-md',
   lg: 'max-w-lg',
-}
+};
 
 export const Modal: React.FC<ModalProps> = ({
   isOpen,
@@ -28,39 +28,39 @@ export const Modal: React.FC<ModalProps> = ({
   closeButton = true,
   onBackdropClick,
 }) => {
-  const modalRef = useRef<HTMLDivElement>(null)
-  const previousActiveElement = useRef<HTMLElement | null>(null)
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousActiveElement = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      previousActiveElement.current = document.activeElement as HTMLElement
-      document.body.style.overflow = 'hidden'
+      previousActiveElement.current = document.activeElement as HTMLElement;
+      document.body.style.overflow = 'hidden';
 
       // Focus trap
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
-          onClose()
+          onClose();
         }
-      }
+      };
 
-      document.addEventListener('keydown', handleKeyDown)
-      modalRef.current?.focus()
+      document.addEventListener('keydown', handleKeyDown);
+      modalRef.current?.focus();
 
       return () => {
-        document.removeEventListener('keydown', handleKeyDown)
-        document.body.style.overflow = 'unset'
-        previousActiveElement.current?.focus()
-      }
+        document.removeEventListener('keydown', handleKeyDown);
+        document.body.style.overflow = 'unset';
+        previousActiveElement.current?.focus();
+      };
     }
-  }, [isOpen, onClose])
+  }, [isOpen, onClose]);
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      onBackdropClick?.() || onClose()
+      onBackdropClick?.() || onClose();
     }
-  }
+  };
 
   return (
     <div
@@ -80,7 +80,10 @@ export const Modal: React.FC<ModalProps> = ({
         {(title || closeButton) && (
           <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200 dark:border-neutral-700">
             {title && (
-              <h2 id="modal-title" className="text-lg font-semibold text-neutral-900 dark:text-white">
+              <h2
+                id="modal-title"
+                className="text-lg font-semibold text-neutral-900 dark:text-white"
+              >
                 {title}
               </h2>
             )}
@@ -97,7 +100,9 @@ export const Modal: React.FC<ModalProps> = ({
         )}
 
         {/* Body */}
-        <div className="px-6 py-4 max-h-[calc(100vh-200px)] overflow-y-auto dark:text-neutral-300">{children}</div>
+        <div className="px-6 py-4 max-h-[calc(100vh-200px)] overflow-y-auto dark:text-neutral-300">
+          {children}
+        </div>
 
         {/* Footer */}
         {actions && (
@@ -107,5 +112,5 @@ export const Modal: React.FC<ModalProps> = ({
         )}
       </div>
     </div>
-  )
-}
+  );
+};

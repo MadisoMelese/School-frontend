@@ -1,32 +1,32 @@
-import React, { useState, useMemo } from 'react'
-import { Modal } from './Modal'
-import { Button } from '@components/atoms/Button'
-import { Icon } from '@components/atoms/Icon'
-import { Checkbox } from '@components/atoms/Checkbox'
-import { Input } from '@components/atoms/Input'
-import { Dropdown } from './Dropdown'
+import React, { useState } from 'react';
+import { Modal } from './Modal';
+import { Button } from '@components/atoms/Button';
+import { Icon } from '@components/atoms/Icon';
+import { Checkbox } from '@components/atoms/Checkbox';
+import { Input } from '@components/atoms/Input';
+import { Dropdown } from './Dropdown';
 
 export interface ExportDialogProps {
-  isOpen: boolean
-  onClose: () => void
-  onExport: (options: ExportOptions) => Promise<void>
-  title?: string
-  description?: string
-  availableColumns: ColumnOption[]
-  defaultFormat?: 'csv' | 'pdf'
-  isLoading?: boolean
+  isOpen: boolean;
+  onClose: () => void;
+  onExport: (options: ExportOptions) => Promise<void>;
+  title?: string;
+  description?: string;
+  availableColumns: ColumnOption[];
+  defaultFormat?: 'csv' | 'pdf';
+  isLoading?: boolean;
 }
 
 export interface ExportOptions {
-  format: 'csv' | 'pdf'
-  columns: string[]
-  filename: string
+  format: 'csv' | 'pdf';
+  columns: string[];
+  filename: string;
 }
 
 export interface ColumnOption {
-  key: string
-  label: string
-  selected?: boolean
+  key: string;
+  label: string;
+  selected?: boolean;
 }
 
 export const ExportDialog: React.FC<ExportDialogProps> = ({
@@ -39,44 +39,42 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
   defaultFormat = 'csv',
   isLoading = false,
 }) => {
-  const [format, setFormat] = useState<'csv' | 'pdf'>(defaultFormat)
+  const [format, setFormat] = useState<'csv' | 'pdf'>(defaultFormat);
   const [selectedColumns, setSelectedColumns] = useState<Set<string>>(
     new Set(availableColumns.filter((col) => col.selected !== false).map((col) => col.key))
-  )
-  const [filename, setFilename] = useState(
-    `export-${new Date().toISOString().split('T')[0]}`
-  )
+  );
+  const [filename, setFilename] = useState(`export-${new Date().toISOString().split('T')[0]}`);
 
   const formatOptions = [
     { value: 'csv', label: 'CSV (.csv)' },
     { value: 'pdf', label: 'PDF (.pdf)' },
-  ]
+  ];
 
-  const selectedCount = selectedColumns.size
-  const totalCount = availableColumns.length
+  const selectedCount = selectedColumns.size;
+  const totalCount = availableColumns.length;
 
   const handleToggleColumn = (key: string) => {
-    const updated = new Set(selectedColumns)
+    const updated = new Set(selectedColumns);
     if (updated.has(key)) {
-      updated.delete(key)
+      updated.delete(key);
     } else {
-      updated.add(key)
+      updated.add(key);
     }
-    setSelectedColumns(updated)
-  }
+    setSelectedColumns(updated);
+  };
 
   const handleSelectAll = () => {
     if (selectedCount === totalCount) {
-      setSelectedColumns(new Set())
+      setSelectedColumns(new Set());
     } else {
-      setSelectedColumns(new Set(availableColumns.map((col) => col.key)))
+      setSelectedColumns(new Set(availableColumns.map((col) => col.key)));
     }
-  }
+  };
 
   const handleExport = async () => {
     if (selectedColumns.size === 0) {
-      alert('Please select at least one column to export')
-      return
+      alert('Please select at least one column to export');
+      return;
     }
 
     try {
@@ -84,12 +82,12 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
         format,
         columns: Array.from(selectedColumns),
         filename: `${filename}.${format}`,
-      })
-      onClose()
+      });
+      onClose();
     } catch (error) {
-      console.error('Export failed:', error)
+      console.error('Export failed:', error);
     }
-  }
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} size="lg">
@@ -99,9 +97,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
 
         {/* Format Selection */}
         <div>
-          <label className="block text-sm font-medium text-neutral-900 mb-2">
-            Export Format
-          </label>
+          <label className="block text-sm font-medium text-neutral-900 mb-2">Export Format</label>
           <Dropdown
             options={formatOptions}
             value={format}
@@ -113,9 +109,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
 
         {/* Filename */}
         <div>
-          <label className="block text-sm font-medium text-neutral-900 mb-2">
-            Filename
-          </label>
+          <label className="block text-sm font-medium text-neutral-900 mb-2">Filename</label>
           <div className="flex gap-2">
             <Input
               type="text"
@@ -134,9 +128,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
         {/* Column Selection */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <label className="block text-sm font-medium text-neutral-900">
-              Columns to Export
-            </label>
+            <label className="block text-sm font-medium text-neutral-900">Columns to Export</label>
             <button
               onClick={handleSelectAll}
               className="text-xs text-primary-600 hover:text-primary-700 font-medium"
@@ -172,11 +164,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
 
         {/* Actions */}
         <div className="flex gap-3 justify-end border-t border-neutral-200 pt-4">
-          <Button
-            variant="secondary"
-            onClick={onClose}
-            disabled={isLoading}
-          >
+          <Button variant="secondary" onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>
           <Button
@@ -200,7 +188,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
         </div>
       </div>
     </Modal>
-  )
-}
+  );
+};
 
-export default ExportDialog
+export default ExportDialog;

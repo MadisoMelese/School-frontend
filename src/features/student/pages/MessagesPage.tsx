@@ -1,18 +1,18 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react'
-import { DashboardLayout } from '@components/templates/DashboardLayout'
-import { Card } from '@components/molecules/Card'
-import { Button } from '@components/atoms/Button'
-import { Input } from '@components/atoms/Input'
-import { Badge } from '@components/atoms/Badge'
-import { Icon } from '@components/atoms/Icon'
-import { Spinner } from '@components/atoms/Spinner'
-import { Modal } from '@components/molecules/Modal'
-import { NotificationToast } from '@components/molecules/NotificationToast'
-import { useDebounce } from '@hooks/useDebounce'
-import { useMediaQuery } from '@hooks/useMediaQuery'
-import { studentService } from '@services/api/studentService'
-import type { Message, SendMessageRequest } from '@types'
-import { z } from 'zod'
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { Card } from '@components/molecules/Card';
+import { Button } from '@components/atoms/Button';
+import { Input } from '@components/atoms/Input';
+import { Badge } from '@components/atoms/Badge';
+import { Icon } from '@components/atoms/Icon';
+import { Spinner } from '@components/atoms/Spinner';
+import { Modal } from '@components/molecules/Modal';
+import { NotificationToast } from '@components/molecules/NotificationToast';
+import { useDebounce } from '@hooks/useDebounce';
+import { useMediaQuery } from '@hooks/useMediaQuery';
+import { studentService } from '@services/api/studentService';
+import type { Message, SendMessageRequest } from '@types';
+import { z } from 'zod';
 
 /**
  * Student Messages Page
@@ -29,180 +29,186 @@ import { z } from 'zod'
 // Validation schema for message composition
 const messageSchema = z.object({
   recipientId: z.string().min(1, 'Recipient is required'),
-  subject: z.string().min(1, 'Subject is required').max(200, 'Subject must be less than 200 characters'),
-  content: z.string().min(1, 'Message content is required').max(5000, 'Message must be less than 5000 characters'),
-})
+  subject: z
+    .string()
+    .min(1, 'Subject is required')
+    .max(200, 'Subject must be less than 200 characters'),
+  content: z
+    .string()
+    .min(1, 'Message content is required')
+    .max(5000, 'Message must be less than 5000 characters'),
+});
 
-type MessageFormData = z.infer<typeof messageSchema>
+type MessageFormData = z.infer<typeof messageSchema>;
 
 interface MessageFormErrors {
-  recipientId?: string
-  subject?: string
-  content?: string
+  recipientId?: string;
+  subject?: string;
+  content?: string;
 }
 
 export const MessagesPage: React.FC = () => {
-  const isMobile = useMediaQuery('(max-width: 768px)')
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   // State
-  const [messages, setMessages] = useState<Message[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null)
-  const [showComposeModal, setShowComposeModal] = useState(false)
-  const [unreadCount, setUnreadCount] = useState(0)
-  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [showComposeModal, setShowComposeModal] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notification, setNotification] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
 
   // Compose form state
   const [formData, setFormData] = useState<MessageFormData>({
     recipientId: '',
     subject: '',
     content: '',
-  })
-  const [formErrors, setFormErrors] = useState<MessageFormErrors>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  });
+  const [formErrors, setFormErrors] = useState<MessageFormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Debounce search query
-  const debouncedSearchQuery = useDebounce(searchQuery, 300)
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   // Load messages data
   useEffect(() => {
     const loadMessages = async () => {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
 
         // Fetch messages
-        const response = await studentService.getMessages()
+        const response = await studentService.getMessages();
         const sortedMessages = (response.data || []).sort(
           (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-        )
-        setMessages(sortedMessages)
+        );
+        setMessages(sortedMessages);
 
         // Fetch unread count
-        const countResponse = await studentService.getUnreadMessageCount()
-        setUnreadCount(countResponse.count)
+        const countResponse = await studentService.getUnreadMessageCount();
+        setUnreadCount(countResponse.count);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load messages')
+        setError(err instanceof Error ? err.message : 'Failed to load messages');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadMessages()
-  }, [])
+    loadMessages();
+  }, []);
 
   // Filter and search messages
   const filteredMessages = useMemo(() => {
-    if (!debouncedSearchQuery) return messages
+    if (!debouncedSearchQuery) return messages;
 
-    const query = debouncedSearchQuery.toLowerCase()
+    const query = debouncedSearchQuery.toLowerCase();
     return messages.filter(
       (msg) =>
         `${msg.sender.firstname} ${msg.sender.lastname}`.toLowerCase().includes(query) ||
         msg.subject.toLowerCase().includes(query) ||
         msg.content.toLowerCase().includes(query)
-    )
-  }, [messages, debouncedSearchQuery])
+    );
+  }, [messages, debouncedSearchQuery]);
 
   // Get unique recipients for compose form
   const recipients = useMemo(() => {
-    const uniqueSenders = new Map<string, Message['sender']>()
+    const uniqueSenders = new Map<string, Message['sender']>();
     messages.forEach((msg) => {
       if (!uniqueSenders.has(msg.sender.id)) {
-        uniqueSenders.set(msg.sender.id, msg.sender)
+        uniqueSenders.set(msg.sender.id, msg.sender);
       }
-    })
-    return Array.from(uniqueSenders.values())
-  }, [messages])
+    });
+    return Array.from(uniqueSenders.values());
+  }, [messages]);
 
   // Handle message selection and mark as read
-  const handleSelectMessage = useCallback(
-    async (message: Message) => {
-      setSelectedMessage(message)
+  const handleSelectMessage = useCallback(async (message: Message) => {
+    setSelectedMessage(message);
 
-      // Mark as read if not already read
-      if (!message.isRead) {
-        try {
-          await studentService.markMessageAsRead(message.id)
+    // Mark as read if not already read
+    if (!message.isRead) {
+      try {
+        await studentService.markMessageAsRead(message.id);
 
-          // Update local state
-          setMessages((prev) =>
-            prev.map((msg) => (msg.id === message.id ? { ...msg, isRead: true } : msg))
-          )
-          setUnreadCount((prev) => Math.max(0, prev - 1))
-        } catch (err) {
-          console.error('Failed to mark message as read:', err)
-        }
+        // Update local state
+        setMessages((prev) =>
+          prev.map((msg) => (msg.id === message.id ? { ...msg, isRead: true } : msg))
+        );
+        setUnreadCount((prev) => Math.max(0, prev - 1));
+      } catch (err) {
+        console.error('Failed to mark message as read:', err);
       }
-    },
-    []
-  )
+    }
+  }, []);
 
   // Handle form input change
   const handleFormChange = useCallback(
     (field: keyof MessageFormData, value: string) => {
-      setFormData((prev) => ({ ...prev, [field]: value }))
+      setFormData((prev) => ({ ...prev, [field]: value }));
       // Clear error for this field when user starts typing
       if (formErrors[field]) {
-        setFormErrors((prev) => ({ ...prev, [field]: undefined }))
+        setFormErrors((prev) => ({ ...prev, [field]: undefined }));
       }
     },
     [formErrors]
-  )
+  );
 
   // Handle message submission
   const handleSubmitMessage = useCallback(async () => {
     try {
       // Validate form
-      const validationResult = messageSchema.safeParse(formData)
+      const validationResult = messageSchema.safeParse(formData);
       if (!validationResult.success) {
-        const errors: MessageFormErrors = {}
+        const errors: MessageFormErrors = {};
         validationResult.error.errors.forEach((err) => {
-          const field = err.path[0] as keyof MessageFormData
-          errors[field] = err.message
-        })
-        setFormErrors(errors)
-        return
+          const field = err.path[0] as keyof MessageFormData;
+          errors[field] = err.message;
+        });
+        setFormErrors(errors);
+        return;
       }
 
-      setIsSubmitting(true)
-      setError(null)
+      setIsSubmitting(true);
+      setError(null);
 
       // Send message
-      const response = await studentService.sendMessage(formData as SendMessageRequest)
+      const response = await studentService.sendMessage(formData as SendMessageRequest);
 
       // Add new message to list
-      setMessages((prev) => [response.message, ...prev])
+      setMessages((prev) => [response.message, ...prev]);
 
       // Reset form
-      setFormData({ recipientId: '', subject: '', content: '' })
-      setFormErrors({})
-      setShowComposeModal(false)
+      setFormData({ recipientId: '', subject: '', content: '' });
+      setFormErrors({});
+      setShowComposeModal(false);
 
       // Show success notification
-      setNotification({ type: 'success', message: 'Message sent successfully!' })
-      setTimeout(() => setNotification(null), 3000)
+      setNotification({ type: 'success', message: 'Message sent successfully!' });
+      setTimeout(() => setNotification(null), 3000);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to send message'
-      setNotification({ type: 'error', message: errorMessage })
+      const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
+      setNotification({ type: 'error', message: errorMessage });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }, [formData])
+  }, [formData]);
 
   // Handle close compose modal
   const handleCloseComposeModal = useCallback(() => {
-    setShowComposeModal(false)
-    setFormData({ recipientId: '', subject: '', content: '' })
-    setFormErrors({})
-  }, [])
+    setShowComposeModal(false);
+    setFormData({ recipientId: '', subject: '', content: '' });
+    setFormErrors({});
+  }, []);
 
   // Handle reset search
   const handleResetSearch = useCallback(() => {
-    setSearchQuery('')
-  }, [])
+    setSearchQuery('');
+  }, []);
 
   if (loading) {
     return (
@@ -211,7 +217,7 @@ export const MessagesPage: React.FC = () => {
           <Spinner size="lg" />
         </div>
       </DashboardLayout>
-    )
+    );
   }
 
   return (
@@ -347,7 +353,9 @@ export const MessagesPage: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-neutral-600 mb-1">From</p>
-                <p className="font-medium text-neutral-900">{selectedMessage.sender.firstname} {selectedMessage.sender.lastname}</p>
+                <p className="font-medium text-neutral-900">
+                  {selectedMessage.sender.firstname} {selectedMessage.sender.lastname}
+                </p>
                 <p className="text-sm text-neutral-600">{selectedMessage.sender.email}</p>
               </div>
 
@@ -442,26 +450,16 @@ export const MessagesPage: React.FC = () => {
                 {formErrors.content && (
                   <p className="text-sm text-danger-600">{formErrors.content}</p>
                 )}
-                <p className="text-xs text-neutral-500 ml-auto">
-                  {formData.content.length}/5000
-                </p>
+                <p className="text-xs text-neutral-500 ml-auto">{formData.content.length}/5000</p>
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="flex gap-3 justify-end pt-4 border-t border-neutral-200">
-              <Button
-                variant="secondary"
-                onClick={handleCloseComposeModal}
-                disabled={isSubmitting}
-              >
+              <Button variant="secondary" onClick={handleCloseComposeModal} disabled={isSubmitting}>
                 Cancel
               </Button>
-              <Button
-                onClick={handleSubmitMessage}
-                loading={isSubmitting}
-                disabled={isSubmitting}
-              >
+              <Button onClick={handleSubmitMessage} loading={isSubmitting} disabled={isSubmitting}>
                 Send Message
               </Button>
             </div>
@@ -469,7 +467,7 @@ export const MessagesPage: React.FC = () => {
         </Modal>
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default MessagesPage
+export default MessagesPage;

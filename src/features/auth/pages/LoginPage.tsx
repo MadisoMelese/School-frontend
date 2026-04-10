@@ -22,10 +22,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 // Validation schema
 const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Email is required')
-    .email('Please enter a valid email address'),
+  email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
   password: z
     .string()
     .min(1, 'Password is required')
@@ -77,8 +74,7 @@ export const LoginPage: React.FC = () => {
       await login(data.email, data.password);
       // Navigation will happen via the useEffect above when user is set
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Login failed. Please try again.';
+      const errorMessage = err instanceof Error ? err.message : 'Login failed. Please try again.';
       setSubmitError(errorMessage);
     }
   };
@@ -206,7 +202,7 @@ export const LoginPage: React.FC = () => {
         {/* Additional Links */}
         <div className="space-y-3">
           <p className="text-center text-sm text-neutral-600 dark:text-neutral-400">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <a
               href="/signup"
               className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium"

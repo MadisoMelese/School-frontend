@@ -61,8 +61,18 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     } else if (user?.role === 'parent') {
       return [
         { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', href: '/parent' },
-        { id: 'progress', label: 'Child Progress', icon: 'TrendingUp', href: '/parent/child-progress' },
-        { id: 'attendance', label: 'Attendance', icon: 'Calendar', href: '/parent/child-attendance' },
+        {
+          id: 'progress',
+          label: 'Child Progress',
+          icon: 'TrendingUp',
+          href: '/parent/child-progress',
+        },
+        {
+          id: 'attendance',
+          label: 'Attendance',
+          icon: 'Calendar',
+          href: '/parent/child-attendance',
+        },
         { id: 'exams', label: 'Exams', icon: 'ClipboardList', href: '/parent/child-exams' },
         { id: 'fees', label: 'Fees', icon: 'CreditCard', href: '/parent/child-fees' },
         { id: 'messages', label: 'Messages', icon: 'Mail', href: '/parent/messages' },
@@ -110,7 +120,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
   const handleNavItemClick = (itemId: string) => {
     // Find the item and navigate to its href
-    const item = navItems.find(i => i.id === itemId);
+    const item = navItems.find((i) => i.id === itemId);
     if (item) {
       navigate(item.href);
     }

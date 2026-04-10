@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react'
-import { Icon } from '../atoms/Icon'
+import React, { useEffect } from 'react';
+import { Icon } from '../atoms/Icon';
 
 interface NotificationToastProps {
-  message: string
-  type?: 'success' | 'error' | 'warning' | 'info'
-  duration?: number
-  onClose: () => void
+  message: string;
+  type?: 'success' | 'error' | 'warning' | 'info';
+  duration?: number;
+  onClose: () => void;
   action?: {
-    label: string
-    onClick: () => void
-  }
-  className?: string
+    label: string;
+    onClick: () => void;
+  };
+  className?: string;
 }
 
 const typeConfig = {
@@ -42,7 +42,7 @@ const typeConfig = {
     textColor: 'text-blue-900',
     iconColor: 'text-blue-600',
   },
-}
+};
 
 export const NotificationToast: React.FC<NotificationToastProps> = ({
   message,
@@ -52,14 +52,14 @@ export const NotificationToast: React.FC<NotificationToastProps> = ({
   action,
   className,
 }) => {
-  const config = typeConfig[type]
+  const config = typeConfig[type];
 
   useEffect(() => {
     if (duration > 0) {
-      const timer = setTimeout(onClose, duration)
-      return () => clearTimeout(timer)
+      const timer = setTimeout(onClose, duration);
+      return () => clearTimeout(timer);
     }
-  }, [duration, onClose])
+  }, [duration, onClose]);
 
   return (
     <div
@@ -101,5 +101,5 @@ export const NotificationToast: React.FC<NotificationToastProps> = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

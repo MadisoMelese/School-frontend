@@ -40,9 +40,7 @@ export const notificationService = {
    * Get user's notification preferences
    */
   getNotificationPreferences: async (): Promise<NotificationPreference> => {
-    const response = await apiClient.get<NotificationPreference>(
-      '/notifications/preferences'
-    );
+    const response = await apiClient.get<NotificationPreference>('/notifications/preferences');
     return response.data;
   },
 
@@ -75,13 +73,10 @@ export const notificationService = {
   /**
    * Unsubscribe from push notifications
    */
-  unsubscribeFromPushNotifications: async (
-    endpoint: string
-  ): Promise<{ message: string }> => {
-    const response = await apiClient.post<{ message: string }>(
-      '/notifications/push/unsubscribe',
-      { endpoint }
-    );
+  unsubscribeFromPushNotifications: async (endpoint: string): Promise<{ message: string }> => {
+    const response = await apiClient.post<{ message: string }>('/notifications/push/unsubscribe', {
+      endpoint,
+    });
     return response.data;
   },
 

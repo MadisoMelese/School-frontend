@@ -1,24 +1,24 @@
-import React from 'react'
+import React from 'react';
 
 interface SpinnerProps {
-  size?: 'sm' | 'md' | 'lg'
-  color?: 'primary' | 'secondary' | 'neutral' | 'inherit'
-  label?: string
-  className?: string
+  size?: 'sm' | 'md' | 'lg';
+  color?: 'primary' | 'secondary' | 'neutral' | 'inherit';
+  label?: string;
+  className?: string;
 }
 
 const sizeStyles = {
   sm: 'w-4 h-4',
   md: 'w-6 h-6',
   lg: 'w-8 h-8',
-}
+};
 
 const colorStyles = {
   primary: 'text-primary-500',
   secondary: 'text-secondary-500',
   neutral: 'text-neutral-500',
   inherit: 'text-current',
-}
+};
 
 export const Spinner: React.FC<SpinnerProps> = ({
   size = 'md',
@@ -54,5 +54,5 @@ export const Spinner: React.FC<SpinnerProps> = ({
       </svg>
       {label && <span className="sr-only">{label}</span>}
     </div>
-  )
-}
+  );
+};

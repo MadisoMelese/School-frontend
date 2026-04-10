@@ -10,7 +10,9 @@ export const useTheme = () => {
   return {
     theme,
     setTheme,
-    isDark: theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches),
+    isDark:
+      theme === 'dark' ||
+      (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches),
   };
 };
 

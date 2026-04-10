@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { DashboardLayout } from '@components/templates/DashboardLayout'
-import { DataTable, type Column } from '@components/organisms/DataTable'
-import { Button } from '@components/atoms/Button'
-import { Badge } from '@components/atoms/Badge'
-import { Icon } from '@components/atoms/Icon'
-import { Card } from '@components/molecules/Card'
-import { Input } from '@components/atoms/Input'
-import { Dropdown } from '@components/molecules/Dropdown'
-import { Modal } from '@components/molecules/Modal'
-import { ExportDialog, type ColumnOption } from '@components/molecules/ExportDialog'
-import { useSystemLogs } from '../hooks/useSystemLogs'
-import type { SystemLog } from '../../../types/api.types'
+import React, { useEffect, useState } from 'react';
+import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { DataTable, type Column } from '@components/organisms/DataTable';
+import { Button } from '@components/atoms/Button';
+import { Badge } from '@components/atoms/Badge';
+import { Icon } from '@components/atoms/Icon';
+import { Card } from '@components/molecules/Card';
+import { Input } from '@components/atoms/Input';
+import { Dropdown } from '@components/molecules/Dropdown';
+import { Modal } from '@components/molecules/Modal';
+import { ExportDialog, type ColumnOption } from '@components/molecules/ExportDialog';
+import { useSystemLogs } from '../hooks/useSystemLogs';
+import type { SystemLog } from '../../../types/api.types';
 
 /**
  * Admin System Logs Page
@@ -27,7 +27,7 @@ const actionOptions = [
   { value: 'delete', label: 'Delete' },
   { value: 'export', label: 'Export' },
   { value: 'import', label: 'Import' },
-]
+];
 
 const resourceOptions = [
   { value: '', label: 'All Resources' },
@@ -39,24 +39,24 @@ const resourceOptions = [
   { value: 'message', label: 'Message' },
   { value: 'class', label: 'Class' },
   { value: 'timetable', label: 'Timetable' },
-]
+];
 
 const logLevelOptions = [
   { value: '', label: 'All Levels' },
   { value: 'info', label: 'Info' },
   { value: 'warning', label: 'Warning' },
   { value: 'error', label: 'Error' },
-]
+];
 
 const statusOptions = [
   { value: '', label: 'All Status' },
   { value: 'success', label: 'Success' },
   { value: 'failure', label: 'Failure' },
-]
+];
 
 interface FilterPreset {
-  name: string
-  filters: typeof initialFilters
+  name: string;
+  filters: typeof initialFilters;
 }
 
 const initialFilters = {
@@ -68,23 +68,23 @@ const initialFilters = {
   search: '',
   logLevel: '',
   status: '',
-}
+};
 
 export const SystemLogsPage: React.FC = () => {
   const { logs, total, limit, loading, error, exporting, fetchLogs, exportAsCSV, exportAsPDF } =
-    useSystemLogs()
+    useSystemLogs();
 
-  const [filters, setFilters] = useState(initialFilters)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [debouncedSearch, setDebouncedSearch] = useState('')
-  const [selectedLog, setSelectedLog] = useState<SystemLog | null>(null)
-  const [showDetailModal, setShowDetailModal] = useState(false)
-  const [showFilterPanel, setShowFilterPanel] = useState(true)
-  const [viewMode, setViewMode] = useState<'table' | 'timeline'>('table')
-  const [selectedLogs, setSelectedLogs] = useState<Set<string>>(new Set())
-  const [filterPresets, setFilterPresets] = useState<FilterPreset[]>([])
-  const [presetName, setPresetName] = useState('')
-  const [showExportDialog, setShowExportDialog] = useState(false)
+  const [filters, setFilters] = useState(initialFilters);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [selectedLog, setSelectedLog] = useState<SystemLog | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showFilterPanel, setShowFilterPanel] = useState(true);
+  const [viewMode, setViewMode] = useState<'table' | 'timeline'>('table');
+  const [selectedLogs, setSelectedLogs] = useState<Set<string>>(new Set());
+  const [filterPresets, setFilterPresets] = useState<FilterPreset[]>([]);
+  const [presetName, setPresetName] = useState('');
+  const [showExportDialog, setShowExportDialog] = useState(false);
 
   // Available columns for export
   const exportColumns: ColumnOption[] = [
@@ -94,27 +94,27 @@ export const SystemLogsPage: React.FC = () => {
     { key: 'action', label: 'Action', selected: true },
     { key: 'resource', label: 'Resource', selected: true },
     { key: 'details', label: 'Details', selected: false },
-  ]
+  ];
 
   // Load filter presets from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('logFilterPresets')
+    const saved = localStorage.getItem('logFilterPresets');
     if (saved) {
       try {
-        setFilterPresets(JSON.parse(saved))
+        setFilterPresets(JSON.parse(saved));
       } catch (err) {
-        console.error('Failed to load filter presets:', err)
+        console.error('Failed to load filter presets:', err);
       }
     }
-  }, [])
+  }, []);
 
   // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearch(filters.search)
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [filters.search])
+      setDebouncedSearch(filters.search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [filters.search]);
 
   // Load logs on mount and when filters change
   useEffect(() => {
@@ -127,7 +127,7 @@ export const SystemLogsPage: React.FC = () => {
       search: debouncedSearch || undefined,
       page: currentPage,
       limit,
-    })
+    });
   }, [
     filters.action,
     filters.resource,
@@ -138,23 +138,23 @@ export const SystemLogsPage: React.FC = () => {
     currentPage,
     limit,
     fetchLogs,
-  ])
+  ]);
 
   // Handle filter changes
   const handleFilterChange = (key: string, value: any) => {
-    setFilters((prev) => ({ ...prev, [key]: value }))
-    setCurrentPage(1)
-  }
+    setFilters((prev) => ({ ...prev, [key]: value }));
+    setCurrentPage(1);
+  };
 
   // Handle search
   const handleSearch = (query: string) => {
-    handleFilterChange('search', query)
-  }
+    handleFilterChange('search', query);
+  };
 
   // Handle page change
   const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage)
-  }
+    setCurrentPage(newPage);
+  };
 
   // Handle export
   const handleExport = async (options: any) => {
@@ -166,66 +166,66 @@ export const SystemLogsPage: React.FC = () => {
         startDate: filters.startDate || undefined,
         endDate: filters.endDate || undefined,
         search: debouncedSearch || undefined,
-      }
+      };
 
       if (options.format === 'csv') {
-        await exportAsCSV(exportFilters, options.filename)
+        await exportAsCSV(exportFilters, options.filename);
       } else {
-        await exportAsPDF(exportFilters, options.filename)
+        await exportAsPDF(exportFilters, options.filename);
       }
     } catch (err) {
-      console.error('Failed to export logs:', err)
+      console.error('Failed to export logs:', err);
     }
-  }
+  };
 
   // Clear all filters
   const handleClearFilters = () => {
-    setFilters(initialFilters)
-    setCurrentPage(1)
-    setSelectedLogs(new Set())
-  }
+    setFilters(initialFilters);
+    setCurrentPage(1);
+    setSelectedLogs(new Set());
+  };
 
   // Save filter preset
   const handleSavePreset = () => {
-    if (!presetName.trim()) return
-    const newPreset: FilterPreset = { name: presetName, filters }
-    const updated = [...filterPresets, newPreset]
-    setFilterPresets(updated)
-    localStorage.setItem('logFilterPresets', JSON.stringify(updated))
-    setPresetName('')
-  }
+    if (!presetName.trim()) return;
+    const newPreset: FilterPreset = { name: presetName, filters };
+    const updated = [...filterPresets, newPreset];
+    setFilterPresets(updated);
+    localStorage.setItem('logFilterPresets', JSON.stringify(updated));
+    setPresetName('');
+  };
 
   // Load filter preset
   const handleLoadPreset = (preset: FilterPreset) => {
-    setFilters(preset.filters)
-    setCurrentPage(1)
-  }
+    setFilters(preset.filters);
+    setCurrentPage(1);
+  };
 
   // Delete filter preset
   const handleDeletePreset = (name: string) => {
-    const updated = filterPresets.filter((p) => p.name !== name)
-    setFilterPresets(updated)
-    localStorage.setItem('logFilterPresets', JSON.stringify(updated))
-  }
+    const updated = filterPresets.filter((p) => p.name !== name);
+    setFilterPresets(updated);
+    localStorage.setItem('logFilterPresets', JSON.stringify(updated));
+  };
 
   // Get action badge variant
   const getActionVariant = (action: string) => {
     switch (action.toLowerCase()) {
       case 'delete':
-        return 'danger'
+        return 'danger';
       case 'create':
-        return 'success'
+        return 'success';
       case 'update':
-        return 'info'
+        return 'info';
       case 'login':
-        return 'warning'
+        return 'warning';
       default:
-        return 'neutral'
+        return 'neutral';
     }
-  }
+  };
 
   // Count active filters
-  const activeFilterCount = Object.values(filters).filter((v) => v !== '').length
+  const activeFilterCount = Object.values(filters).filter((v) => v !== '').length;
 
   // Define table columns
   const columns: Column<SystemLog>[] = [
@@ -236,8 +236,8 @@ export const SystemLogsPage: React.FC = () => {
       render: (value, row) => (
         <button
           onClick={() => {
-            setSelectedLog(row)
-            setShowDetailModal(true)
+            setSelectedLog(row);
+            setShowDetailModal(true);
           }}
           className="text-sm hover:text-primary-600 cursor-pointer"
         >
@@ -253,8 +253,8 @@ export const SystemLogsPage: React.FC = () => {
       render: (value, row) => (
         <button
           onClick={() => {
-            setSelectedLog(row)
-            setShowDetailModal(true)
+            setSelectedLog(row);
+            setShowDetailModal(true);
           }}
           className="flex items-center gap-2 hover:text-primary-600 cursor-pointer"
         >
@@ -280,22 +280,24 @@ export const SystemLogsPage: React.FC = () => {
       label: 'Resource',
       sortable: true,
       render: (value: string) => (
-        <span className="text-sm text-neutral-700">{value.charAt(0).toUpperCase() + value.slice(1)}</span>
+        <span className="text-sm text-neutral-700">
+          {value.charAt(0).toUpperCase() + value.slice(1)}
+        </span>
       ),
     },
     {
       key: 'details',
       label: 'Details',
       render: (value?: Record<string, unknown>) => {
-        if (!value) return <span className="text-xs text-neutral-500">-</span>
+        if (!value) return <span className="text-xs text-neutral-500">-</span>;
         const details = Object.entries(value)
           .slice(0, 2)
           .map(([k, v]) => `${k}: ${v}`)
-          .join(', ')
-        return <span className="text-xs text-neutral-600 truncate">{details}</span>
+          .join(', ');
+        return <span className="text-xs text-neutral-600 truncate">{details}</span>;
       },
     },
-  ]
+  ];
 
   return (
     <DashboardLayout title="System Logs" description="View and manage system activity logs">
@@ -500,11 +502,7 @@ export const SystemLogsPage: React.FC = () => {
                   <span className="text-sm font-medium text-primary-900">
                     {selectedLogs.size} log{selectedLogs.size !== 1 ? 's' : ''} selected
                   </span>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => setSelectedLogs(new Set())}
-                  >
+                  <Button variant="secondary" size="sm" onClick={() => setSelectedLogs(new Set())}>
                     Clear Selection
                   </Button>
                 </div>
@@ -539,8 +537,8 @@ export const SystemLogsPage: React.FC = () => {
                     key={log.id}
                     className="flex gap-4 pb-4 border-b border-neutral-200 last:border-b-0 cursor-pointer hover:bg-neutral-50 p-3 rounded-lg transition-colors"
                     onClick={() => {
-                      setSelectedLog(log)
-                      setShowDetailModal(true)
+                      setSelectedLog(log);
+                      setShowDetailModal(true);
                     }}
                   >
                     {/* Timeline dot */}
@@ -632,7 +630,9 @@ export const SystemLogsPage: React.FC = () => {
             {/* Details Section */}
             {selectedLog.details && Object.keys(selectedLog.details).length > 0 && (
               <div className="border-t border-neutral-200 pt-4">
-                <p className="text-sm font-semibold text-neutral-900 mb-3">Request/Response Details</p>
+                <p className="text-sm font-semibold text-neutral-900 mb-3">
+                  Request/Response Details
+                </p>
                 <div className="bg-neutral-50 rounded-lg p-4 max-h-64 overflow-y-auto">
                   <pre className="text-xs text-neutral-700 whitespace-pre-wrap break-words">
                     {JSON.stringify(selectedLog.details, null, 2)}
@@ -670,7 +670,7 @@ export const SystemLogsPage: React.FC = () => {
         isLoading={exporting}
       />
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default SystemLogsPage
+export default SystemLogsPage;

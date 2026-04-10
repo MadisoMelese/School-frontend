@@ -24,7 +24,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
   subtitle,
   showBranding = true,
 }) => {
-  const { isDark } = useTheme();
+  useTheme();
 
   return (
     <div
@@ -33,10 +33,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
       aria-label="Authentication page"
     >
       {/* Background decoration */}
-      <div
-        className="absolute inset-0 overflow-hidden pointer-events-none"
-        aria-hidden="true"
-      >
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary-200 dark:bg-primary-900 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-soft" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary-200 dark:bg-secondary-900 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-soft" />
       </div>
@@ -76,9 +73,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
                 {title}
               </h2>
               {subtitle && (
-                <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-                  {subtitle}
-                </p>
+                <p className="text-neutral-600 dark:text-neutral-400 text-sm">{subtitle}</p>
               )}
             </div>
           )}
@@ -89,9 +84,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
 
         {/* Footer links */}
         <div className="mt-6 text-center text-sm text-neutral-600 dark:text-neutral-400">
-          <p>
-            Protected by industry-standard security and encryption
-          </p>
+          <p>Protected by industry-standard security and encryption</p>
         </div>
       </div>
     </div>

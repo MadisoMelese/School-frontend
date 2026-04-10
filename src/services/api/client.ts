@@ -16,7 +16,7 @@ const createApiClient = (): AxiosInstance => {
     timeout: 30000, // 30 seconds
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
+      Accept: 'application/json',
     },
   });
 

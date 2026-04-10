@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { DashboardLayout } from '@components/templates/DashboardLayout'
-import { Tabs, Tab } from '@components/molecules/Tabs'
-import { Card } from '@components/molecules/Card'
-import { Button } from '@components/atoms/Button'
-import { FormField } from '@components/molecules/FormField'
-import { ImageUpload } from '@components/molecules/ImageUpload'
-import { NotificationToast } from '@components/molecules/NotificationToast'
-import { Icon } from '@components/atoms/Icon'
-import { adminService } from '@services/api/adminService'
-import { SchoolSettings, UpdateSettingsRequest, Holiday, Term } from '../../../types/api.types'
-import { z } from 'zod'
+import React, { useEffect, useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { Tabs, Tab } from '@components/molecules/Tabs';
+import { Card } from '@components/molecules/Card';
+import { Button } from '@components/atoms/Button';
+import { FormField } from '@components/molecules/FormField';
+import { ImageUpload } from '@components/molecules/ImageUpload';
+import { NotificationToast } from '@components/molecules/NotificationToast';
+import { Icon } from '@components/atoms/Icon';
+import { adminService } from '@services/api/adminService';
+import { UpdateSettingsRequest, Holiday, Term } from '../../../types/api.types';
+import { z } from 'zod';
 
 /**
  * Settings Page
@@ -25,150 +25,181 @@ import { z } from 'zod'
 const schoolInfoSchema = z.object({
   schoolName: z.string().min(1, 'School name is required'),
   schoolCode: z.string().min(1, 'School code is required'),
-  schoolAddress: z.object({
-    street: z.string().optional(),
-    city: z.string().optional(),
-    state: z.string().optional(),
-    postalCode: z.string().optional(),
-  }).optional(),
-  contactInformation: z.object({
-    phone: z.string().regex(/^[\d\s\-\+\(\)]*$/, 'Invalid phone number').optional().or(z.literal('')),
-    email: z.string().email('Invalid email address').optional().or(z.literal('')),
-    website: z.string().url('Invalid website URL').optional().or(z.literal('')),
-  }).optional(),
+  schoolAddress: z
+    .object({
+      street: z.string().optional(),
+      city: z.string().optional(),
+      state: z.string().optional(),
+      postalCode: z.string().optional(),
+    })
+    .optional(),
+  contactInformation: z
+    .object({
+      phone: z
+        .string()
+        .regex(/^[\d\s\-+()]*$/, 'Invalid phone number')
+        .optional()
+        .or(z.literal('')),
+      email: z.string().email('Invalid email address').optional().or(z.literal('')),
+      website: z.string().url('Invalid website URL').optional().or(z.literal('')),
+    })
+    .optional(),
   principalName: z.string().optional(),
-  establishmentYear: z.number().int().min(1900, 'Invalid year').max(new Date().getFullYear(), 'Year cannot be in the future').optional().or(z.literal(null)),
-})
+  establishmentYear: z
+    .number()
+    .int()
+    .min(1900, 'Invalid year')
+    .max(new Date().getFullYear(), 'Year cannot be in the future')
+    .optional()
+    .or(z.literal(null)),
+});
 
-const academicCalendarSchema = z.object({
-  academicYear: z.string().min(1, 'Academic year is required'),
-  termStartDate: z.string().min(1, 'Term start date is required'),
-  termEndDate: z.string().min(1, 'Term end date is required'),
-  terms: z.array(
-    z.object({
-      name: z.string().min(1, 'Term name is required'),
-      startDate: z.string().min(1, 'Term start date is required'),
-      endDate: z.string().min(1, 'Term end date is required'),
-    })
-  ).optional(),
-  holidays: z.array(
-    z.object({
-      name: z.string().min(1, 'Holiday name is required'),
-      startDate: z.string().min(1, 'Holiday start date is required'),
-      endDate: z.string().min(1, 'Holiday end date is required'),
-    })
-  ).optional(),
-}).refine(
-  (data) => {
-    if (data.termStartDate && data.termEndDate) {
-      return new Date(data.termStartDate) < new Date(data.termEndDate)
+const academicCalendarSchema = z
+  .object({
+    academicYear: z.string().min(1, 'Academic year is required'),
+    termStartDate: z.string().min(1, 'Term start date is required'),
+    termEndDate: z.string().min(1, 'Term end date is required'),
+    terms: z
+      .array(
+        z.object({
+          name: z.string().min(1, 'Term name is required'),
+          startDate: z.string().min(1, 'Term start date is required'),
+          endDate: z.string().min(1, 'Term end date is required'),
+        })
+      )
+      .optional(),
+    holidays: z
+      .array(
+        z.object({
+          name: z.string().min(1, 'Holiday name is required'),
+          startDate: z.string().min(1, 'Holiday start date is required'),
+          endDate: z.string().min(1, 'Holiday end date is required'),
+        })
+      )
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.termStartDate && data.termEndDate) {
+        return new Date(data.termStartDate) < new Date(data.termEndDate);
+      }
+      return true;
+    },
+    {
+      message: 'Term end date must be after term start date',
+      path: ['termEndDate'],
     }
-    return true
-  },
-  {
-    message: 'Term end date must be after term start date',
-    path: ['termEndDate'],
-  }
-)
+  );
 
 const gradingScaleSchema = z.object({
-  gradingScale: z.array(
-    z.object({
-      grade: z.string().min(1, 'Grade name is required').max(10, 'Grade name must be 10 characters or less'),
-      minMarks: z.number().min(0, 'Minimum marks must be 0 or greater').max(100, 'Minimum marks cannot exceed 100'),
-      maxMarks: z.number().min(0, 'Maximum marks must be 0 or greater').max(100, 'Maximum marks cannot exceed 100'),
-      description: z.string().optional(),
-    })
-  ).min(1, 'At least one grade must be defined')
-  .refine(
-    (grades) => {
-      // Check for unique grade names
-      const gradeNames = grades.map(g => g.grade.toUpperCase())
-      return new Set(gradeNames).size === gradeNames.length
-    },
-    { message: 'Grade names must be unique' }
-  )
-  .refine(
-    (grades) => {
-      // Check for overlapping ranges
-      const sortedGrades = [...grades].sort((a, b) => a.minMarks - b.minMarks)
-      for (let i = 0; i < sortedGrades.length - 1; i++) {
-        if (sortedGrades[i].maxMarks >= sortedGrades[i + 1].minMarks) {
-          return false
+  gradingScale: z
+    .array(
+      z.object({
+        grade: z
+          .string()
+          .min(1, 'Grade name is required')
+          .max(10, 'Grade name must be 10 characters or less'),
+        minMarks: z
+          .number()
+          .min(0, 'Minimum marks must be 0 or greater')
+          .max(100, 'Minimum marks cannot exceed 100'),
+        maxMarks: z
+          .number()
+          .min(0, 'Maximum marks must be 0 or greater')
+          .max(100, 'Maximum marks cannot exceed 100'),
+        description: z.string().optional(),
+      })
+    )
+    .min(1, 'At least one grade must be defined')
+    .refine(
+      (grades) => {
+        // Check for unique grade names
+        const gradeNames = grades.map((g) => g.grade.toUpperCase());
+        return new Set(gradeNames).size === gradeNames.length;
+      },
+      { message: 'Grade names must be unique' }
+    )
+    .refine(
+      (grades) => {
+        // Check for overlapping ranges
+        const sortedGrades = [...grades].sort((a, b) => a.minMarks - b.minMarks);
+        for (let i = 0; i < sortedGrades.length - 1; i++) {
+          if (sortedGrades[i].maxMarks >= sortedGrades[i + 1].minMarks) {
+            return false;
+          }
         }
-      }
-      return true
-    },
-    { message: 'Grade ranges cannot overlap' }
-  )
-  .refine(
-    (grades) => {
-      // Check that min <= max for each grade
-      return grades.every(g => g.minMarks <= g.maxMarks)
-    },
-    { message: 'Minimum marks must be less than or equal to maximum marks' }
-  ),
-})
+        return true;
+      },
+      { message: 'Grade ranges cannot overlap' }
+    )
+    .refine(
+      (grades) => {
+        // Check that min <= max for each grade
+        return grades.every((g) => g.minMarks <= g.maxMarks);
+      },
+      { message: 'Minimum marks must be less than or equal to maximum marks' }
+    ),
+});
 
 interface NotificationSettings {
-  emailNotifications: boolean
-  pushNotifications: boolean
-  smsNotifications: boolean
+  emailNotifications: boolean;
+  pushNotifications: boolean;
+  smsNotifications: boolean;
   eventTypes: {
-    userRegistration: boolean
-    gradeSubmission: boolean
-    attendanceAlert: boolean
-    feeReminder: boolean
-  }
+    userRegistration: boolean;
+    gradeSubmission: boolean;
+    attendanceAlert: boolean;
+    feeReminder: boolean;
+  };
 }
 
 interface SettingsPageState {
   schoolInfo: {
-    schoolName: string
-    schoolCode: string
+    schoolName: string;
+    schoolCode: string;
     schoolAddress: {
-      street: string
-      city: string
-      state: string
-      postalCode: string
-    }
+      street: string;
+      city: string;
+      state: string;
+      postalCode: string;
+    };
     contactInformation: {
-      phone: string
-      email: string
-      website: string
-    }
-    schoolLogo: File | string | null
-    principalName: string
-    establishmentYear: number | null
-  }
+      phone: string;
+      email: string;
+      website: string;
+    };
+    schoolLogo: File | string | null;
+    principalName: string;
+    establishmentYear: number | null;
+  };
   academicCalendar: {
-    academicYear: string
-    termStartDate: string
-    termEndDate: string
-    terms: Term[]
-    holidays: Holiday[]
-  }
+    academicYear: string;
+    termStartDate: string;
+    termEndDate: string;
+    terms: Term[];
+    holidays: Holiday[];
+  };
   gradingScale: Array<{
-    grade: string
-    minMarks: number
-    maxMarks: number
-    description?: string
-  }>
-  notificationSettings: NotificationSettings
+    grade: string;
+    minMarks: number;
+    maxMarks: number;
+    description?: string;
+  }>;
+  notificationSettings: NotificationSettings;
 }
 
 interface FormErrors {
-  [key: string]: string
+  [key: string]: string;
 }
 
 export const SettingsPage: React.FC = () => {
-  const queryClient = useQueryClient()
-  const [activeTab, setActiveTab] = useState('school-info')
-  const [formErrors, setFormErrors] = useState<FormErrors>({})
+  const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState('school-info');
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [notification, setNotification] = useState<{
-    message: string
-    type: 'success' | 'error' | 'warning' | 'info'
-  } | null>(null)
+    message: string;
+    type: 'success' | 'error' | 'warning' | 'info';
+  } | null>(null);
   const [formState, setFormState] = useState<SettingsPageState>({
     schoolInfo: {
       schoolName: '',
@@ -207,32 +238,36 @@ export const SettingsPage: React.FC = () => {
         feeReminder: true,
       },
     },
-  })
+  });
 
   // Fetch settings
-  const { data: settings, isLoading, error } = useQuery({
+  const {
+    data: settings,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['admin-settings'],
     queryFn: () => adminService.getSettings(),
-  })
+  });
 
   // Update settings mutation
   const updateSettingsMutation = useMutation({
     mutationFn: (data: UpdateSettingsRequest) => adminService.updateSettings(data),
     onSuccess: (response) => {
-      queryClient.setQueryData(['admin-settings'], response.settings)
+      queryClient.setQueryData(['admin-settings'], response.settings);
       setNotification({
         message: 'Settings updated successfully',
         type: 'success',
-      })
-      setFormErrors({})
+      });
+      setFormErrors({});
     },
     onError: (error: any) => {
       setNotification({
         message: error?.response?.data?.message || 'Failed to update settings',
         type: 'error',
-      })
+      });
     },
-  })
+  });
 
   // Initialize form state when settings are loaded
   useEffect(() => {
@@ -265,16 +300,16 @@ export const SettingsPage: React.FC = () => {
           holidays: settings.holidays || [],
         },
         gradingScale: settings.gradingScale || [],
-      }))
+      }));
     }
-  }, [settings])
+  }, [settings]);
 
   // Handle school info form submission
   const handleSchoolInfoSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      schoolInfoSchema.parse(formState.schoolInfo)
-      
+      schoolInfoSchema.parse(formState.schoolInfo);
+
       const updateData: UpdateSettingsRequest = {
         schoolName: formState.schoolInfo.schoolName,
         schoolCode: formState.schoolInfo.schoolCode,
@@ -291,35 +326,35 @@ export const SettingsPage: React.FC = () => {
         },
         principalName: formState.schoolInfo.principalName || undefined,
         establishmentYear: formState.schoolInfo.establishmentYear || undefined,
-      }
+      };
 
       // Handle logo upload if it's a File
       if (formState.schoolInfo.schoolLogo instanceof File) {
         // In a real app, you'd upload this to a file service
         // For now, we'll convert to base64
-        const reader = new FileReader()
+        const reader = new FileReader();
         reader.onloadend = () => {
-          updateData.schoolLogo = reader.result as string
-          updateSettingsMutation.mutate(updateData)
-        }
-        reader.readAsDataURL(formState.schoolInfo.schoolLogo)
+          updateData.schoolLogo = reader.result as string;
+          updateSettingsMutation.mutate(updateData);
+        };
+        reader.readAsDataURL(formState.schoolInfo.schoolLogo);
       } else {
-        updateSettingsMutation.mutate(updateData)
+        updateSettingsMutation.mutate(updateData);
       }
     } catch (err) {
       if (err instanceof z.ZodError) {
-        const errors: FormErrors = {}
+        const errors: FormErrors = {};
         err.errors.forEach((error) => {
-          errors[error.path[0] as string] = error.message
-        })
-        setFormErrors(errors)
+          errors[error.path[0] as string] = error.message;
+        });
+        setFormErrors(errors);
       }
     }
-  }
+  };
 
   // Handle academic calendar form submission
   const handleAcademicCalendarSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
       academicCalendarSchema.parse({
         academicYear: formState.academicCalendar.academicYear,
@@ -327,58 +362,58 @@ export const SettingsPage: React.FC = () => {
         termEndDate: formState.academicCalendar.termEndDate,
         terms: formState.academicCalendar.terms,
         holidays: formState.academicCalendar.holidays,
-      })
+      });
       updateSettingsMutation.mutate({
         academicYear: formState.academicCalendar.academicYear,
         termStartDate: formState.academicCalendar.termStartDate,
         termEndDate: formState.academicCalendar.termEndDate,
         terms: formState.academicCalendar.terms,
         holidays: formState.academicCalendar.holidays,
-      })
+      });
     } catch (err) {
       if (err instanceof z.ZodError) {
-        const errors: FormErrors = {}
+        const errors: FormErrors = {};
         err.errors.forEach((error) => {
-          errors[error.path[0] as string] = error.message
-        })
-        setFormErrors(errors)
+          errors[error.path[0] as string] = error.message;
+        });
+        setFormErrors(errors);
       }
     }
-  }
+  };
 
   // Handle grading scale form submission
   const handleGradingScaleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
       gradingScaleSchema.parse({
         gradingScale: formState.gradingScale,
-      })
+      });
       updateSettingsMutation.mutate({
         gradingScale: formState.gradingScale,
-      })
+      });
     } catch (err) {
       if (err instanceof z.ZodError) {
-        const errors: FormErrors = {}
+        const errors: FormErrors = {};
         err.errors.forEach((error) => {
-          errors[error.path[0] as string] = error.message
-        })
-        setFormErrors(errors)
+          errors[error.path[0] as string] = error.message;
+        });
+        setFormErrors(errors);
       }
     }
-  }
+  };
 
   // Handle grading scale row changes
   const handleGradeChange = (index: number, field: string, value: any) => {
-    const newGradingScale = [...formState.gradingScale]
+    const newGradingScale = [...formState.gradingScale];
     newGradingScale[index] = {
       ...newGradingScale[index],
       [field]: field === 'grade' ? value : Number(value),
-    }
+    };
     setFormState((prev) => ({
       ...prev,
       gradingScale: newGradingScale,
-    }))
-  }
+    }));
+  };
 
   // Add new grading scale row
   const addGradeRow = () => {
@@ -388,29 +423,29 @@ export const SettingsPage: React.FC = () => {
         ...prev.gradingScale,
         { grade: '', minMarks: 0, maxMarks: 0, description: '' },
       ],
-    }))
-  }
+    }));
+  };
 
   // Remove grading scale row
   const removeGradeRow = (index: number) => {
     setFormState((prev) => ({
       ...prev,
       gradingScale: prev.gradingScale.filter((_, i) => i !== index),
-    }))
-  }
+    }));
+  };
 
   // Handle term changes
   const handleTermChange = (index: number, field: string, value: string) => {
-    const newTerms = [...formState.academicCalendar.terms]
+    const newTerms = [...formState.academicCalendar.terms];
     newTerms[index] = {
       ...newTerms[index],
       [field]: value,
-    }
+    };
     setFormState((prev) => ({
       ...prev,
       academicCalendar: { ...prev.academicCalendar, terms: newTerms },
-    }))
-  }
+    }));
+  };
 
   // Add new term
   const addTerm = () => {
@@ -423,8 +458,8 @@ export const SettingsPage: React.FC = () => {
           { name: `Term ${prev.academicCalendar.terms.length + 1}`, startDate: '', endDate: '' },
         ],
       },
-    }))
-  }
+    }));
+  };
 
   // Remove term
   const removeTerm = (index: number) => {
@@ -434,21 +469,21 @@ export const SettingsPage: React.FC = () => {
         ...prev.academicCalendar,
         terms: prev.academicCalendar.terms.filter((_, i) => i !== index),
       },
-    }))
-  }
+    }));
+  };
 
   // Handle holiday changes
   const handleHolidayChange = (index: number, field: string, value: string) => {
-    const newHolidays = [...formState.academicCalendar.holidays]
+    const newHolidays = [...formState.academicCalendar.holidays];
     newHolidays[index] = {
       ...newHolidays[index],
       [field]: value,
-    }
+    };
     setFormState((prev) => ({
       ...prev,
       academicCalendar: { ...prev.academicCalendar, holidays: newHolidays },
-    }))
-  }
+    }));
+  };
 
   // Add new holiday
   const addHoliday = () => {
@@ -456,13 +491,10 @@ export const SettingsPage: React.FC = () => {
       ...prev,
       academicCalendar: {
         ...prev.academicCalendar,
-        holidays: [
-          ...prev.academicCalendar.holidays,
-          { name: '', startDate: '', endDate: '' },
-        ],
+        holidays: [...prev.academicCalendar.holidays, { name: '', startDate: '', endDate: '' }],
       },
-    }))
-  }
+    }));
+  };
 
   // Remove holiday
   const removeHoliday = (index: number) => {
@@ -472,8 +504,8 @@ export const SettingsPage: React.FC = () => {
         ...prev.academicCalendar,
         holidays: prev.academicCalendar.holidays.filter((_, i) => i !== index),
       },
-    }))
-  }
+    }));
+  };
 
   // Handle notification settings change
   const handleNotificationChange = (field: string, value: boolean) => {
@@ -483,8 +515,8 @@ export const SettingsPage: React.FC = () => {
         ...prev.notificationSettings,
         [field]: value,
       },
-    }))
-  }
+    }));
+  };
 
   // Handle notification event type change
   const handleEventTypeChange = (eventType: string, value: boolean) => {
@@ -497,8 +529,8 @@ export const SettingsPage: React.FC = () => {
           [eventType]: value,
         },
       },
-    }))
-  }
+    }));
+  };
 
   // Loading skeleton
   if (isLoading) {
@@ -512,7 +544,7 @@ export const SettingsPage: React.FC = () => {
           <div className="h-96 bg-neutral-200 rounded-lg animate-pulse" />
         </div>
       </DashboardLayout>
-    )
+    );
   }
 
   // Error state
@@ -534,7 +566,7 @@ export const SettingsPage: React.FC = () => {
           </div>
         </Card>
       </DashboardLayout>
-    )
+    );
   }
 
   const tabs: Tab[] = [
@@ -733,7 +765,10 @@ export const SettingsPage: React.FC = () => {
                       ...prev,
                       schoolInfo: {
                         ...prev.schoolInfo,
-                        contactInformation: { ...prev.schoolInfo.contactInformation, website: value },
+                        contactInformation: {
+                          ...prev.schoolInfo.contactInformation,
+                          website: value,
+                        },
                       },
                     }))
                   }
@@ -764,11 +799,7 @@ export const SettingsPage: React.FC = () => {
             </div>
 
             <div className="flex gap-3 pt-4">
-              <Button
-                type="submit"
-                variant="primary"
-                loading={updateSettingsMutation.isPending}
-              >
+              <Button type="submit" variant="primary" loading={updateSettingsMutation.isPending}>
                 Save Changes
               </Button>
               <Button type="button" variant="ghost">
@@ -846,7 +877,10 @@ export const SettingsPage: React.FC = () => {
                 ) : (
                   <div className="space-y-3">
                     {formState.academicCalendar.terms.map((term, index) => (
-                      <div key={index} className="p-4 border border-neutral-200 rounded-lg space-y-3">
+                      <div
+                        key={index}
+                        className="p-4 border border-neutral-200 rounded-lg space-y-3"
+                      >
                         <div className="flex items-center justify-between">
                           <h4 className="font-medium text-neutral-900">Term {index + 1}</h4>
                           <button
@@ -883,12 +917,7 @@ export const SettingsPage: React.FC = () => {
                     ))}
                   </div>
                 )}
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={addTerm}
-                  className="w-full"
-                >
+                <Button type="button" variant="secondary" onClick={addTerm} className="w-full">
                   <Icon name="Plus" size={18} className="mr-2" />
                   Add Term
                 </Button>
@@ -904,9 +933,14 @@ export const SettingsPage: React.FC = () => {
                 ) : (
                   <div className="space-y-3">
                     {formState.academicCalendar.holidays.map((holiday, index) => (
-                      <div key={index} className="p-4 border border-neutral-200 rounded-lg space-y-3">
+                      <div
+                        key={index}
+                        className="p-4 border border-neutral-200 rounded-lg space-y-3"
+                      >
                         <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-neutral-900">{holiday.name || `Holiday ${index + 1}`}</h4>
+                          <h4 className="font-medium text-neutral-900">
+                            {holiday.name || `Holiday ${index + 1}`}
+                          </h4>
                           <button
                             type="button"
                             onClick={() => removeHoliday(index)}
@@ -927,7 +961,9 @@ export const SettingsPage: React.FC = () => {
                           <input
                             type="date"
                             value={holiday.startDate}
-                            onChange={(e) => handleHolidayChange(index, 'startDate', e.target.value)}
+                            onChange={(e) =>
+                              handleHolidayChange(index, 'startDate', e.target.value)
+                            }
                             className="px-3 py-2 border border-neutral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                           />
                           <input
@@ -941,12 +977,7 @@ export const SettingsPage: React.FC = () => {
                     ))}
                   </div>
                 )}
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={addHoliday}
-                  className="w-full"
-                >
+                <Button type="button" variant="secondary" onClick={addHoliday} className="w-full">
                   <Icon name="Plus" size={18} className="mr-2" />
                   Add Holiday
                 </Button>
@@ -954,11 +985,7 @@ export const SettingsPage: React.FC = () => {
             </div>
 
             <div className="flex gap-3 pt-4">
-              <Button
-                type="submit"
-                variant="primary"
-                loading={updateSettingsMutation.isPending}
-              >
+              <Button type="submit" variant="primary" loading={updateSettingsMutation.isPending}>
                 Save Changes
               </Button>
               <Button type="button" variant="ghost">
@@ -979,7 +1006,8 @@ export const SettingsPage: React.FC = () => {
             {/* Grading Scale Info */}
             <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <p className="text-sm text-blue-900">
-                Define grade ranges for your school. Grades must have unique names and non-overlapping ranges.
+                Define grade ranges for your school. Grades must have unique names and
+                non-overlapping ranges.
               </p>
             </div>
 
@@ -989,25 +1017,36 @@ export const SettingsPage: React.FC = () => {
                 <thead>
                   <tr className="border-b border-neutral-200 bg-neutral-50">
                     <th className="text-left py-3 px-3 font-semibold text-neutral-700">Grade</th>
-                    <th className="text-left py-3 px-3 font-semibold text-neutral-700">Min Marks</th>
-                    <th className="text-left py-3 px-3 font-semibold text-neutral-700">Max Marks</th>
-                    <th className="text-left py-3 px-3 font-semibold text-neutral-700">Percentage</th>
-                    <th className="text-left py-3 px-3 font-semibold text-neutral-700">Description</th>
+                    <th className="text-left py-3 px-3 font-semibold text-neutral-700">
+                      Min Marks
+                    </th>
+                    <th className="text-left py-3 px-3 font-semibold text-neutral-700">
+                      Max Marks
+                    </th>
+                    <th className="text-left py-3 px-3 font-semibold text-neutral-700">
+                      Percentage
+                    </th>
+                    <th className="text-left py-3 px-3 font-semibold text-neutral-700">
+                      Description
+                    </th>
                     <th className="text-left py-3 px-3 font-semibold text-neutral-700">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {formState.gradingScale.map((grade, index) => {
-                    const percentage = grade.maxMarks > 0 ? ((grade.minMarks + grade.maxMarks) / 2 / 100 * 100).toFixed(1) : '0'
+                    const percentage =
+                      grade.maxMarks > 0
+                        ? (((grade.minMarks + grade.maxMarks) / 2 / 100) * 100).toFixed(1)
+                        : '0';
                     const hasOverlap = formState.gradingScale.some((g, i) => {
-                      if (i === index) return false
-                      return (grade.minMarks <= g.maxMarks && grade.maxMarks >= g.minMarks)
-                    })
+                      if (i === index) return false;
+                      return grade.minMarks <= g.maxMarks && grade.maxMarks >= g.minMarks;
+                    });
                     const isDuplicate = formState.gradingScale.some((g, i) => {
-                      if (i === index) return false
-                      return g.grade.toUpperCase() === grade.grade.toUpperCase()
-                    })
-                    const isInvalid = grade.minMarks > grade.maxMarks
+                      if (i === index) return false;
+                      return g.grade.toUpperCase() === grade.grade.toUpperCase();
+                    });
+                    const isInvalid = grade.minMarks > grade.maxMarks;
 
                     return (
                       <tr
@@ -1064,7 +1103,9 @@ export const SettingsPage: React.FC = () => {
                           <input
                             type="text"
                             value={grade.description || ''}
-                            onChange={(e) => handleGradeChange(index, 'description', e.target.value)}
+                            onChange={(e) =>
+                              handleGradeChange(index, 'description', e.target.value)
+                            }
                             placeholder="Optional remarks"
                             className="w-full px-2 py-1 border border-neutral-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                           />
@@ -1080,7 +1121,7 @@ export const SettingsPage: React.FC = () => {
                           </button>
                         </td>
                       </tr>
-                    )
+                    );
                   })}
                 </tbody>
               </table>
@@ -1092,16 +1133,19 @@ export const SettingsPage: React.FC = () => {
                 <p className="text-neutral-500 text-sm text-center py-4">No grades added yet</p>
               ) : (
                 formState.gradingScale.map((grade, index) => {
-                  const percentage = grade.maxMarks > 0 ? ((grade.minMarks + grade.maxMarks) / 2 / 100 * 100).toFixed(1) : '0'
+                  const percentage =
+                    grade.maxMarks > 0
+                      ? (((grade.minMarks + grade.maxMarks) / 2 / 100) * 100).toFixed(1)
+                      : '0';
                   const hasOverlap = formState.gradingScale.some((g, i) => {
-                    if (i === index) return false
-                    return (grade.minMarks <= g.maxMarks && grade.maxMarks >= g.minMarks)
-                  })
+                    if (i === index) return false;
+                    return grade.minMarks <= g.maxMarks && grade.maxMarks >= g.minMarks;
+                  });
                   const isDuplicate = formState.gradingScale.some((g, i) => {
-                    if (i === index) return false
-                    return g.grade.toUpperCase() === grade.grade.toUpperCase()
-                  })
-                  const isInvalid = grade.minMarks > grade.maxMarks
+                    if (i === index) return false;
+                    return g.grade.toUpperCase() === grade.grade.toUpperCase();
+                  });
+                  const isInvalid = grade.minMarks > grade.maxMarks;
 
                   return (
                     <div
@@ -1217,14 +1261,16 @@ export const SettingsPage: React.FC = () => {
                           <input
                             type="text"
                             value={grade.description || ''}
-                            onChange={(e) => handleGradeChange(index, 'description', e.target.value)}
+                            onChange={(e) =>
+                              handleGradeChange(index, 'description', e.target.value)
+                            }
                             placeholder="e.g., Excellent performance"
                             className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                           />
                         </div>
                       </div>
                     </div>
-                  )
+                  );
                 })
               )}
             </div>
@@ -1250,7 +1296,7 @@ export const SettingsPage: React.FC = () => {
                           />
                         </div>
                         <span className="text-neutral-600 w-12 text-right">
-                          {((grade.maxMarks - grade.minMarks + 1) / 101 * 100).toFixed(1)}%
+                          {(((grade.maxMarks - grade.minMarks + 1) / 101) * 100).toFixed(1)}%
                         </span>
                       </div>
                     ))}
@@ -1259,12 +1305,7 @@ export const SettingsPage: React.FC = () => {
             )}
 
             {/* Add Grade Button */}
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={addGradeRow}
-              className="w-full"
-            >
+            <Button type="button" variant="secondary" onClick={addGradeRow} className="w-full">
               <Icon name="Plus" size={18} className="mr-2" />
               Add Grade
             </Button>
@@ -1278,11 +1319,7 @@ export const SettingsPage: React.FC = () => {
             )}
 
             <div className="flex gap-3 pt-4">
-              <Button
-                type="submit"
-                variant="primary"
-                loading={updateSettingsMutation.isPending}
-              >
+              <Button type="submit" variant="primary" loading={updateSettingsMutation.isPending}>
                 Save Changes
               </Button>
               <Button type="button" variant="ghost">
@@ -1302,9 +1339,7 @@ export const SettingsPage: React.FC = () => {
           <div className="space-y-6">
             {/* Notification Channels */}
             <div>
-              <h3 className="text-lg font-semibold text-neutral-900 mb-4">
-                Notification Channels
-              </h3>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-4">Notification Channels</h3>
               <div className="space-y-3">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
@@ -1334,9 +1369,7 @@ export const SettingsPage: React.FC = () => {
                   <input
                     type="checkbox"
                     checked={formState.notificationSettings.smsNotifications}
-                    onChange={(e) =>
-                      handleNotificationChange('smsNotifications', e.target.checked)
-                    }
+                    onChange={(e) => handleNotificationChange('smsNotifications', e.target.checked)}
                     className="w-4 h-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
                   />
                   <span className="text-neutral-700">SMS Notifications</span>
@@ -1346,17 +1379,13 @@ export const SettingsPage: React.FC = () => {
 
             {/* Event Types */}
             <div>
-              <h3 className="text-lg font-semibold text-neutral-900 mb-4">
-                Event Types to Notify
-              </h3>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-4">Event Types to Notify</h3>
               <div className="space-y-3">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={formState.notificationSettings.eventTypes.userRegistration}
-                    onChange={(e) =>
-                      handleEventTypeChange('userRegistration', e.target.checked)
-                    }
+                    onChange={(e) => handleEventTypeChange('userRegistration', e.target.checked)}
                     className="w-4 h-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
                   />
                   <span className="text-neutral-700">User Registration</span>
@@ -1366,9 +1395,7 @@ export const SettingsPage: React.FC = () => {
                   <input
                     type="checkbox"
                     checked={formState.notificationSettings.eventTypes.gradeSubmission}
-                    onChange={(e) =>
-                      handleEventTypeChange('gradeSubmission', e.target.checked)
-                    }
+                    onChange={(e) => handleEventTypeChange('gradeSubmission', e.target.checked)}
                     className="w-4 h-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
                   />
                   <span className="text-neutral-700">Grade Submission</span>
@@ -1378,9 +1405,7 @@ export const SettingsPage: React.FC = () => {
                   <input
                     type="checkbox"
                     checked={formState.notificationSettings.eventTypes.attendanceAlert}
-                    onChange={(e) =>
-                      handleEventTypeChange('attendanceAlert', e.target.checked)
-                    }
+                    onChange={(e) => handleEventTypeChange('attendanceAlert', e.target.checked)}
                     className="w-4 h-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
                   />
                   <span className="text-neutral-700">Attendance Alert</span>
@@ -1390,9 +1415,7 @@ export const SettingsPage: React.FC = () => {
                   <input
                     type="checkbox"
                     checked={formState.notificationSettings.eventTypes.feeReminder}
-                    onChange={(e) =>
-                      handleEventTypeChange('feeReminder', e.target.checked)
-                    }
+                    onChange={(e) => handleEventTypeChange('feeReminder', e.target.checked)}
                     className="w-4 h-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
                   />
                   <span className="text-neutral-700">Fee Reminder</span>
@@ -1410,7 +1433,7 @@ export const SettingsPage: React.FC = () => {
         </Card>
       ),
     },
-  ]
+  ];
 
   return (
     <DashboardLayout
@@ -1431,7 +1454,7 @@ export const SettingsPage: React.FC = () => {
       {/* Tabs */}
       <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} variant="pill" />
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default SettingsPage
+export default SettingsPage;

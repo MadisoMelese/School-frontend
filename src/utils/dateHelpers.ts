@@ -181,11 +181,7 @@ export const getDaysDifference = (date1: Date, date2: Date): number => {
  * Get difference in months between two dates
  */
 export const getMonthsDifference = (date1: Date, date2: Date): number => {
-  return (
-    date2.getMonth() -
-    date1.getMonth() +
-    12 * (date2.getFullYear() - date1.getFullYear())
-  );
+  return date2.getMonth() - date1.getMonth() + 12 * (date2.getFullYear() - date1.getFullYear());
 };
 
 /**
@@ -314,7 +310,6 @@ export const isCurrentOrUpcoming = (classDate: Date, startTime: string): boolean
 
   // Check if class is today and time is >= now
   return (
-    classDate.toDateString() === now.toDateString() &&
-    classDateTime.getTime() >= now.getTime()
+    classDate.toDateString() === now.toDateString() && classDateTime.getTime() >= now.getTime()
   );
 };

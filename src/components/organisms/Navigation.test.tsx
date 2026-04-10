@@ -52,13 +52,7 @@ describe('Navigation Component with Scroll Hiding', () => {
 
   it('should render navigation items', () => {
     const onItemClick = vi.fn();
-    render(
-      <Navigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        onLogout={vi.fn()}
-      />,
-    );
+    render(<Navigation items={mockItems} onItemClick={onItemClick} onLogout={vi.fn()} />);
 
     const dashboardItems = screen.getAllByText('Dashboard');
     expect(dashboardItems.length).toBeGreaterThan(0);
@@ -67,13 +61,7 @@ describe('Navigation Component with Scroll Hiding', () => {
 
   it('should call onItemClick when navigation item is clicked', () => {
     const onItemClick = vi.fn();
-    render(
-      <Navigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        onLogout={vi.fn()}
-      />,
-    );
+    render(<Navigation items={mockItems} onItemClick={onItemClick} onLogout={vi.fn()} />);
 
     const dashboardButtons = screen.getAllByText('Dashboard');
     fireEvent.click(dashboardButtons[0]);
@@ -89,7 +77,7 @@ describe('Navigation Component with Scroll Hiding', () => {
         onItemClick={onItemClick}
         onLogout={vi.fn()}
         activeItem="grades"
-      />,
+      />
     );
 
     const gradesButtons = screen.getAllByText('Grades');
@@ -98,13 +86,7 @@ describe('Navigation Component with Scroll Hiding', () => {
 
   it('should display badge count for items', () => {
     const onItemClick = vi.fn();
-    render(
-      <Navigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        onLogout={vi.fn()}
-      />,
-    );
+    render(<Navigation items={mockItems} onItemClick={onItemClick} onLogout={vi.fn()} />);
 
     const badgeItems = screen.getAllByText('2');
     expect(badgeItems.length).toBeGreaterThan(0);
@@ -118,7 +100,7 @@ describe('Navigation Component with Scroll Hiding', () => {
         onItemClick={onItemClick}
         onLogout={vi.fn()}
         useBottomTabNavigation={true}
-      />,
+      />
     );
 
     const bottomNav = container.querySelector('nav[aria-label="Mobile bottom navigation"]');
@@ -133,7 +115,7 @@ describe('Navigation Component with Scroll Hiding', () => {
         onItemClick={onItemClick}
         onLogout={vi.fn()}
         useBottomTabNavigation={false}
-      />,
+      />
     );
 
     const bottomNav = container.querySelector('nav[aria-label="Mobile bottom navigation"]');
@@ -143,11 +125,7 @@ describe('Navigation Component with Scroll Hiding', () => {
   it('should have proper accessibility attributes', () => {
     const onItemClick = vi.fn();
     const { container } = render(
-      <Navigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        onLogout={vi.fn()}
-      />,
+      <Navigation items={mockItems} onItemClick={onItemClick} onLogout={vi.fn()} />
     );
 
     const sidebar = container.querySelector('aside[role="navigation"]');
@@ -157,11 +135,7 @@ describe('Navigation Component with Scroll Hiding', () => {
   it('should toggle sidebar on mobile menu button click', () => {
     const onItemClick = vi.fn();
     const { container } = render(
-      <Navigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        onLogout={vi.fn()}
-      />,
+      <Navigation items={mockItems} onItemClick={onItemClick} onLogout={vi.fn()} />
     );
 
     const menuButton = screen.getByLabelText('Toggle navigation');
@@ -174,11 +148,7 @@ describe('Navigation Component with Scroll Hiding', () => {
   it('should close sidebar when navigation item is clicked', () => {
     const onItemClick = vi.fn();
     const { container } = render(
-      <Navigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        onLogout={vi.fn()}
-      />,
+      <Navigation items={mockItems} onItemClick={onItemClick} onLogout={vi.fn()} />
     );
 
     // Open sidebar
@@ -197,11 +167,7 @@ describe('Navigation Component with Scroll Hiding', () => {
   it('should display overlay when sidebar is open on mobile', () => {
     const onItemClick = vi.fn();
     const { container } = render(
-      <Navigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        onLogout={vi.fn()}
-      />,
+      <Navigation items={mockItems} onItemClick={onItemClick} onLogout={vi.fn()} />
     );
 
     const menuButton = screen.getByLabelText('Toggle navigation');
@@ -214,11 +180,7 @@ describe('Navigation Component with Scroll Hiding', () => {
   it('should close sidebar when overlay is clicked', () => {
     const onItemClick = vi.fn();
     const { container } = render(
-      <Navigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        onLogout={vi.fn()}
-      />,
+      <Navigation items={mockItems} onItemClick={onItemClick} onLogout={vi.fn()} />
     );
 
     // Open sidebar
@@ -236,13 +198,7 @@ describe('Navigation Component with Scroll Hiding', () => {
 
   it('should display SchoolOS logo', () => {
     const onItemClick = vi.fn();
-    render(
-      <Navigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        onLogout={vi.fn()}
-      />,
-    );
+    render(<Navigation items={mockItems} onItemClick={onItemClick} onLogout={vi.fn()} />);
 
     const logos = screen.getAllByText('SchoolOS');
     expect(logos.length).toBeGreaterThan(0);
@@ -251,11 +207,7 @@ describe('Navigation Component with Scroll Hiding', () => {
   it('should have proper z-index layering', () => {
     const onItemClick = vi.fn();
     const { container } = render(
-      <Navigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        onLogout={vi.fn()}
-      />,
+      <Navigation items={mockItems} onItemClick={onItemClick} onLogout={vi.fn()} />
     );
 
     const sidebar = container.querySelector('aside');
@@ -265,11 +217,7 @@ describe('Navigation Component with Scroll Hiding', () => {
   it('should have smooth sidebar transition', () => {
     const onItemClick = vi.fn();
     const { container } = render(
-      <Navigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        onLogout={vi.fn()}
-      />,
+      <Navigation items={mockItems} onItemClick={onItemClick} onLogout={vi.fn()} />
     );
 
     const sidebar = container.querySelector('aside');
@@ -286,7 +234,7 @@ describe('Navigation Component with Scroll Hiding', () => {
         onLogout={vi.fn()}
         enableScrollHiding={true}
         scrollHideThreshold={75}
-      />,
+      />
     );
 
     // Component should render without errors
@@ -302,7 +250,7 @@ describe('Navigation Component with Scroll Hiding', () => {
         onItemClick={onItemClick}
         onLogout={vi.fn()}
         enableScrollHiding={false}
-      />,
+      />
     );
 
     // Component should render without errors
@@ -320,7 +268,7 @@ describe('Navigation Component with Scroll Hiding', () => {
         useBottomTabNavigation={true}
         enableScrollHiding={true}
         scrollHideThreshold={100}
-      />,
+      />
     );
 
     const bottomNav = container.querySelector('nav[aria-label="Mobile bottom navigation"]');
@@ -330,12 +278,7 @@ describe('Navigation Component with Scroll Hiding', () => {
   it('should render with user information', () => {
     const onItemClick = vi.fn();
     render(
-      <Navigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        onLogout={vi.fn()}
-        user={mockUser}
-      />,
+      <Navigation items={mockItems} onItemClick={onItemClick} onLogout={vi.fn()} user={mockUser} />
     );
 
     // User info should be in the sidebar
@@ -347,12 +290,7 @@ describe('Navigation Component with Scroll Hiding', () => {
     const onLogout = vi.fn();
     const onItemClick = vi.fn();
     render(
-      <Navigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        onLogout={onLogout}
-        user={mockUser}
-      />,
+      <Navigation items={mockItems} onItemClick={onItemClick} onLogout={onLogout} user={mockUser} />
     );
 
     const userMenuButtons = screen.getAllByText('John Doe');

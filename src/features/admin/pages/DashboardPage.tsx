@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { DashboardLayout } from '@components/templates/DashboardLayout'
-import { Dashboard, Widget } from '@components/organisms/Dashboard'
-import { Badge } from '@components/atoms/Badge'
-import { useAuth } from '@hooks/useAuth'
-import { useLocalStorage } from '@hooks/useLocalStorage'
-import { apiClient } from '@services/api/client'
+import React, { useEffect, useState } from 'react';
+import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { Dashboard, Widget } from '@components/organisms/Dashboard';
+import { Badge } from '@components/atoms/Badge';
+import { useAuth } from '@hooks/useAuth';
+import { useLocalStorage } from '@hooks/useLocalStorage';
+import { apiClient } from '@services/api/client';
 
 /**
  * Admin Dashboard Page
@@ -16,152 +16,170 @@ import { apiClient } from '@services/api/client'
  */
 
 interface DashboardState {
-  scrollPosition: number
-  lastUpdated: number
+  scrollPosition: number;
+  lastUpdated: number;
 }
 
 interface ResourceStats {
-  students?: number
-  teachers?: number
-  classes?: number
-  exams?: number
-  grades?: number
-  fees?: number
-  attendance?: number
-  announcements?: number
-  books?: number
-  timetables?: number
-  messages?: number
-  staff?: number
-  borrows?: number
+  students?: number;
+  teachers?: number;
+  classes?: number;
+  exams?: number;
+  grades?: number;
+  fees?: number;
+  attendance?: number;
+  announcements?: number;
+  books?: number;
+  timetables?: number;
+  messages?: number;
+  staff?: number;
+  borrows?: number;
 }
 
 export const AdminDashboardPage: React.FC = () => {
-  const { user } = useAuth()
+  const { user } = useAuth();
   const [dashboardState, setDashboardState] = useLocalStorage<DashboardState>(
     `dashboard-${user?.id}`,
     { scrollPosition: 0, lastUpdated: Date.now() }
-  )
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [widgets, setWidgets] = useState<Widget[]>([])
+  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [widgets, setWidgets] = useState<Widget[]>([]);
 
   // Load dashboard data from backend
   useEffect(() => {
     const loadDashboard = async () => {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
 
         // Fetch HR summary
-        const hrResponse = await apiClient.get('/hr/summary')
-        const summary = hrResponse.data.data || hrResponse.data
+        const hrResponse = await apiClient.get('/hr/summary');
+        const summary = hrResponse.data.data || hrResponse.data;
 
         // Fetch resource counts
-        const stats: ResourceStats = {}
-        
+        const stats: ResourceStats = {};
+
         try {
-          const studentsRes = await apiClient.get('/students')
-          const studentsData = studentsRes.data.data
-          stats.students = Array.isArray(studentsData) ? studentsData.length : studentsData?.students?.length || 0
+          const studentsRes = await apiClient.get('/students');
+          const studentsData = studentsRes.data.data;
+          stats.students = Array.isArray(studentsData)
+            ? studentsData.length
+            : studentsData?.students?.length || 0;
         } catch (e) {
-          stats.students = 0
+          stats.students = 0;
         }
 
         try {
-          const teachersRes = await apiClient.get('/teachers')
-          const teachersData = teachersRes.data.data
-          stats.teachers = Array.isArray(teachersData) ? teachersData.length : teachersData?.teachers?.length || 0
+          const teachersRes = await apiClient.get('/teachers');
+          const teachersData = teachersRes.data.data;
+          stats.teachers = Array.isArray(teachersData)
+            ? teachersData.length
+            : teachersData?.teachers?.length || 0;
         } catch (e) {
-          stats.teachers = 0
+          stats.teachers = 0;
         }
 
         try {
-          const classesRes = await apiClient.get('/classes')
-          const classesData = classesRes.data.data
-          stats.classes = Array.isArray(classesData) ? classesData.length : classesData?.classes?.length || 0
+          const classesRes = await apiClient.get('/classes');
+          const classesData = classesRes.data.data;
+          stats.classes = Array.isArray(classesData)
+            ? classesData.length
+            : classesData?.classes?.length || 0;
         } catch (e) {
-          stats.classes = 0
+          stats.classes = 0;
         }
 
         try {
-          const examsRes = await apiClient.get('/exams')
-          const examsData = examsRes.data.data
-          stats.exams = Array.isArray(examsData) ? examsData.length : examsData?.exams?.length || 0
+          const examsRes = await apiClient.get('/exams');
+          const examsData = examsRes.data.data;
+          stats.exams = Array.isArray(examsData) ? examsData.length : examsData?.exams?.length || 0;
         } catch (e) {
-          stats.exams = 0
+          stats.exams = 0;
         }
 
         try {
-          const gradesRes = await apiClient.get('/grades')
-          const gradesData = gradesRes.data.data
-          stats.grades = Array.isArray(gradesData) ? gradesData.length : gradesData?.grades?.length || 0
+          const gradesRes = await apiClient.get('/grades');
+          const gradesData = gradesRes.data.data;
+          stats.grades = Array.isArray(gradesData)
+            ? gradesData.length
+            : gradesData?.grades?.length || 0;
         } catch (e) {
-          stats.grades = 0
+          stats.grades = 0;
         }
 
         try {
-          const feesRes = await apiClient.get('/fees')
-          const feesData = feesRes.data.data
-          stats.fees = Array.isArray(feesData) ? feesData.length : feesData?.fees?.length || 0
+          const feesRes = await apiClient.get('/fees');
+          const feesData = feesRes.data.data;
+          stats.fees = Array.isArray(feesData) ? feesData.length : feesData?.fees?.length || 0;
         } catch (e) {
-          stats.fees = 0
+          stats.fees = 0;
         }
 
         try {
-          const attendanceRes = await apiClient.get('/attendance')
-          const attendanceData = attendanceRes.data.data
-          stats.attendance = Array.isArray(attendanceData) ? attendanceData.length : attendanceData?.attendance?.length || 0
+          const attendanceRes = await apiClient.get('/attendance');
+          const attendanceData = attendanceRes.data.data;
+          stats.attendance = Array.isArray(attendanceData)
+            ? attendanceData.length
+            : attendanceData?.attendance?.length || 0;
         } catch (e) {
-          stats.attendance = 0
+          stats.attendance = 0;
         }
 
         try {
-          const announcementsRes = await apiClient.get('/announcements')
-          const announcementsData = announcementsRes.data.data
-          stats.announcements = Array.isArray(announcementsData) ? announcementsData.length : announcementsData?.announcements?.length || 0
+          const announcementsRes = await apiClient.get('/announcements');
+          const announcementsData = announcementsRes.data.data;
+          stats.announcements = Array.isArray(announcementsData)
+            ? announcementsData.length
+            : announcementsData?.announcements?.length || 0;
         } catch (e) {
-          stats.announcements = 0
+          stats.announcements = 0;
         }
 
         try {
-          const booksRes = await apiClient.get('/library/books')
-          const booksData = booksRes.data.data
-          stats.books = Array.isArray(booksData) ? booksData.length : booksData?.books?.length || 0
+          const booksRes = await apiClient.get('/library/books');
+          const booksData = booksRes.data.data;
+          stats.books = Array.isArray(booksData) ? booksData.length : booksData?.books?.length || 0;
         } catch (e) {
-          stats.books = 0
+          stats.books = 0;
         }
 
         try {
-          const timetablesRes = await apiClient.get('/timetables')
-          const timetablesData = timetablesRes.data.data
-          stats.timetables = Array.isArray(timetablesData) ? timetablesData.length : timetablesData?.timetables?.length || 0
+          const timetablesRes = await apiClient.get('/timetables');
+          const timetablesData = timetablesRes.data.data;
+          stats.timetables = Array.isArray(timetablesData)
+            ? timetablesData.length
+            : timetablesData?.timetables?.length || 0;
         } catch (e) {
-          stats.timetables = 0
+          stats.timetables = 0;
         }
 
         try {
-          const messagesRes = await apiClient.get('/messages/inbox')
-          const messagesData = messagesRes.data.data
-          stats.messages = Array.isArray(messagesData) ? messagesData.length : messagesData?.messages?.length || 0
+          const messagesRes = await apiClient.get('/messages/inbox');
+          const messagesData = messagesRes.data.data;
+          stats.messages = Array.isArray(messagesData)
+            ? messagesData.length
+            : messagesData?.messages?.length || 0;
         } catch (e) {
-          stats.messages = 0
+          stats.messages = 0;
         }
 
         try {
-          const staffRes = await apiClient.get('/hr')
-          const staffData = staffRes.data.data
-          stats.staff = Array.isArray(staffData) ? staffData.length : staffData?.staff?.length || 0
+          const staffRes = await apiClient.get('/hr');
+          const staffData = staffRes.data.data;
+          stats.staff = Array.isArray(staffData) ? staffData.length : staffData?.staff?.length || 0;
         } catch (e) {
-          stats.staff = 0
+          stats.staff = 0;
         }
 
         try {
-          const borrowsRes = await apiClient.get('/library/borrows')
-          const borrowsData = borrowsRes.data.data
-          stats.borrows = Array.isArray(borrowsData) ? borrowsData.length : borrowsData?.borrows?.length || 0
+          const borrowsRes = await apiClient.get('/library/borrows');
+          const borrowsData = borrowsRes.data.data;
+          stats.borrows = Array.isArray(borrowsData)
+            ? borrowsData.length
+            : borrowsData?.borrows?.length || 0;
         } catch (e) {
-          stats.borrows = 0
+          stats.borrows = 0;
         }
 
         // Create widgets with real data
@@ -175,15 +193,11 @@ export const AdminDashboardPage: React.FC = () => {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="bg-primary-50 rounded-lg p-4">
                   <p className="text-xs text-primary-600 font-medium mb-1">Total Staff</p>
-                  <p className="text-2xl font-bold text-primary-900">
-                    {summary?.totalStaff || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-primary-900">{summary?.totalStaff || 0}</p>
                 </div>
                 <div className="bg-success-50 rounded-lg p-4">
                   <p className="text-xs text-success-600 font-medium mb-1">Active</p>
-                  <p className="text-2xl font-bold text-success-900">
-                    {summary?.activeStaff || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-success-900">{summary?.activeStaff || 0}</p>
                 </div>
                 <div className="bg-warning-50 rounded-lg p-4">
                   <p className="text-xs text-warning-600 font-medium mb-1">On Leave</p>
@@ -193,9 +207,7 @@ export const AdminDashboardPage: React.FC = () => {
                 </div>
                 <div className="bg-info-50 rounded-lg p-4">
                   <p className="text-xs text-info-600 font-medium mb-1">Permanent</p>
-                  <p className="text-2xl font-bold text-info-900">
-                    {summary?.permanentStaff || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-info-900">{summary?.permanentStaff || 0}</p>
                 </div>
                 <div className="bg-neutral-50 rounded-lg p-4">
                   <p className="text-xs text-neutral-600 font-medium mb-1">Contract</p>
@@ -221,39 +233,27 @@ export const AdminDashboardPage: React.FC = () => {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="bg-blue-50 rounded-lg p-4">
                   <p className="text-xs text-blue-600 font-medium mb-1">Students</p>
-                  <p className="text-2xl font-bold text-blue-900">
-                    {stats.students || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-blue-900">{stats.students || 0}</p>
                 </div>
                 <div className="bg-purple-50 rounded-lg p-4">
                   <p className="text-xs text-purple-600 font-medium mb-1">Teachers</p>
-                  <p className="text-2xl font-bold text-purple-900">
-                    {stats.teachers || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-purple-900">{stats.teachers || 0}</p>
                 </div>
                 <div className="bg-indigo-50 rounded-lg p-4">
                   <p className="text-xs text-indigo-600 font-medium mb-1">Classes</p>
-                  <p className="text-2xl font-bold text-indigo-900">
-                    {stats.classes || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-indigo-900">{stats.classes || 0}</p>
                 </div>
                 <div className="bg-cyan-50 rounded-lg p-4">
                   <p className="text-xs text-cyan-600 font-medium mb-1">Exams</p>
-                  <p className="text-2xl font-bold text-cyan-900">
-                    {stats.exams || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-cyan-900">{stats.exams || 0}</p>
                 </div>
                 <div className="bg-teal-50 rounded-lg p-4">
                   <p className="text-xs text-teal-600 font-medium mb-1">Grades</p>
-                  <p className="text-2xl font-bold text-teal-900">
-                    {stats.grades || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-teal-900">{stats.grades || 0}</p>
                 </div>
                 <div className="bg-emerald-50 rounded-lg p-4">
                   <p className="text-xs text-emerald-600 font-medium mb-1">Timetables</p>
-                  <p className="text-2xl font-bold text-emerald-900">
-                    {stats.timetables || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-emerald-900">{stats.timetables || 0}</p>
                 </div>
               </div>
             ),
@@ -267,39 +267,27 @@ export const AdminDashboardPage: React.FC = () => {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="bg-rose-50 rounded-lg p-4">
                   <p className="text-xs text-rose-600 font-medium mb-1">Attendance Records</p>
-                  <p className="text-2xl font-bold text-rose-900">
-                    {stats.attendance || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-rose-900">{stats.attendance || 0}</p>
                 </div>
                 <div className="bg-pink-50 rounded-lg p-4">
                   <p className="text-xs text-pink-600 font-medium mb-1">Fees</p>
-                  <p className="text-2xl font-bold text-pink-900">
-                    {stats.fees || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-pink-900">{stats.fees || 0}</p>
                 </div>
                 <div className="bg-fuchsia-50 rounded-lg p-4">
                   <p className="text-xs text-fuchsia-600 font-medium mb-1">Announcements</p>
-                  <p className="text-2xl font-bold text-fuchsia-900">
-                    {stats.announcements || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-fuchsia-900">{stats.announcements || 0}</p>
                 </div>
                 <div className="bg-amber-50 rounded-lg p-4">
                   <p className="text-xs text-amber-600 font-medium mb-1">Library Books</p>
-                  <p className="text-2xl font-bold text-amber-900">
-                    {stats.books || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-amber-900">{stats.books || 0}</p>
                 </div>
                 <div className="bg-orange-50 rounded-lg p-4">
                   <p className="text-xs text-orange-600 font-medium mb-1">Book Borrows</p>
-                  <p className="text-2xl font-bold text-orange-900">
-                    {stats.borrows || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-orange-900">{stats.borrows || 0}</p>
                 </div>
                 <div className="bg-red-50 rounded-lg p-4">
                   <p className="text-xs text-red-600 font-medium mb-1">Messages</p>
-                  <p className="text-2xl font-bold text-red-900">
-                    {stats.messages || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-red-900">{stats.messages || 0}</p>
                 </div>
               </div>
             ),
@@ -313,15 +301,11 @@ export const AdminDashboardPage: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-violet-50 rounded-lg p-4">
                   <p className="text-xs text-violet-600 font-medium mb-1">Total Staff</p>
-                  <p className="text-2xl font-bold text-violet-900">
-                    {stats.staff || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-violet-900">{stats.staff || 0}</p>
                 </div>
                 <div className="bg-slate-50 rounded-lg p-4">
                   <p className="text-xs text-slate-600 font-medium mb-1">HR Records</p>
-                  <p className="text-2xl font-bold text-slate-900">
-                    {summary?.totalStaff || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-slate-900">{summary?.totalStaff || 0}</p>
                 </div>
               </div>
             ),
@@ -333,18 +317,21 @@ export const AdminDashboardPage: React.FC = () => {
             size: 'medium',
             content: (
               <div className="space-y-3">
-                {summary?.departmentBreakdown && Object.entries(summary.departmentBreakdown).length > 0 ? (
-                  Object.entries(summary.departmentBreakdown).map(([dept, count]: [string, any]) => (
-                    <div
-                      key={dept}
-                      className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <p className="font-medium text-neutral-900 capitalize">{dept}</p>
+                {summary?.departmentBreakdown &&
+                Object.entries(summary.departmentBreakdown).length > 0 ? (
+                  Object.entries(summary.departmentBreakdown).map(
+                    ([dept, count]: [string, any]) => (
+                      <div
+                        key={dept}
+                        className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg"
+                      >
+                        <div className="flex-1">
+                          <p className="font-medium text-neutral-900 capitalize">{dept}</p>
+                        </div>
+                        <Badge variant="info">{count}</Badge>
                       </div>
-                      <Badge variant="info">{count}</Badge>
-                    </div>
-                  ))
+                    )
+                  )
                 ) : (
                   <div className="p-4 text-center">
                     <p className="text-neutral-600">No department data available</p>
@@ -361,20 +348,24 @@ export const AdminDashboardPage: React.FC = () => {
             content: (
               <div className="space-y-4">
                 {summary?.contractTypeBreakdown ? (
-                  Object.entries(summary.contractTypeBreakdown).map(([type, count]: [string, any]) => (
-                    <div key={type}>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-neutral-600 capitalize">{type}</span>
-                        <Badge variant="success">{count}</Badge>
+                  Object.entries(summary.contractTypeBreakdown).map(
+                    ([type, count]: [string, any]) => (
+                      <div key={type}>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm text-neutral-600 capitalize">{type}</span>
+                          <Badge variant="success">{count}</Badge>
+                        </div>
+                        <div className="w-full bg-neutral-200 rounded-full h-2 overflow-hidden">
+                          <div
+                            className="h-full bg-primary-500"
+                            style={{
+                              width: `${((count as number) / (summary?.totalStaff || 1)) * 100}%`,
+                            }}
+                          />
+                        </div>
                       </div>
-                      <div className="w-full bg-neutral-200 rounded-full h-2 overflow-hidden">
-                        <div
-                          className="h-full bg-primary-500"
-                          style={{ width: `${((count as number) / (summary?.totalStaff || 1)) * 100}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))
+                    )
+                  )
                 ) : (
                   <div className="p-4 text-center">
                     <p className="text-neutral-600">No contract data available</p>
@@ -383,25 +374,25 @@ export const AdminDashboardPage: React.FC = () => {
               </div>
             ),
           },
-        ]
+        ];
 
-        setWidgets(dashboardWidgets)
+        setWidgets(dashboardWidgets);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load dashboard')
+        setError(err instanceof Error ? err.message : 'Failed to load dashboard');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadDashboard()
-  }, [])
+    loadDashboard();
+  }, []);
 
   // Restore scroll position
   useEffect(() => {
     if (dashboardState?.scrollPosition) {
-      window.scrollTo(0, dashboardState.scrollPosition)
+      window.scrollTo(0, dashboardState.scrollPosition);
     }
-  }, [dashboardState])
+  }, [dashboardState]);
 
   // Save scroll position on scroll
   useEffect(() => {
@@ -410,12 +401,12 @@ export const AdminDashboardPage: React.FC = () => {
         ...dashboardState,
         scrollPosition: window.scrollY,
         lastUpdated: Date.now(),
-      })
-    }
+      });
+    };
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [dashboardState, setDashboardState])
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [dashboardState, setDashboardState]);
 
   return (
     <DashboardLayout
@@ -424,7 +415,7 @@ export const AdminDashboardPage: React.FC = () => {
     >
       <Dashboard widgets={widgets} loading={loading} error={error || undefined} />
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default AdminDashboardPage
+export default AdminDashboardPage;

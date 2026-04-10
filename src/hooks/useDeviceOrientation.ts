@@ -35,14 +35,14 @@ export const useDeviceOrientation = (throttleMs: number = 300): DeviceOrientatio
 
   const handleOrientationChange = useCallback(() => {
     const now = Date.now();
-    
+
     // Throttle orientation change events
     if (now - lastUpdateTimeRef.current < throttleMs) {
       return;
     }
 
     lastUpdateTimeRef.current = now;
-    
+
     const orientation = getOrientation();
     const angle = getOrientationAngle();
 

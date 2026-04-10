@@ -208,7 +208,9 @@ export const teacherService = {
   /**
    * Send message to student(s) or class
    */
-  sendMessage: async (data: SendMessageRequest & { classId?: string }): Promise<SendMessageResponse> => {
+  sendMessage: async (
+    data: SendMessageRequest & { classId?: string }
+  ): Promise<SendMessageResponse> => {
     const response = await apiClient.post<SendMessageResponse>('/teacher/messages', data);
     return response.data;
   },

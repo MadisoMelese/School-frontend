@@ -1,32 +1,32 @@
-import React from 'react'
-import { Card } from '../molecules/Card'
-import { Badge } from '../atoms/Badge'
-import { Icon } from '../atoms/Icon'
+import React from 'react';
+import { Card } from '../molecules/Card';
+import { Badge } from '../atoms/Badge';
+import { Icon } from '../atoms/Icon';
 
 export interface GradeCardProps {
-  subject: string
-  marksObtained: number
-  totalMarks: number
-  grade: string
-  remarks?: string
-  examDate?: Date
-  onClick?: () => void
+  subject: string;
+  marksObtained: number;
+  totalMarks: number;
+  grade: string;
+  remarks?: string;
+  examDate?: Date;
+  onClick?: () => void;
 }
 
 const getGradeColor = (grade: string): 'success' | 'warning' | 'danger' | 'info' => {
-  const gradeUpper = grade.toUpperCase()
-  if (gradeUpper === 'A' || gradeUpper === 'A+') return 'success'
-  if (gradeUpper === 'B' || gradeUpper === 'B+') return 'info'
-  if (gradeUpper === 'C' || gradeUpper === 'C+') return 'warning'
-  return 'danger'
-}
+  const gradeUpper = grade.toUpperCase();
+  if (gradeUpper === 'A' || gradeUpper === 'A+') return 'success';
+  if (gradeUpper === 'B' || gradeUpper === 'B+') return 'info';
+  if (gradeUpper === 'C' || gradeUpper === 'C+') return 'warning';
+  return 'danger';
+};
 
 const getPercentageColor = (percentage: number): string => {
-  if (percentage >= 90) return 'text-success-600'
-  if (percentage >= 80) return 'text-primary-600'
-  if (percentage >= 70) return 'text-warning-600'
-  return 'text-danger-600'
-}
+  if (percentage >= 90) return 'text-success-600';
+  if (percentage >= 80) return 'text-primary-600';
+  if (percentage >= 70) return 'text-warning-600';
+  return 'text-danger-600';
+};
 
 export const GradeCard: React.FC<GradeCardProps> = ({
   subject,
@@ -37,7 +37,7 @@ export const GradeCard: React.FC<GradeCardProps> = ({
   examDate,
   onClick,
 }) => {
-  const percentage = Math.round((marksObtained / totalMarks) * 100)
+  const percentage = Math.round((marksObtained / totalMarks) * 100);
 
   return (
     <Card
@@ -71,9 +71,7 @@ export const GradeCard: React.FC<GradeCardProps> = ({
           </div>
           <div className="bg-neutral-50 rounded-lg p-3">
             <p className="text-xs text-neutral-600 mb-1">Percentage</p>
-            <p className={`text-lg font-bold ${getPercentageColor(percentage)}`}>
-              {percentage}%
-            </p>
+            <p className={`text-lg font-bold ${getPercentageColor(percentage)}`}>{percentage}%</p>
           </div>
         </div>
 
@@ -123,5 +121,5 @@ export const GradeCard: React.FC<GradeCardProps> = ({
         </div>
       </div>
     </Card>
-  )
-}
+  );
+};

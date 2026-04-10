@@ -56,11 +56,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
   it('should render all navigation items', () => {
     const onItemClick = vi.fn();
     render(
-      <BottomTabNavigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        activeItem="dashboard"
-      />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} activeItem="dashboard" />
     );
 
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
@@ -72,13 +68,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
 
   it('should highlight active item', () => {
     const onItemClick = vi.fn();
-    render(
-      <BottomTabNavigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        activeItem="grades"
-      />,
-    );
+    render(<BottomTabNavigation items={mockItems} onItemClick={onItemClick} activeItem="grades" />);
 
     const gradesButton = screen.getByLabelText('Grades');
     expect(gradesButton).toHaveClass('text-primary-600');
@@ -87,11 +77,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
   it('should call onItemClick when item is clicked', () => {
     const onItemClick = vi.fn();
     render(
-      <BottomTabNavigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        activeItem="dashboard"
-      />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} activeItem="dashboard" />
     );
 
     const gradesButton = screen.getByLabelText('Grades');
@@ -103,11 +89,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
   it('should display badge count when present', () => {
     const onItemClick = vi.fn();
     render(
-      <BottomTabNavigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        activeItem="dashboard"
-      />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} activeItem="dashboard" />
     );
 
     expect(screen.getByText('3')).toBeInTheDocument();
@@ -133,11 +115,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
 
     const onItemClick = vi.fn();
     render(
-      <BottomTabNavigation
-        items={itemsWithRoles}
-        onItemClick={onItemClick}
-        userRole="student"
-      />,
+      <BottomTabNavigation items={itemsWithRoles} onItemClick={onItemClick} userRole="student" />
     );
 
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
@@ -155,11 +133,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
 
     const onItemClick = vi.fn();
     const { container } = render(
-      <BottomTabNavigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        enableScrollHiding={true}
-      />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} enableScrollHiding={true} />
     );
 
     const nav = container.querySelector('nav');
@@ -177,11 +151,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
 
     const onItemClick = vi.fn();
     const { container } = render(
-      <BottomTabNavigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        enableScrollHiding={true}
-      />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} enableScrollHiding={true} />
     );
 
     const nav = container.querySelector('nav');
@@ -199,11 +169,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
 
     const onItemClick = vi.fn();
     const { container } = render(
-      <BottomTabNavigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        enableScrollHiding={false}
-      />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} enableScrollHiding={false} />
     );
 
     const nav = container.querySelector('nav');
@@ -214,11 +180,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
     const mockUseHeaderVisibility = useHeaderVisibility as any;
     const onItemClick = vi.fn();
     render(
-      <BottomTabNavigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        scrollHideThreshold={100}
-      />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} scrollHideThreshold={100} />
     );
 
     expect(mockUseHeaderVisibility).toHaveBeenCalledWith(100);
@@ -227,9 +189,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
   it('should use default scroll threshold of 50', () => {
     const mockUseHeaderVisibility = useHeaderVisibility as any;
     const onItemClick = vi.fn();
-    render(
-      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} />,
-    );
+    render(<BottomTabNavigation items={mockItems} onItemClick={onItemClick} />);
 
     expect(mockUseHeaderVisibility).toHaveBeenCalledWith(50);
   });
@@ -237,11 +197,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
   it('should have smooth transition animation', () => {
     const onItemClick = vi.fn();
     const { container } = render(
-      <BottomTabNavigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        enableScrollHiding={true}
-      />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} enableScrollHiding={true} />
     );
 
     const nav = container.querySelector('nav');
@@ -253,7 +209,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
   it('should have proper z-index for fixed positioning', () => {
     const onItemClick = vi.fn();
     const { container } = render(
-      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} />
     );
 
     const nav = container.querySelector('nav');
@@ -263,7 +219,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
   it('should have proper border styling', () => {
     const onItemClick = vi.fn();
     const { container } = render(
-      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} />
     );
 
     const nav = container.querySelector('nav');
@@ -274,7 +230,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
   it('should have safe area bottom padding', () => {
     const onItemClick = vi.fn();
     const { container } = render(
-      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} />
     );
 
     const nav = container.querySelector('nav');
@@ -293,12 +249,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
     ];
 
     const onItemClick = vi.fn();
-    render(
-      <BottomTabNavigation
-        items={itemsWithLargeBadge}
-        onItemClick={onItemClick}
-      />,
-    );
+    render(<BottomTabNavigation items={itemsWithLargeBadge} onItemClick={onItemClick} />);
 
     expect(screen.getByText('99+')).toBeInTheDocument();
   });
@@ -306,11 +257,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
   it('should have proper accessibility attributes', () => {
     const onItemClick = vi.fn();
     render(
-      <BottomTabNavigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        activeItem="dashboard"
-      />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} activeItem="dashboard" />
     );
 
     const nav = screen.getByRole('navigation');
@@ -322,9 +269,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
 
   it('should handle empty items array', () => {
     const onItemClick = vi.fn();
-    const { container } = render(
-      <BottomTabNavigation items={[]} onItemClick={onItemClick} />,
-    );
+    const { container } = render(<BottomTabNavigation items={[]} onItemClick={onItemClick} />);
 
     const nav = container.querySelector('nav');
     expect(nav).toBeInTheDocument();
@@ -333,22 +278,14 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
   it('should update active item when prop changes', () => {
     const onItemClick = vi.fn();
     const { rerender } = render(
-      <BottomTabNavigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        activeItem="dashboard"
-      />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} activeItem="dashboard" />
     );
 
     let dashboardButton = screen.getByLabelText('Dashboard');
     expect(dashboardButton).toHaveClass('text-primary-600');
 
     rerender(
-      <BottomTabNavigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        activeItem="grades"
-      />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} activeItem="grades" />
     );
 
     dashboardButton = screen.getByLabelText('Dashboard');
@@ -371,11 +308,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
 
     const onItemClick = vi.fn();
     const { container, rerender } = render(
-      <BottomTabNavigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        enableScrollHiding={true}
-      />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} enableScrollHiding={true} />
     );
 
     let nav = container.querySelector('nav');
@@ -390,11 +323,7 @@ describe('BottomTabNavigation Component with Scroll Hiding', () => {
     });
 
     rerender(
-      <BottomTabNavigation
-        items={mockItems}
-        onItemClick={onItemClick}
-        enableScrollHiding={true}
-      />,
+      <BottomTabNavigation items={mockItems} onItemClick={onItemClick} enableScrollHiding={true} />
     );
 
     nav = container.querySelector('nav');

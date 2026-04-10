@@ -1,20 +1,20 @@
-import React from 'react'
-import { Label } from '../atoms/Label'
-import { Input } from '../atoms/Input'
+import React from 'react';
+import { Label } from '../atoms/Label';
+import { Input } from '../atoms/Input';
 
 interface FormFieldProps {
-  label: string
-  name?: string
-  type?: string
-  value?: string
-  onChange?: (value: string) => void
-  error?: string
-  helperText?: string
-  required?: boolean
-  disabled?: boolean
-  placeholder?: string
-  id?: string
-  children?: React.ReactNode
+  label: string;
+  name?: string;
+  type?: string;
+  value?: string;
+  onChange?: (value: string) => void;
+  error?: string;
+  helperText?: string;
+  required?: boolean;
+  disabled?: boolean;
+  placeholder?: string;
+  id?: string;
+  children?: React.ReactNode;
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
@@ -31,7 +31,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   id,
   children,
 }) => {
-  const fieldId = id || `field-${name}`
+  const fieldId = id || `field-${name}`;
 
   return (
     <div className="w-full">
@@ -61,5 +61,5 @@ export const FormField: React.FC<FormFieldProps> = ({
         </span>
       )}
     </div>
-  )
-}
+  );
+};

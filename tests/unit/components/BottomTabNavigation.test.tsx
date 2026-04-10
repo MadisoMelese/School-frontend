@@ -366,7 +366,7 @@ describe('BottomTabNavigation Component', () => {
 
   // Test 17: Switches active state when different items are clicked
   it('should switch active state when different items are clicked', () => {
-    const { rerender, container } = render(
+    const { rerender } = render(
       <BottomTabNavigation
         items={mockItems}
         activeItem="dashboard"

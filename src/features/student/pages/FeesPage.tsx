@@ -1,16 +1,16 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react'
-import { DashboardLayout } from '@components/templates/DashboardLayout'
-import { Card } from '@components/molecules/Card'
-import { DataTable, Column } from '@components/organisms/DataTable'
-import { Button } from '@components/atoms/Button'
-import { Input } from '@components/atoms/Input'
-import { Badge } from '@components/atoms/Badge'
-import { Icon } from '@components/atoms/Icon'
-import { Spinner } from '@components/atoms/Spinner'
-import { useDebounce } from '@hooks/useDebounce'
-import { useMediaQuery } from '@hooks/useMediaQuery'
-import { studentService } from '@services/api/studentService'
-import type { Fee } from '@types'
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { Card } from '@components/molecules/Card';
+import { DataTable, Column } from '@components/organisms/DataTable';
+import { Button } from '@components/atoms/Button';
+import { Input } from '@components/atoms/Input';
+import { Badge } from '@components/atoms/Badge';
+import { Icon } from '@components/atoms/Icon';
+import { Spinner } from '@components/atoms/Spinner';
+import { useDebounce } from '@hooks/useDebounce';
+import { useMediaQuery } from '@hooks/useMediaQuery';
+import { studentService } from '@services/api/studentService';
+import type { Fee } from '@types';
 
 /**
  * Student Fees Page
@@ -24,178 +24,170 @@ import type { Fee } from '@types'
  */
 
 interface FeeSummary {
-  totalFees: number
-  totalPaid: number
-  outstandingBalance: number
-}
-
-interface PaymentHistory {
-  id: string
-  feeId: string
-  amount: number
-  date: string
-  method: string
+  totalFees: number;
+  totalPaid: number;
+  outstandingBalance: number;
 }
 
 export const FeesPage: React.FC = () => {
-  const isMobile = useMediaQuery('(max-width: 768px)')
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   // State
-  const [fees, setFees] = useState<Fee[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedStatus, setSelectedStatus] = useState<string>('')
-  const [selectedYear, setSelectedYear] = useState<string>('')
-  const [selectedTerm, setSelectedTerm] = useState<string>('')
-  const [feeSummary, setFeeSummary] = useState<FeeSummary | null>(null)
-  const [paymentHistory, setPaymentHistory] = useState<PaymentHistory[]>([])
-  const [showPaymentHistory, setShowPaymentHistory] = useState(false)
-  const [sortKey, setSortKey] = useState<string | null>(null)
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | null>(null)
-  const [initiatingPayment, setInitiatingPayment] = useState<string | null>(null)
+  const [fees, setFees] = useState<Fee[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState<string>('');
+  const [selectedYear, setSelectedYear] = useState<string>('');
+  const [selectedTerm, setSelectedTerm] = useState<string>('');
+  const [feeSummary, setFeeSummary] = useState<FeeSummary | null>(null);
+  const [paymentHistory, setPaymentHistory] = useState<any[]>([]);
+  const [showPaymentHistory, setShowPaymentHistory] = useState(false);
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | null>(null);
+  const [initiatingPayment, setInitiatingPayment] = useState<string | null>(null);
 
   // Debounce search query
-  const debouncedSearchQuery = useDebounce(searchQuery, 300)
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   // Load fees data
   useEffect(() => {
     const loadFees = async () => {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
 
         // Fetch fees with filters
         const response = await studentService.getFees({
           status: selectedStatus || undefined,
           academicYear: selectedYear || undefined,
           term: selectedTerm || undefined,
-        })
+        });
 
-        setFees(response.data || [])
+        setFees(response.data || []);
 
         // Fetch fee summary
-        const summary = await studentService.getFeeSummary()
-        setFeeSummary(summary)
+        const summary = await studentService.getFeeSummary();
+        setFeeSummary(summary);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load fees')
+        setError(err instanceof Error ? err.message : 'Failed to load fees');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadFees()
-  }, [selectedStatus, selectedYear, selectedTerm])
+    loadFees();
+  }, [selectedStatus, selectedYear, selectedTerm]);
 
   // Filter and search fees
   const filteredFees = useMemo(() => {
-    let result = [...fees]
+    let result = [...fees];
 
     // Apply search filter
     if (debouncedSearchQuery) {
-      const query = debouncedSearchQuery.toLowerCase()
-      result = result.filter((fee) => fee.title.toLowerCase().includes(query))
+      const query = debouncedSearchQuery.toLowerCase();
+      result = result.filter((fee) => fee.title.toLowerCase().includes(query));
     }
 
     // Apply sorting
     if (sortKey && sortDirection) {
       result.sort((a, b) => {
-        let aVal: any = a[sortKey as keyof Fee]
-        let bVal: any = b[sortKey as keyof Fee]
+        let aVal: any = a[sortKey as keyof Fee];
+        let bVal: any = b[sortKey as keyof Fee];
 
         if (typeof aVal === 'string') {
-          aVal = aVal.toLowerCase()
-          bVal = (bVal as string).toLowerCase()
+          aVal = aVal.toLowerCase();
+          bVal = (bVal as string).toLowerCase();
         }
 
-        if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1
-        if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1
-        return 0
-      })
+        if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+        if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
     }
 
-    return result
-  }, [fees, debouncedSearchQuery, sortKey, sortDirection])
+    return result;
+  }, [fees, debouncedSearchQuery, sortKey, sortDirection]);
 
   // Get unique academic years and terms
   const academicYears = useMemo(() => {
-    const years = new Set(fees.map((f) => f.academicYear))
-    return Array.from(years).sort().reverse()
-  }, [fees])
+    const years = new Set(fees.map((f) => f.academicYear));
+    return Array.from(years).sort().reverse();
+  }, [fees]);
 
   const terms = useMemo(() => {
-    const termsSet = new Set(fees.filter((f) => f.term).map((f) => f.term!))
-    return Array.from(termsSet).sort()
-  }, [fees])
+    const termsSet = new Set(fees.filter((f) => f.term).map((f) => f.term!));
+    return Array.from(termsSet).sort();
+  }, [fees]);
 
   // Calculate days overdue
   const getDaysOverdue = (dueDate: string): number => {
-    const due = new Date(dueDate)
-    const today = new Date()
-    const diffTime = today.getTime() - due.getTime()
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return diffDays > 0 ? diffDays : 0
-  }
+    const due = new Date(dueDate);
+    const today = new Date();
+    const diffTime = today.getTime() - due.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays > 0 ? diffDays : 0;
+  };
 
   // Check if fee is overdue
   const isOverdue = (fee: Fee): boolean => {
-    return fee.status === 'overdue' || getDaysOverdue(fee.dueDate) > 0
-  }
+    return fee.status === 'overdue' || getDaysOverdue(fee.dueDate) > 0;
+  };
 
   // Handle sort
   const handleSort = (key: string, direction: 'asc' | 'desc') => {
-    setSortKey(key)
-    setSortDirection(direction)
-  }
+    setSortKey(key);
+    setSortDirection(direction);
+  };
 
   // Reset filters
   const handleResetFilters = useCallback(() => {
-    setSearchQuery('')
-    setSelectedStatus('')
-    setSelectedYear('')
-    setSelectedTerm('')
-    setSortKey(null)
-    setSortDirection(null)
-  }, [])
+    setSearchQuery('');
+    setSelectedStatus('');
+    setSelectedYear('');
+    setSelectedTerm('');
+    setSortKey(null);
+    setSortDirection(null);
+  }, []);
 
   // Handle payment initiation
   const handleInitiatePayment = async (feeId: string) => {
     try {
-      setInitiatingPayment(feeId)
+      setInitiatingPayment(feeId);
       // Call payment initiation API
-      await studentService.initiateFeePayment(feeId)
+      await studentService.initiateFeePayment(feeId);
       // In a real app, this would redirect to payment gateway
-      alert('Payment initiated. Redirecting to payment gateway...')
+      alert('Payment initiated. Redirecting to payment gateway...');
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to initiate payment')
+      alert(err instanceof Error ? err.message : 'Failed to initiate payment');
     } finally {
-      setInitiatingPayment(null)
+      setInitiatingPayment(null);
     }
-  }
+  };
 
   // Format currency
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-    }).format(amount)
-  }
+    }).format(amount);
+  };
 
   // Get status badge variant
   const getStatusVariant = (status: string): 'success' | 'warning' | 'danger' | 'info' => {
     switch (status) {
       case 'paid':
-        return 'success'
+        return 'success';
       case 'partial':
-        return 'info'
+        return 'info';
       case 'pending':
-        return 'warning'
+        return 'warning';
       case 'overdue':
-        return 'danger'
+        return 'danger';
       default:
-        return 'info'
+        return 'info';
     }
-  }
+  };
 
   // Table columns for desktop view
   const tableColumns: Column<Fee>[] = [
@@ -233,9 +225,7 @@ export const FeesPage: React.FC = () => {
       width: '15%',
       render: (value, row) => (
         <div className="flex items-center gap-2">
-          {isOverdue(row) && (
-            <Icon name="AlertCircle" size={16} className="text-danger-600" />
-          )}
+          {isOverdue(row) && <Icon name="AlertCircle" size={16} className="text-danger-600" />}
           <Badge variant={getStatusVariant(value)}>{value}</Badge>
         </div>
       ),
@@ -256,7 +246,7 @@ export const FeesPage: React.FC = () => {
         </Button>
       ),
     },
-  ]
+  ];
 
   if (loading) {
     return (
@@ -265,7 +255,7 @@ export const FeesPage: React.FC = () => {
           <Spinner size="lg" />
         </div>
       </DashboardLayout>
-    )
+    );
   }
 
   return (
@@ -370,9 +360,7 @@ export const FeesPage: React.FC = () => {
             <div className="space-y-3">
               {/* Search */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-2">
-                  Search
-                </label>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">Search</label>
                 <Input
                   type="text"
                   placeholder="Search by fee title..."
@@ -385,9 +373,7 @@ export const FeesPage: React.FC = () => {
 
               {/* Status Filter */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-2">
-                  Status
-                </label>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">Status</label>
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
@@ -427,9 +413,7 @@ export const FeesPage: React.FC = () => {
               {/* Term Filter */}
               {terms.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">
-                    Term
-                  </label>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">Term</label>
                   <select
                     value={selectedTerm}
                     onChange={(e) => setSelectedTerm(e.target.value)}
@@ -491,9 +475,7 @@ export const FeesPage: React.FC = () => {
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div>
                       <p className="text-neutral-600">Amount</p>
-                      <p className="font-semibold text-neutral-900">
-                        {formatCurrency(fee.amount)}
-                      </p>
+                      <p className="font-semibold text-neutral-900">{formatCurrency(fee.amount)}</p>
                     </div>
                     <div>
                       <p className="text-neutral-600">Paid</p>
@@ -538,7 +520,7 @@ export const FeesPage: React.FC = () => {
         )}
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default FeesPage
+export default FeesPage;

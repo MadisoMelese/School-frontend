@@ -20,15 +20,9 @@ interface BreadcrumbProps {
   className?: string;
 }
 
-export const Breadcrumb: React.FC<BreadcrumbProps> = ({
-  items,
-  className = '',
-}) => {
+export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = '' }) => {
   return (
-    <nav
-      className={`flex items-center gap-2 text-sm ${className}`}
-      aria-label="Breadcrumb"
-    >
+    <nav className={`flex items-center gap-2 text-sm ${className}`} aria-label="Breadcrumb">
       <ol className="flex items-center gap-2">
         {items.map((item, index) => (
           <li key={index} className="flex items-center gap-2">

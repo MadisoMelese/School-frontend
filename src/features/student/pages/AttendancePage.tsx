@@ -1,13 +1,13 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react'
-import { DashboardLayout } from '@components/templates/DashboardLayout'
-import { Card } from '@components/molecules/Card'
-import { Button } from '@components/atoms/Button'
-import { Badge } from '@components/atoms/Badge'
-import { Icon } from '@components/atoms/Icon'
-import { Spinner } from '@components/atoms/Spinner'
-import { useMediaQuery } from '@hooks/useMediaQuery'
-import { studentService } from '@services/api/studentService'
-import type { Attendance } from '@types'
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { Card } from '@components/molecules/Card';
+import { Button } from '@components/atoms/Button';
+import { Badge } from '@components/atoms/Badge';
+import { Icon } from '@components/atoms/Icon';
+import { Spinner } from '@components/atoms/Spinner';
+import { useMediaQuery } from '@hooks/useMediaQuery';
+import { studentService } from '@services/api/studentService';
+import type { Attendance } from '@types';
 
 /**
  * Student Attendance Page
@@ -22,91 +22,91 @@ import type { Attendance } from '@types'
  */
 
 interface AttendanceSummary {
-  totalPresent: number
-  totalAbsent: number
-  totalLate: number
-  totalExcused: number
-  attendancePercentage: number
+  totalPresent: number;
+  totalAbsent: number;
+  totalLate: number;
+  totalExcused: number;
+  attendancePercentage: number;
 }
 
 interface AttendanceByDate {
-  [date: string]: Attendance
+  [date: string]: Attendance;
 }
 
 const getStatusColor = (status: string): 'success' | 'danger' | 'warning' | 'neutral' => {
   switch (status) {
     case 'present':
-      return 'success'
+      return 'success';
     case 'absent':
-      return 'danger'
+      return 'danger';
     case 'late':
-      return 'warning'
+      return 'warning';
     case 'excused':
-      return 'neutral'
+      return 'neutral';
     default:
-      return 'neutral'
+      return 'neutral';
   }
-}
+};
 
 const getStatusLabel = (status: string): string => {
-  return status.charAt(0).toUpperCase() + status.slice(1)
-}
+  return status.charAt(0).toUpperCase() + status.slice(1);
+};
 
 const getDaysInMonth = (date: Date): number => {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
-}
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+};
 
 const getFirstDayOfMonth = (date: Date): number => {
-  return new Date(date.getFullYear(), date.getMonth(), 1).getDay()
-}
+  return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+};
 
 const formatDateKey = (date: Date): string => {
-  return date.toISOString().split('T')[0]
-}
+  return date.toISOString().split('T')[0];
+};
 
 export const AttendancePage: React.FC = () => {
-  const isMobile = useMediaQuery('(max-width: 768px)')
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   // State
-  const [attendance, setAttendance] = useState<Attendance[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [currentDate, setCurrentDate] = useState(new Date())
-  const [attendanceSummary, setAttendanceSummary] = useState<AttendanceSummary | null>(null)
+  const [attendance, setAttendance] = useState<Attendance[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [attendanceSummary, setAttendanceSummary] = useState<AttendanceSummary | null>(null);
 
   // Load attendance data
   useEffect(() => {
     const loadAttendance = async () => {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
 
         // Fetch attendance records for the current month
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0')
-        const year = currentDate.getFullYear()
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const year = currentDate.getFullYear();
 
         const response = await studentService.getAttendance({
           month: `${year}-${month}`,
           year: String(year),
-        })
+        });
 
-        setAttendance(response.data || [])
+        setAttendance(response.data || []);
 
         // Fetch attendance percentage
-        const percentageData = await studentService.getAttendancePercentage()
-        
-        // Calculate summary
-        const summary = calculateSummary(response.data || [], percentageData.percentage)
-        setAttendanceSummary(summary)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load attendance')
-      } finally {
-        setLoading(false)
-      }
-    }
+        const percentageData = await studentService.getAttendancePercentage();
 
-    loadAttendance()
-  }, [currentDate])
+        // Calculate summary
+        const summary = calculateSummary(response.data || [], percentageData.percentage);
+        setAttendanceSummary(summary);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load attendance');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadAttendance();
+  }, [currentDate]);
 
   // Calculate attendance summary
   const calculateSummary = (records: Attendance[], percentage: number): AttendanceSummary => {
@@ -116,81 +116,81 @@ export const AttendancePage: React.FC = () => {
       totalLate: 0,
       totalExcused: 0,
       attendancePercentage: percentage,
-    }
+    };
 
     records.forEach((record) => {
       switch (record.status) {
         case 'present':
-          summary.totalPresent++
-          break
+          summary.totalPresent++;
+          break;
         case 'absent':
-          summary.totalAbsent++
-          break
+          summary.totalAbsent++;
+          break;
         case 'late':
-          summary.totalLate++
-          break
+          summary.totalLate++;
+          break;
         case 'excused':
-          summary.totalExcused++
-          break
+          summary.totalExcused++;
+          break;
       }
-    })
+    });
 
-    return summary
-  }
+    return summary;
+  };
 
   // Create attendance map by date for quick lookup
   const attendanceByDate = useMemo(() => {
-    const map: AttendanceByDate = {}
+    const map: AttendanceByDate = {};
     attendance.forEach((record) => {
-      const dateKey = formatDateKey(new Date(record.date))
-      map[dateKey] = record
-    })
-    return map
-  }, [attendance])
+      const dateKey = formatDateKey(new Date(record.date));
+      map[dateKey] = record;
+    });
+    return map;
+  }, [attendance]);
 
   // Generate calendar days
   const calendarDays = useMemo(() => {
-    const daysInMonth = getDaysInMonth(currentDate)
-    const firstDay = getFirstDayOfMonth(currentDate)
-    const days = []
+    const daysInMonth = getDaysInMonth(currentDate);
+    const firstDay = getFirstDayOfMonth(currentDate);
+    const days = [];
 
     // Add empty cells for days before month starts
     for (let i = 0; i < firstDay; i++) {
-      days.push(null)
+      days.push(null);
     }
 
     // Add days of the month
     for (let i = 1; i <= daysInMonth; i++) {
-      days.push(i)
+      days.push(i);
     }
 
-    return days
-  }, [currentDate])
+    return days;
+  }, [currentDate]);
 
   // Handle month navigation
   const handlePreviousMonth = useCallback(() => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))
-  }, [currentDate])
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
+  }, [currentDate]);
 
   const handleNextMonth = useCallback(() => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))
-  }, [currentDate])
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
+  }, [currentDate]);
 
   const handleToday = useCallback(() => {
-    setCurrentDate(new Date())
-  }, [])
+    setCurrentDate(new Date());
+  }, []);
 
   // Get attendance for a specific day
   const getAttendanceForDay = (day: number): Attendance | null => {
-    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
-    const dateKey = formatDateKey(date)
-    return attendanceByDate[dateKey] || null
-  }
+    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+    const dateKey = formatDateKey(date);
+    return attendanceByDate[dateKey] || null;
+  };
 
   // Get list of attendance records for the month
   const attendanceList = useMemo(() => {
-    return attendance.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-  }, [attendance])
+    return attendance.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [attendance]);
 
   if (loading) {
     return (
@@ -199,7 +199,7 @@ export const AttendancePage: React.FC = () => {
           <Spinner size="lg" />
         </div>
       </DashboardLayout>
-    )
+    );
   }
 
   return (
@@ -271,9 +271,7 @@ export const AttendancePage: React.FC = () => {
                   <div className="w-3 h-3 rounded-full bg-warning-500 mr-2" />
                   <p className="text-sm text-neutral-600">Late</p>
                 </div>
-                <p className="text-3xl font-bold text-warning-600">
-                  {attendanceSummary.totalLate}
-                </p>
+                <p className="text-3xl font-bold text-warning-600">{attendanceSummary.totalLate}</p>
               </div>
             </Card>
 
@@ -344,11 +342,11 @@ export const AttendancePage: React.FC = () => {
                 <div className="grid grid-cols-7 gap-2">
                   {calendarDays.map((day, index) => {
                     if (day === null) {
-                      return <div key={`empty-${index}`} className="aspect-square" />
+                      return <div key={`empty-${index}`} className="aspect-square" />;
                     }
 
-                    const attendanceRecord = getAttendanceForDay(day)
-                    const status = attendanceRecord?.status || null
+                    const attendanceRecord = getAttendanceForDay(day);
+                    const status = attendanceRecord?.status || null;
 
                     return (
                       <div
@@ -393,7 +391,7 @@ export const AttendancePage: React.FC = () => {
                           </p>
                         )}
                       </div>
-                    )
+                    );
                   })}
                 </div>
               </div>
@@ -520,7 +518,7 @@ export const AttendancePage: React.FC = () => {
         </Card>
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default AttendancePage
+export default AttendancePage;

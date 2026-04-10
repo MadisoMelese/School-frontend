@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 import { User } from '@/types/api.types';
-import { setTokens, clearTokens, getAccessToken, getRefreshToken } from '@/services/api/tokenManager';
+import {
+  setTokens,
+  clearTokens,
+  getAccessToken,
+  getRefreshToken,
+} from '@/services/api/tokenManager';
 import authService from '@/services/api/authService';
 
 /**

@@ -29,7 +29,7 @@ export const authService = {
         accessToken: string;
       };
     }>('/sessions', credentials);
-    
+
     // Transform backend response to match frontend expectations
     const { data } = response.data;
     return {

@@ -13,25 +13,18 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import React from 'react'
 import {
   BREAKPOINTS,
   setViewportSize,
   setViewportToBreakpoint,
-  renderAtBreakpoint,
-  testAtBreakpoints,
-  hasResponsiveClasses,
-  isVisibleAtBreakpoint,
-  hasTouchTargetSize,
   hasResponsiveGrid,
   hasResponsiveGap,
   hasResponsivePadding,
   hasResponsiveTypography,
-  hasNoHorizontalScroll,
   assertResponsiveGrid,
   assertResponsiveTypography,
-  assertResponsiveSpacing,
 } from './responsive.test.utils'
 
 describe('Responsive Layout Tests', () => {

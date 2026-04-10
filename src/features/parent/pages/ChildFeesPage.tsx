@@ -6,7 +6,6 @@ import { DataTable } from '@/components/organisms';
 import { Card, Dropdown } from '@/components/molecules';
 import { Button, Badge, Spinner } from '@/components/atoms';
 import { parentService } from '@/services/api';
-import { Fee } from '@/types/api.types';
 import { useDebounce } from '@/hooks';
 import { formatDate } from '@/utils/formatters';
 import { Search } from 'lucide-react';
@@ -67,9 +66,7 @@ export const ChildFeesPage = () => {
     {
       key: 'dueDate' as const,
       label: 'Due Date',
-      render: (value: string) => (
-        <span>{formatDate(new Date(value), 'long')}</span>
-      ),
+      render: (value: string) => <span>{formatDate(new Date(value), 'long')}</span>,
     },
     {
       key: 'status' as const,
@@ -123,18 +120,14 @@ export const ChildFeesPage = () => {
 
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                 <div className="rounded-lg bg-primary-50 p-4 dark:bg-primary-950">
-                  <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                    Total Fees
-                  </p>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-400">Total Fees</p>
                   <p className="mt-1 text-2xl font-bold text-primary-600 dark:text-primary-400">
                     ${feeSummaryData.totalFees.toFixed(2)}
                   </p>
                 </div>
 
                 <div className="rounded-lg bg-success-50 p-4 dark:bg-success-950">
-                  <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                    Total Paid
-                  </p>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-400">Total Paid</p>
                   <p className="mt-1 text-2xl font-bold text-success-600 dark:text-success-400">
                     ${feeSummaryData.totalPaid.toFixed(2)}
                   </p>
@@ -222,11 +215,7 @@ export const ChildFeesPage = () => {
                 Fees ({filteredFees.length})
               </h3>
 
-              <DataTable
-                columns={feeColumns}
-                data={filteredFees}
-                pageSize={10}
-              />
+              <DataTable columns={feeColumns} data={filteredFees} pageSize={10} />
             </div>
           </Card>
         ) : (
@@ -243,9 +232,7 @@ export const ChildFeesPage = () => {
             </h3>
 
             <div className="space-y-2 text-sm text-neutral-600 dark:text-neutral-400">
-              <p>
-                • Fees can be paid online through the school portal or at the school office
-              </p>
+              <p>• Fees can be paid online through the school portal or at the school office</p>
               <p>• Please keep payment receipts for your records</p>
               <p>• Contact the school office for payment plan options if needed</p>
               <p>• Late payments may incur additional charges</p>

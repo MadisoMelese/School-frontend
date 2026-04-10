@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import { DashboardLayout } from '@components/templates/DashboardLayout'
-import { DataTable, type Column } from '@components/organisms/DataTable'
-import { Modal } from '@components/molecules/Modal'
-import { Button } from '@components/atoms/Button'
-import { Badge } from '@components/atoms/Badge'
-import { Icon } from '@components/atoms/Icon'
-import { Card } from '@components/molecules/Card'
-import { Input } from '@components/atoms/Input'
-import { Dropdown } from '@components/molecules/Dropdown'
-import { useUsers } from '../hooks/useUsers'
-import type { User, UserRole, UserStatus } from '@/types/api.types'
-import UserDetailsModal from '../components/UserDetailsModal'
-import UserEditForm from '../components/UserEditForm'
-import UserCreateForm from '../components/UserCreateForm'
+import React, { useEffect, useState } from 'react';
+import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { DataTable, type Column } from '@components/organisms/DataTable';
+import { Modal } from '@components/molecules/Modal';
+import { Button } from '@components/atoms/Button';
+import { Badge } from '@components/atoms/Badge';
+import { Icon } from '@components/atoms/Icon';
+import { Card } from '@components/molecules/Card';
+import { Input } from '@components/atoms/Input';
+import { Dropdown } from '@components/molecules/Dropdown';
+import { useUsers } from '../hooks/useUsers';
+import type { User, UserRole, UserStatus } from '@/types/api.types';
+import UserDetailsModal from '../components/UserDetailsModal';
+import UserEditForm from '../components/UserEditForm';
+import UserCreateForm from '../components/UserCreateForm';
 
 /**
  * Admin User Management Page
@@ -20,11 +20,11 @@ import UserCreateForm from '../components/UserCreateForm'
  * Supports: view details, edit, change role, block/unblock, delete, create
  */
 
-type ModalType = 'details' | 'edit' | 'create' | 'delete' | null
+type ModalType = 'details' | 'edit' | 'create' | 'delete' | null;
 
 interface ModalState {
-  type: ModalType
-  user?: User
+  type: ModalType;
+  user?: User;
 }
 
 const roleOptions = [
@@ -34,14 +34,14 @@ const roleOptions = [
   { value: 'parent', label: 'Parent' },
   { value: 'admin', label: 'Admin' },
   { value: 'user', label: 'User' },
-]
+];
 
 const statusOptions = [
   { value: '', label: 'All Status' },
   { value: 'active', label: 'Active' },
   { value: 'blocked', label: 'Blocked' },
   { value: 'inactive', label: 'Inactive' },
-]
+];
 
 export const UserManagementPage: React.FC = () => {
   const {
@@ -58,15 +58,15 @@ export const UserManagementPage: React.FC = () => {
     blockUser,
     unblockUser,
     deleteUser,
-  } = useUsers()
+  } = useUsers();
 
-  const [modal, setModal] = useState<ModalState>({ type: null })
+  const [modal, setModal] = useState<ModalState>({ type: null });
   const [filters, setFilters] = useState({
     role: '' as UserRole | '',
     status: '' as UserStatus | '',
     search: '',
-  })
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  });
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   // Load users on mount and when filters change
   useEffect(() => {
@@ -76,97 +76,89 @@ export const UserManagementPage: React.FC = () => {
       search: filters.search || undefined,
       page,
       limit,
-    })
-  }, [filters, page, limit, fetchUsers])
+    });
+  }, [filters, page, limit, fetchUsers]);
 
   // Handle filter changes
   const handleFilterChange = (key: string, value: any) => {
-    setFilters((prev) => ({ ...prev, [key]: value }))
-  }
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
 
   // Handle search with debouncing
   const handleSearch = (query: string) => {
-    handleFilterChange('search', query)
-  }
+    handleFilterChange('search', query);
+  };
 
   // Open modals
   const openDetailsModal = (user: User) => {
-    setModal({ type: 'details', user })
-  }
+    setModal({ type: 'details', user });
+  };
 
   const openEditModal = (user: User) => {
-    setModal({ type: 'edit', user })
-  }
+    setModal({ type: 'edit', user });
+  };
 
   const openCreateModal = () => {
-    setModal({ type: 'create' })
-  }
+    setModal({ type: 'create' });
+  };
 
   const openDeleteConfirm = (userId: string) => {
-    setDeleteConfirm(userId)
-  }
+    setDeleteConfirm(userId);
+  };
 
   // Close modals
   const closeModal = () => {
-    setModal({ type: null })
-  }
+    setModal({ type: null });
+  };
 
   const closeDeleteConfirm = () => {
-    setDeleteConfirm(null)
-  }
+    setDeleteConfirm(null);
+  };
 
   // Handle user creation
   const handleCreateUser = async (data: any) => {
-    try {
-      await createUser(data.firstname, data.lastname, data.email, data.role)
-      closeModal()
-    } catch (err) {
-      throw err
-    }
-  }
+    await createUser(data.firstname, data.lastname, data.email, data.role);
+    closeModal();
+  };
 
   // Handle user update
   const handleUpdateUser = async (data: any) => {
-    if (!modal.user) return
-    try {
-      await updateUser(modal.user.id, data)
-      closeModal()
-    } catch (err) {
-      throw err
-    }
-  }
+    if (!modal.user) return;
+    await updateUser(modal.user.id, data);
+    closeModal();
+  };
 
   // Handle role change
   const handleRoleChange = async (userId: string, newRole: UserRole) => {
     try {
-      await changeRole(userId, newRole)
+      await changeRole(userId, newRole);
     } catch (err) {
-      console.error('Failed to change role:', err)
+      console.error('Failed to change role:', err);
     }
-  }
+  };
 
   // Handle block/unblock
   const handleToggleBlock = async (user: User) => {
     try {
       if (user.isBlocked) {
-        await unblockUser(user.id)
+        await unblockUser(user.id);
       } else {
-        await blockUser(user.id)
+        await blockUser(user.id);
       }
     } catch (err) {
-      console.error('Failed to toggle block status:', err)
+      console.error('Failed to toggle block status:', err);
     }
-  }
+  };
 
   // Handle delete
   const handleDeleteUser = async (userId: string) => {
     try {
-      await deleteUser(userId)
-      closeDeleteConfirm()
+      await deleteUser(userId);
+      closeDeleteConfirm();
     } catch (err) {
-      console.error('Failed to delete user:', err)
+      console.error('Failed to delete user:', err);
     }
-  }
+  };
 
   // Define table columns
   const columns: Column<User>[] = [
@@ -175,7 +167,7 @@ export const UserManagementPage: React.FC = () => {
       label: 'Name',
       sortable: true,
       render: (value, row) => {
-        const fullName = `${row.firstname} ${row.lastname}`
+        const fullName = `${row.firstname} ${row.lastname}`;
         return (
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-sm font-semibold text-primary-600 dark:text-primary-300">
@@ -186,7 +178,7 @@ export const UserManagementPage: React.FC = () => {
               <p className="text-xs text-neutral-500 dark:text-neutral-400">{row.email}</p>
             </div>
           </div>
-        )
+        );
       },
     },
     {
@@ -214,20 +206,14 @@ export const UserManagementPage: React.FC = () => {
       label: 'Status',
       sortable: true,
       render: (value: boolean) => {
-        const status = value ? 'blocked' : 'active'
+        const status = value ? 'blocked' : 'active';
         return (
           <Badge
-            variant={
-              status === 'active'
-                ? 'success'
-                : status === 'blocked'
-                  ? 'danger'
-                  : 'warning'
-            }
+            variant={status === 'active' ? 'success' : status === 'blocked' ? 'danger' : 'warning'}
           >
             {status.charAt(0).toUpperCase() + status.slice(1)}
           </Badge>
-        )
+        );
       },
     },
     {
@@ -265,7 +251,11 @@ export const UserManagementPage: React.FC = () => {
                 : 'text-warning-600 dark:text-warning-400 hover:bg-warning-50 dark:hover:bg-warning-900'
             }`}
             title={row.isBlocked ? 'Unblock user' : 'Block user'}
-            aria-label={row.isBlocked ? `Unblock ${row.firstname} ${row.lastname}` : `Block ${row.firstname} ${row.lastname}`}
+            aria-label={
+              row.isBlocked
+                ? `Unblock ${row.firstname} ${row.lastname}`
+                : `Block ${row.firstname} ${row.lastname}`
+            }
           >
             <Icon name={row.isBlocked ? 'Unlock' : 'Lock'} size={16} />
           </button>
@@ -280,22 +270,15 @@ export const UserManagementPage: React.FC = () => {
         </div>
       ),
     },
-  ]
+  ];
 
   return (
-    <DashboardLayout
-      title="User Management"
-      description="Manage all users in the system"
-    >
+    <DashboardLayout title="User Management" description="Manage all users in the system">
       <div className="space-y-6">
         {/* Header with Create Button */}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Users</h1>
-          <Button
-            variant="primary"
-            onClick={openCreateModal}
-            className="flex items-center gap-2"
-          >
+          <Button variant="primary" onClick={openCreateModal} className="flex items-center gap-2">
             <Icon name="Plus" size={18} />
             Create User
           </Button>
@@ -377,10 +360,7 @@ export const UserManagementPage: React.FC = () => {
               <Button variant="secondary" onClick={closeDeleteConfirm}>
                 Cancel
               </Button>
-              <Button
-                variant="danger"
-                onClick={() => handleDeleteUser(deleteConfirm)}
-              >
+              <Button variant="danger" onClick={() => handleDeleteUser(deleteConfirm)}>
                 Delete
               </Button>
             </>
@@ -392,7 +372,7 @@ export const UserManagementPage: React.FC = () => {
         </Modal>
       )}
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default UserManagementPage
+export default UserManagementPage;

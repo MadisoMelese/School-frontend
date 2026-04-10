@@ -1,17 +1,17 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react'
-import { DashboardLayout } from '@components/templates/DashboardLayout'
-import { Card } from '@components/molecules/Card'
-import { Modal } from '@components/molecules/Modal'
-import { Button } from '@components/atoms/Button'
-import { Input } from '@components/atoms/Input'
-import { Badge } from '@components/atoms/Badge'
-import { Icon } from '@components/atoms/Icon'
-import { Spinner } from '@components/atoms/Spinner'
-import { useDebounce } from '@hooks/useDebounce'
-import { useMediaQuery } from '@hooks/useMediaQuery'
-import { useExamNotifications } from '@hooks/useExamNotifications'
-import { studentService } from '@services/api/studentService'
-import type { Exam } from '@types'
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { Card } from '@components/molecules/Card';
+import { Modal } from '@components/molecules/Modal';
+import { Button } from '@components/atoms/Button';
+import { Input } from '@components/atoms/Input';
+import { Badge } from '@components/atoms/Badge';
+import { Icon } from '@components/atoms/Icon';
+import { Spinner } from '@components/atoms/Spinner';
+import { useDebounce } from '@hooks/useDebounce';
+import { useMediaQuery } from '@hooks/useMediaQuery';
+import { useExamNotifications } from '@hooks/useExamNotifications';
+import { studentService } from '@services/api/studentService';
+import type { Exam } from '@types';
 
 /**
  * Student Exams Page
@@ -25,140 +25,138 @@ import type { Exam } from '@types'
  */
 
 interface ExamWithStatus extends Exam {
-  isUpcoming: boolean
-  daysUntilExam?: number
-  isWithin7Days?: boolean
+  isUpcoming: boolean;
+  daysUntilExam?: number;
+  isWithin7Days?: boolean;
 }
 
 export const ExamsPage: React.FC = () => {
-  const isMobile = useMediaQuery('(max-width: 768px)')
-  const { checkExamsForNewResults } = useExamNotifications()
+  const { checkExamsForNewResults } = useExamNotifications();
 
   // State
-  const [exams, setExams] = useState<ExamWithStatus[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming')
-  const [selectedExam, setSelectedExam] = useState<ExamWithStatus | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [exams, setExams] = useState<ExamWithStatus[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
+  const [selectedExam, setSelectedExam] = useState<ExamWithStatus | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Debounce search query
-  const debouncedSearchQuery = useDebounce(searchQuery, 300)
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   // Load exams data
   useEffect(() => {
     const loadExams = async () => {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
 
         // Fetch upcoming exams
         const upcomingResponse = await studentService.getExams({
           status: 'upcoming',
-        })
+        });
 
         // Fetch past exams
         const pastResponse = await studentService.getExams({
           status: 'past',
-        })
+        });
 
         // Combine and enrich with status information
         const allExams: ExamWithStatus[] = [
           ...(upcomingResponse.data || []).map((exam) => {
-            const examDate = new Date(exam.date)
-            const today = new Date()
+            const examDate = new Date(exam.date);
+            const today = new Date();
             const daysUntil = Math.ceil(
               (examDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-            )
+            );
 
             return {
               ...exam,
               isUpcoming: true,
               daysUntilExam: daysUntil,
               isWithin7Days: daysUntil <= 7 && daysUntil > 0,
-            }
+            };
           }),
           ...(pastResponse.data || []).map((exam) => ({
             ...exam,
             isUpcoming: false,
           })),
-        ]
+        ];
 
-        setExams(allExams)
+        setExams(allExams);
 
         // Check for new exam results and send notifications
-        checkExamsForNewResults(allExams)
+        checkExamsForNewResults(allExams);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load exams')
+        setError(err instanceof Error ? err.message : 'Failed to load exams');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadExams()
-  }, [checkExamsForNewResults])
+    loadExams();
+  }, [checkExamsForNewResults]);
 
   // Filter exams by tab and search
   const filteredExams = useMemo(() => {
-    let result = exams.filter((exam) => exam.isUpcoming === (activeTab === 'upcoming'))
+    let result = exams.filter((exam) => exam.isUpcoming === (activeTab === 'upcoming'));
 
     // Apply search filter
     if (debouncedSearchQuery) {
-      const query = debouncedSearchQuery.toLowerCase()
+      const query = debouncedSearchQuery.toLowerCase();
       result = result.filter(
         (exam) =>
-          exam.name.toLowerCase().includes(query) ||
-          exam.subject.toLowerCase().includes(query)
-      )
+          exam.name.toLowerCase().includes(query) || exam.subject.toLowerCase().includes(query)
+      );
     }
 
     // Sort: upcoming by date ascending, past by date descending
     result.sort((a, b) => {
-      const dateA = new Date(a.date).getTime()
-      const dateB = new Date(b.date).getTime()
-      return activeTab === 'upcoming' ? dateA - dateB : dateB - dateA
-    })
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      return activeTab === 'upcoming' ? dateA - dateB : dateB - dateA;
+    });
 
-    return result
-  }, [exams, activeTab, debouncedSearchQuery])
+    return result;
+  }, [exams, activeTab, debouncedSearchQuery]);
 
   // Handle exam selection
   const handleSelectExam = useCallback((exam: ExamWithStatus) => {
-    setSelectedExam(exam)
-    setIsModalOpen(true)
-  }, [])
+    setSelectedExam(exam);
+    setIsModalOpen(true);
+  }, []);
 
   // Handle modal close
   const handleCloseModal = useCallback(() => {
-    setIsModalOpen(false)
-    setSelectedExam(null)
-  }, [])
+    setIsModalOpen(false);
+    setSelectedExam(null);
+  }, []);
 
   // Reset filters
   const handleResetFilters = useCallback(() => {
-    setSearchQuery('')
-  }, [])
+    setSearchQuery('');
+  }, []);
 
   // Format date and time
   const formatDateTime = (date: string, time: string) => {
-    const examDate = new Date(date)
+    const examDate = new Date(date);
     const dateStr = examDate.toLocaleDateString('en-US', {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
       year: 'numeric',
-    })
-    return `${dateStr} at ${time}`
-  }
+    });
+    return `${dateStr} at ${time}`;
+  };
 
   // Calculate days until exam
   const getDaysUntilText = (daysUntil?: number) => {
-    if (!daysUntil) return ''
-    if (daysUntil === 0) return 'Today'
-    if (daysUntil === 1) return 'Tomorrow'
-    return `In ${daysUntil} days`
-  }
+    if (!daysUntil) return '';
+    if (daysUntil === 0) return 'Today';
+    if (daysUntil === 1) return 'Tomorrow';
+    return `In ${daysUntil} days`;
+  };
 
   if (loading) {
     return (
@@ -167,7 +165,7 @@ export const ExamsPage: React.FC = () => {
           <Spinner size="lg" />
         </div>
       </DashboardLayout>
-    )
+    );
   }
 
   return (
@@ -320,11 +318,7 @@ export const ExamsPage: React.FC = () => {
                   )}
 
                   {/* Arrow Icon */}
-                  <Icon
-                    name="ChevronRight"
-                    size={20}
-                    className="text-neutral-400 flex-shrink-0"
-                  />
+                  <Icon name="ChevronRight" size={20} className="text-neutral-400 flex-shrink-0" />
                 </div>
               </Card>
             ))}
@@ -333,12 +327,7 @@ export const ExamsPage: React.FC = () => {
       </div>
 
       {/* Exam Details Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        title={selectedExam?.name}
-        size="md"
-      >
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={selectedExam?.name} size="md">
         {selectedExam && (
           <div className="space-y-6">
             {/* Exam Information */}
@@ -393,8 +382,7 @@ export const ExamsPage: React.FC = () => {
                       <div className="mt-1">
                         <Badge
                           variant={
-                            selectedExam.result.grade === 'A' ||
-                            selectedExam.result.grade === 'A+'
+                            selectedExam.result.grade === 'A' || selectedExam.result.grade === 'A+'
                               ? 'success'
                               : selectedExam.result.grade === 'B' ||
                                   selectedExam.result.grade === 'B+'
@@ -441,7 +429,7 @@ export const ExamsPage: React.FC = () => {
         </div>
       </Modal>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default ExamsPage
+export default ExamsPage;

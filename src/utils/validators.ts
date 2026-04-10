@@ -15,7 +15,9 @@ export const validateEmail = (email: string): boolean => {
  * Validate password strength
  * Minimum 8 characters, at least one uppercase, one lowercase, one number
  */
-export const validatePassword = (password: string): {
+export const validatePassword = (
+  password: string
+): {
   isValid: boolean;
   errors: string[];
 } => {
@@ -47,7 +49,7 @@ export const validatePassword = (password: string): {
  * Validate phone number
  */
 export const validatePhoneNumber = (phone: string): boolean => {
-  const phoneRegex = /^[\d\s\-\+\(\)]{10,}$/;
+  const phoneRegex = /^[\d\s\-+()]{10,}$/;
   return phoneRegex.test(phone);
 };
 

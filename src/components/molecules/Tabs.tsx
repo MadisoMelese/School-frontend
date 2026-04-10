@@ -1,19 +1,19 @@
-import React, { useState } from 'react'
+import React from 'react';
 
 export interface Tab {
-  id: string
-  label: string
-  content: React.ReactNode
-  disabled?: boolean
-  icon?: React.ReactNode
+  id: string;
+  label: string;
+  content: React.ReactNode;
+  disabled?: boolean;
+  icon?: React.ReactNode;
 }
 
 interface TabsProps {
-  tabs: Tab[]
-  activeTab: string
-  onChange: (tabId: string) => void
-  variant?: 'line' | 'pill'
-  className?: string
+  tabs: Tab[];
+  activeTab: string;
+  onChange: (tabId: string) => void;
+  variant?: 'line' | 'pill';
+  className?: string;
 }
 
 export const Tabs: React.FC<TabsProps> = ({
@@ -24,41 +24,40 @@ export const Tabs: React.FC<TabsProps> = ({
   className,
 }) => {
   const handleKeyDown = (e: React.KeyboardEvent, tabId: string, index: number) => {
-    let newIndex = index
+    let newIndex = index;
 
     switch (e.key) {
       case 'ArrowLeft':
       case 'ArrowUp':
-        e.preventDefault()
-        newIndex = index - 1
-        if (newIndex < 0) newIndex = tabs.length - 1
-        break
+        e.preventDefault();
+        newIndex = index - 1;
+        if (newIndex < 0) newIndex = tabs.length - 1;
+        break;
       case 'ArrowRight':
       case 'ArrowDown':
-        e.preventDefault()
-        newIndex = index + 1
-        if (newIndex >= tabs.length) newIndex = 0
-        break
+        e.preventDefault();
+        newIndex = index + 1;
+        if (newIndex >= tabs.length) newIndex = 0;
+        break;
       case 'Home':
-        e.preventDefault()
-        newIndex = 0
-        break
+        e.preventDefault();
+        newIndex = 0;
+        break;
       case 'End':
-        e.preventDefault()
-        newIndex = tabs.length - 1
-        break
+        e.preventDefault();
+        newIndex = tabs.length - 1;
+        break;
       default:
-        return
+        return;
     }
 
-    const nextTab = tabs[newIndex]
+    const nextTab = tabs[newIndex];
     if (!nextTab.disabled) {
-      onChange(nextTab.id)
+      onChange(nextTab.id);
     }
-  }
+  };
 
-  const activeTabIndex = tabs.findIndex((tab) => tab.id === activeTab)
-  const activeTabContent = tabs.find((tab) => tab.id === activeTab)
+  const activeTabContent = tabs.find((tab) => tab.id === activeTab);
 
   return (
     <div className={className}>
@@ -106,5 +105,5 @@ export const Tabs: React.FC<TabsProps> = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};

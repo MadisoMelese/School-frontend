@@ -47,7 +47,9 @@ export const logConflict = async (
  */
 export const getUnresolvedConflicts = async (): Promise<ConflictLogEntry[]> => {
   const allEntries = await getAllItems(STORE_NAME);
-  return allEntries.filter((entry) => !(entry as unknown as ConflictLogEntry).resolved) as unknown as ConflictLogEntry[];
+  return allEntries.filter(
+    (entry) => !(entry as unknown as ConflictLogEntry).resolved
+  ) as unknown as ConflictLogEntry[];
 };
 
 /**
@@ -114,7 +116,9 @@ export const resolveConflictMerged = async (id: string): Promise<void> => {
  */
 export const getConflictsByResource = async (resource: string): Promise<ConflictLogEntry[]> => {
   const allEntries = await getAllItems(STORE_NAME);
-  return allEntries.filter((entry) => (entry as unknown as ConflictLogEntry).resource === resource) as unknown as ConflictLogEntry[];
+  return allEntries.filter(
+    (entry) => (entry as unknown as ConflictLogEntry).resource === resource
+  ) as unknown as ConflictLogEntry[];
 };
 
 /**
@@ -126,7 +130,9 @@ export const getConflictsByResourceId = async (
 ): Promise<ConflictLogEntry[]> => {
   const allEntries = await getAllItems(STORE_NAME);
   return allEntries.filter(
-    (entry) => (entry as unknown as ConflictLogEntry).resource === resource && (entry as unknown as ConflictLogEntry).resourceId === resourceId
+    (entry) =>
+      (entry as unknown as ConflictLogEntry).resource === resource &&
+      (entry as unknown as ConflictLogEntry).resourceId === resourceId
   ) as unknown as ConflictLogEntry[];
 };
 

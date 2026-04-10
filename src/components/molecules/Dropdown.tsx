@@ -1,100 +1,99 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { Icon } from '../atoms/Icon'
+import React, { useState, useRef, useEffect } from 'react';
+import { Icon } from '../atoms/Icon';
 
 export interface DropdownOption {
-  value: string | number
-  label: string
-  disabled?: boolean
+  value: string | number;
+  label: string;
+  disabled?: boolean;
 }
 
 interface DropdownProps {
-  options: DropdownOption[]
-  value?: string | number
-  onChange: (value: string | number) => void
-  placeholder?: string
-  searchable?: boolean
-  disabled?: boolean
-  multiple?: boolean
-  className?: string
-  id?: string
+  options: DropdownOption[];
+  value?: string | number;
+  onChange: (value: string | number) => void;
+  placeholder?: string;
+  searchable?: boolean;
+  disabled?: boolean;
+  multiple?: boolean;
+  className?: string;
+  id?: string;
 }
 
-export const Dropdown: React.FC<DropdownProps> = ({
+export const Dropdown: React.FC<Omit<DropdownProps, 'multiple'>> = ({
   options,
   value,
   onChange,
   placeholder = 'Select an option',
   searchable = false,
   disabled = false,
-  multiple = false,
   className,
   id,
 }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [highlightedIndex, setHighlightedIndex] = useState(0)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const searchInputRef = useRef<HTMLInputElement>(null)
-  const dropdownId = id || `dropdown-${Math.random().toString(36).substr(2, 9)}`
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const dropdownId = id || `dropdown-${Math.random().toString(36).substr(2, 9)}`;
 
   const filteredOptions = searchable
     ? options.filter((opt) => opt.label.toLowerCase().includes(searchTerm.toLowerCase()))
-    : options
+    : options;
 
-  const selectedOption = options.find((opt) => opt.value === value)
+  const selectedOption = options.find((opt) => opt.value === value);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
+        setIsOpen(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     if (isOpen && searchable && searchInputRef.current) {
-      searchInputRef.current.focus()
+      searchInputRef.current.focus();
     }
-  }, [isOpen, searchable])
+  }, [isOpen, searchable]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) {
       if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
-        e.preventDefault()
-        setIsOpen(true)
+        e.preventDefault();
+        setIsOpen(true);
       }
-      return
+      return;
     }
 
     switch (e.key) {
       case 'ArrowDown':
-        e.preventDefault()
-        setHighlightedIndex((prev) => (prev + 1) % filteredOptions.length)
-        break
+        e.preventDefault();
+        setHighlightedIndex((prev) => (prev + 1) % filteredOptions.length);
+        break;
       case 'ArrowUp':
-        e.preventDefault()
-        setHighlightedIndex((prev) => (prev - 1 + filteredOptions.length) % filteredOptions.length)
-        break
+        e.preventDefault();
+        setHighlightedIndex((prev) => (prev - 1 + filteredOptions.length) % filteredOptions.length);
+        break;
       case 'Enter':
-        e.preventDefault()
+        e.preventDefault();
         if (filteredOptions[highlightedIndex]) {
-          onChange(filteredOptions[highlightedIndex].value)
-          setIsOpen(false)
-          setSearchTerm('')
+          onChange(filteredOptions[highlightedIndex].value);
+          setIsOpen(false);
+          setSearchTerm('');
         }
-        break
+        break;
       case 'Escape':
-        e.preventDefault()
-        setIsOpen(false)
-        setSearchTerm('')
-        break
+        e.preventDefault();
+        setIsOpen(false);
+        setSearchTerm('');
+        break;
       default:
-        break
+        break;
     }
-  }
+  };
 
   return (
     <div ref={containerRef} className={`relative w-full ${className || ''}`}>
@@ -108,7 +107,13 @@ export const Dropdown: React.FC<DropdownProps> = ({
         aria-controls={`${dropdownId}-listbox`}
         onKeyDown={handleKeyDown}
       >
-        <span className={selectedOption ? 'text-neutral-900 dark:text-white' : 'text-neutral-500 dark:text-neutral-400'}>
+        <span
+          className={
+            selectedOption
+              ? 'text-neutral-900 dark:text-white'
+              : 'text-neutral-500 dark:text-neutral-400'
+          }
+        >
           {selectedOption?.label || placeholder}
         </span>
         <Icon
@@ -128,8 +133,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => {
-                  setSearchTerm(e.target.value)
-                  setHighlightedIndex(0)
+                  setSearchTerm(e.target.value);
+                  setHighlightedIndex(0);
                 }}
                 onKeyDown={handleKeyDown}
                 className="w-full px-3 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:border-primary-500"
@@ -137,21 +142,19 @@ export const Dropdown: React.FC<DropdownProps> = ({
             </div>
           )}
 
-          <ul
-            id={`${dropdownId}-listbox`}
-            role="listbox"
-            className="max-h-60 overflow-y-auto"
-          >
+          <ul id={`${dropdownId}-listbox`} role="listbox" className="max-h-60 overflow-y-auto">
             {filteredOptions.length === 0 ? (
-              <li className="px-3 py-2 text-sm text-neutral-500 dark:text-neutral-400 text-center">No options</li>
+              <li className="px-3 py-2 text-sm text-neutral-500 dark:text-neutral-400 text-center">
+                No options
+              </li>
             ) : (
               filteredOptions.map((option, index) => (
                 <li key={option.value} role="presentation">
                   <button
                     onClick={() => {
-                      onChange(option.value)
-                      setIsOpen(false)
-                      setSearchTerm('')
+                      onChange(option.value);
+                      setIsOpen(false);
+                      setSearchTerm('');
                     }}
                     disabled={option.disabled}
                     className={`w-full text-left px-3 py-2.5 text-sm transition-colors min-h-[44px] flex items-center ${
@@ -174,5 +177,5 @@ export const Dropdown: React.FC<DropdownProps> = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};

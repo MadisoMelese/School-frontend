@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { NotificationCenterPage } from './NotificationCenterPage'
-import * as notificationService from '@services/api/notificationService'
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { NotificationCenterPage } from './NotificationCenterPage';
+import * as notificationService from '@services/api/notificationService';
 
 // Mock dependencies
-vi.mock('@services/api/notificationService')
+vi.mock('@services/api/notificationService');
 vi.mock('@components/templates/DashboardLayout', () => ({
   DashboardLayout: ({ children, title }: any) => (
     <div>
@@ -12,7 +12,7 @@ vi.mock('@components/templates/DashboardLayout', () => ({
       {children}
     </div>
   ),
-}))
+}));
 
 describe('NotificationCenterPage', () => {
   const mockNotifications = [
@@ -40,143 +40,143 @@ describe('NotificationCenterPage', () => {
       isRead: false,
       createdAt: '2024-01-13T09:00:00Z',
     },
-  ]
+  ];
 
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.clearAllMocks();
 
     // Mock notificationService
-    ;(notificationService.notificationService.getNotifications as any).mockResolvedValue({
+    (notificationService.notificationService.getNotifications as any).mockResolvedValue({
       notifications: mockNotifications,
       total: mockNotifications.length,
-    })
-    ;(notificationService.notificationService.markNotificationAsRead as any).mockResolvedValue({
+    });
+    (notificationService.notificationService.markNotificationAsRead as any).mockResolvedValue({
       message: 'Marked as read',
-    })
-  })
+    });
+  });
 
   it('should load and display all notifications', async () => {
-    render(<NotificationCenterPage />)
+    render(<NotificationCenterPage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Mathematics Results')).toBeInTheDocument()
-      expect(screen.getByText('Physics Exam Tomorrow')).toBeInTheDocument()
-      expect(screen.getByText('New Message from Teacher')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('Mathematics Results')).toBeInTheDocument();
+      expect(screen.getByText('Physics Exam Tomorrow')).toBeInTheDocument();
+      expect(screen.getByText('New Message from Teacher')).toBeInTheDocument();
+    });
+  });
 
   it('should display unread count', async () => {
-    render(<NotificationCenterPage />)
+    render(<NotificationCenterPage />);
 
     await waitFor(() => {
-      expect(screen.getByText(/You have 2 unread notifications/)).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText(/You have 2 unread notifications/)).toBeInTheDocument();
+    });
+  });
 
   it('should filter notifications by type', async () => {
-    render(<NotificationCenterPage />)
+    render(<NotificationCenterPage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Mathematics Results')).toBeInTheDocument()
-    })
+      expect(screen.getByText('Mathematics Results')).toBeInTheDocument();
+    });
 
-    const examResultFilter = screen.getByText('Exam Result')
-    fireEvent.click(examResultFilter)
+    const examResultFilter = screen.getByText('Exam Result');
+    fireEvent.click(examResultFilter);
 
     await waitFor(() => {
-      expect(screen.getByText('Mathematics Results')).toBeInTheDocument()
-      expect(screen.queryByText('Physics Exam Tomorrow')).not.toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('Mathematics Results')).toBeInTheDocument();
+      expect(screen.queryByText('Physics Exam Tomorrow')).not.toBeInTheDocument();
+    });
+  });
 
   it('should mark notification as read when clicked', async () => {
-    render(<NotificationCenterPage />)
+    render(<NotificationCenterPage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Mathematics Results')).toBeInTheDocument()
-    })
+      expect(screen.getByText('Mathematics Results')).toBeInTheDocument();
+    });
 
-    const notification = screen.getByText('Mathematics Results').closest('div')
-    fireEvent.click(notification!)
+    const notification = screen.getByText('Mathematics Results').closest('div');
+    fireEvent.click(notification!);
 
     await waitFor(() => {
       expect(notificationService.notificationService.markNotificationAsRead).toHaveBeenCalledWith(
         'notif-1'
-      )
-    })
-  })
+      );
+    });
+  });
 
   it('should display notification badges for unread items', async () => {
-    render(<NotificationCenterPage />)
+    render(<NotificationCenterPage />);
 
     await waitFor(() => {
-      const newBadges = screen.getAllByText('New')
-      expect(newBadges.length).toBe(2) // Two unread notifications
-    })
-  })
+      const newBadges = screen.getAllByText('New');
+      expect(newBadges.length).toBe(2); // Two unread notifications
+    });
+  });
 
   it('should display empty state when no notifications', async () => {
     (notificationService.notificationService.getNotifications as any).mockResolvedValueOnce({
       notifications: [],
       total: 0,
-    })
+    });
 
-    render(<NotificationCenterPage />)
+    render(<NotificationCenterPage />);
 
     await waitFor(() => {
-      expect(screen.getByText('No notifications yet')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('No notifications yet')).toBeInTheDocument();
+    });
+  });
 
   it('should display empty state for filtered results', async () => {
-    render(<NotificationCenterPage />)
+    render(<NotificationCenterPage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Mathematics Results')).toBeInTheDocument()
-    })
+      expect(screen.getByText('Mathematics Results')).toBeInTheDocument();
+    });
 
-    const feeFilter = screen.getByText('Fee')
-    fireEvent.click(feeFilter)
+    const feeFilter = screen.getByText('Fee');
+    fireEvent.click(feeFilter);
 
     await waitFor(() => {
-      expect(screen.getByText('No notifications of this type')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('No notifications of this type')).toBeInTheDocument();
+    });
+  });
 
   it('should display notification timestamps', async () => {
-    render(<NotificationCenterPage />)
+    render(<NotificationCenterPage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Mathematics Results')).toBeInTheDocument()
+      expect(screen.getByText('Mathematics Results')).toBeInTheDocument();
       // Check that dates are displayed (exact format depends on locale)
-      const dateElements = screen.getAllByText(/Jan/)
-      expect(dateElements.length).toBeGreaterThan(0)
-    })
-  })
+      const dateElements = screen.getAllByText(/Jan/);
+      expect(dateElements.length).toBeGreaterThan(0);
+    });
+  });
 
   it('should handle notification loading errors', async () => {
     (notificationService.notificationService.getNotifications as any).mockRejectedValueOnce(
       new Error('Failed to load notifications')
-    )
+    );
 
-    render(<NotificationCenterPage />)
+    render(<NotificationCenterPage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Failed to load notifications')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('Failed to load notifications')).toBeInTheDocument();
+    });
+  });
 
   it('should display all notification type filters', async () => {
-    render(<NotificationCenterPage />)
+    render(<NotificationCenterPage />);
 
     await waitFor(() => {
-      expect(screen.getByText('All')).toBeInTheDocument()
-      expect(screen.getByText('Exam Result')).toBeInTheDocument()
-      expect(screen.getByText('Exam Reminder')).toBeInTheDocument()
-      expect(screen.getByText('Message')).toBeInTheDocument()
-      expect(screen.getByText('Fee')).toBeInTheDocument()
-      expect(screen.getByText('Attendance')).toBeInTheDocument()
-      expect(screen.getByText('Announcement')).toBeInTheDocument()
-    })
-  })
-})
+      expect(screen.getByText('All')).toBeInTheDocument();
+      expect(screen.getByText('Exam Result')).toBeInTheDocument();
+      expect(screen.getByText('Exam Reminder')).toBeInTheDocument();
+      expect(screen.getByText('Message')).toBeInTheDocument();
+      expect(screen.getByText('Fee')).toBeInTheDocument();
+      expect(screen.getByText('Attendance')).toBeInTheDocument();
+      expect(screen.getByText('Announcement')).toBeInTheDocument();
+    });
+  });
+});

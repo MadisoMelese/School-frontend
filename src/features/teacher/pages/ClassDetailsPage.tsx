@@ -6,7 +6,6 @@ import { DataTable } from '@/components/organisms';
 import { Card, SearchBar } from '@/components/molecules';
 import { Button, Badge, Spinner } from '@/components/atoms';
 import { teacherService } from '@/services/api';
-import { ClassStudent } from '@/types/api.types';
 import { useDebounce } from '@/hooks';
 import { ChevronLeft } from 'lucide-react';
 
@@ -15,6 +14,24 @@ export const ClassDetailsPage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebounce(searchTerm, 300);
+
+  const { data: classData, isLoading: classLoading } = useQuery({
+    queryKey: ['teacher-class', classId],
+    queryFn: () => teacherService.getClassDetails(classId!),
+    enabled: !!classId,
+  });
+
+  const { data: studentsData, isLoading: studentsLoading } = useQuery({
+    queryKey: ['teacher-class-students', classId],
+    queryFn: () => teacherService.getClassStudents(classId!, { limit: 100 }),
+    enabled: !!classId,
+  });
+
+  const { data: statsData, isLoading: statsLoading } = useQuery({
+    queryKey: ['teacher-class-stats', classId],
+    queryFn: () => teacherService.getClassStatistics(classId!),
+    enabled: !!classId,
+  });
 
   if (!classId) {
     return (
@@ -25,21 +42,6 @@ export const ClassDetailsPage = () => {
       </PortalLayout>
     );
   }
-
-  const { data: classData, isLoading: classLoading } = useQuery({
-    queryKey: ['teacher-class', classId],
-    queryFn: () => teacherService.getClassDetails(classId),
-  });
-
-  const { data: studentsData, isLoading: studentsLoading } = useQuery({
-    queryKey: ['teacher-class-students', classId],
-    queryFn: () => teacherService.getClassStudents(classId, { limit: 100 }),
-  });
-
-  const { data: statsData, isLoading: statsLoading } = useQuery({
-    queryKey: ['teacher-class-stats', classId],
-    queryFn: () => teacherService.getClassStatistics(classId),
-  });
 
   const filteredStudents = useMemo(() => {
     if (!studentsData?.data) return [];
@@ -127,9 +129,7 @@ export const ClassDetailsPage = () => {
               {statsData && (
                 <>
                   <div className="rounded-lg bg-success-50 p-4 dark:bg-success-950">
-                    <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                      Average Grade
-                    </p>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400">Average Grade</p>
                     <p className="mt-1 text-2xl font-bold text-success-600 dark:text-success-400">
                       {statsData.averageGrade.toFixed(1)}
                     </p>
@@ -196,11 +196,7 @@ export const ClassDetailsPage = () => {
                 No students found
               </p>
             ) : (
-              <DataTable
-                columns={studentColumns}
-                data={filteredStudents}
-                pageSize={10}
-              />
+              <DataTable columns={studentColumns} data={filteredStudents} pageSize={10} />
             )}
           </div>
         </Card>

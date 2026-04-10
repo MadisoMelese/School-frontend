@@ -48,7 +48,10 @@ export const captureException = (error: Error | unknown, context?: ErrorContext)
 /**
  * Capture message for debugging
  */
-export const captureMessage = (message: string, level: 'info' | 'warning' | 'error' = 'info'): void => {
+export const captureMessage = (
+  message: string,
+  level: 'info' | 'warning' | 'error' = 'info'
+): void => {
   try {
     if ((import.meta.env as any).DEV) {
       console.log(`[${level.toUpperCase()}] ${message}`);
@@ -65,7 +68,7 @@ export const captureMessage = (message: string, level: 'info' | 'warning' | 'err
 /**
  * Set user context for error tracking
  */
-export const setUserContext = (userId: string, userName: string, email?: string): void => {
+export const setUserContext = (_userId: string, _userName: string, _email?: string): void => {
   try {
     if ((import.meta.env as any).PROD) {
       // Sentry.setUser({
@@ -97,8 +100,8 @@ export const clearUserContext = (): void => {
  */
 export const addBreadcrumb = (
   message: string,
-  category: string = 'user-action',
-  level: 'info' | 'warning' | 'error' = 'info'
+  _category: string = 'user-action',
+  _level: 'info' | 'warning' | 'error' = 'info'
 ): void => {
   try {
     if ((import.meta.env as any).PROD) {
@@ -136,18 +139,8 @@ export const reportApiError = (
 /**
  * Report validation error
  */
-export const reportValidationError = (
-  fieldName: string,
-  value: unknown,
-  rule: string
-): void => {
+export const reportValidationError = (fieldName: string, value: unknown, rule: string): void => {
   const message = `Validation failed for field "${fieldName}" with rule "${rule}"`;
-  const context: ErrorContext = {
-    type: 'validation_error',
-    fieldName,
-    value,
-    rule,
-  };
 
   captureMessage(message, 'warning');
 };
@@ -162,12 +155,6 @@ export const reportPerformanceIssue = (
 ): void => {
   if (duration > threshold) {
     const message = `Performance issue: ${operation} took ${duration}ms (threshold: ${threshold}ms)`;
-    const context: ErrorContext = {
-      type: 'performance_issue',
-      operation,
-      duration,
-      threshold,
-    };
 
     captureMessage(message, 'warning');
   }

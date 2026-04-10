@@ -1,29 +1,28 @@
-import React, { useEffect, useState } from 'react'
-import { Icon } from '../atoms/Icon'
-import { Badge } from '../atoms/Badge'
+import React, { useEffect, useState } from 'react';
+import { Icon } from '../atoms/Icon';
 
 export interface BottomTabItem {
-  id: string
-  label: string
-  icon: string
-  href?: string
-  roles?: string[]
-  badge?: number
-  ariaLabel?: string
+  id: string;
+  label: string;
+  icon: string;
+  href?: string;
+  roles?: string[];
+  badge?: number;
+  ariaLabel?: string;
 }
 
 export interface BottomTabNavigationProps {
-  items: BottomTabItem[]
-  activeItem?: string
-  onItemClick: (itemId: string) => void
-  className?: string
-  showLabels?: boolean
-  hideOnScroll?: boolean
+  items: BottomTabItem[];
+  activeItem?: string;
+  onItemClick: (itemId: string) => void;
+  className?: string;
+  showLabels?: boolean;
+  hideOnScroll?: boolean;
 }
 
 /**
  * BottomTabNavigation Component
- * 
+ *
  * Mobile-optimized bottom tab navigation with:
  * - 44px minimum touch-friendly height
  * - Active state indicator with smooth transitions
@@ -31,7 +30,7 @@ export interface BottomTabNavigationProps {
  * - Responsive icons and labels
  * - Smooth animations
  * - Accessibility features (ARIA labels, keyboard navigation)
- * 
+ *
  * **Validates: Requirement 17.7 - Bottom tab navigation on mobile**
  */
 export const BottomTabNavigation: React.FC<BottomTabNavigationProps> = ({
@@ -42,40 +41,40 @@ export const BottomTabNavigation: React.FC<BottomTabNavigationProps> = ({
   showLabels = true,
   hideOnScroll = false,
 }) => {
-  const [isVisible, setIsVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   // Handle scroll to hide/show navigation
   useEffect(() => {
-    if (!hideOnScroll) return
+    if (!hideOnScroll) return;
 
     const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      const isScrollingDown = currentScrollY > lastScrollY
+      const currentScrollY = window.scrollY;
+      const isScrollingDown = currentScrollY > lastScrollY;
 
       // Show nav when scrolling up or at top
-      setIsVisible(!isScrollingDown || currentScrollY < 50)
-      setLastScrollY(currentScrollY)
-    }
+      setIsVisible(!isScrollingDown || currentScrollY < 50);
+      setLastScrollY(currentScrollY);
+    };
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY, hideOnScroll])
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY, hideOnScroll]);
 
   const handleItemClick = (itemId: string) => {
-    onItemClick(itemId)
-  }
+    onItemClick(itemId);
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent, itemId: string) => {
     // Support arrow keys for navigation
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-      e.preventDefault()
-      const currentIndex = items.findIndex((item) => item.id === itemId)
-      const direction = e.key === 'ArrowLeft' ? -1 : 1
-      const nextIndex = (currentIndex + direction + items.length) % items.length
-      handleItemClick(items[nextIndex].id)
+      e.preventDefault();
+      const currentIndex = items.findIndex((item) => item.id === itemId);
+      const direction = e.key === 'ArrowLeft' ? -1 : 1;
+      const nextIndex = (currentIndex + direction + items.length) % items.length;
+      handleItemClick(items[nextIndex].id);
     }
-  }
+  };
 
   return (
     <nav
@@ -93,8 +92,8 @@ export const BottomTabNavigation: React.FC<BottomTabNavigationProps> = ({
       aria-label="Mobile navigation"
     >
       {items.map((item) => {
-        const isActive = activeItem === item.id
-        const hasNotification = item.badge && item.badge > 0
+        const isActive = activeItem === item.id;
+        const hasNotification = item.badge && item.badge > 0;
 
         return (
           <button
@@ -177,8 +176,8 @@ export const BottomTabNavigation: React.FC<BottomTabNavigationProps> = ({
               />
             )}
           </button>
-        )
+        );
       })}
     </nav>
-  )
-}
+  );
+};

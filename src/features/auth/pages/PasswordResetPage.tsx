@@ -21,10 +21,7 @@ import authService from '@/services/api/authService';
 
 // Validation schema
 const resetSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Email is required')
-    .email('Please enter a valid email address'),
+  email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
 });
 
 type ResetFormData = z.infer<typeof resetSchema>;
@@ -82,8 +79,8 @@ export const PasswordResetPage: React.FC = () => {
           >
             <p className="font-medium mb-1">Reset link sent successfully</p>
             <p>
-              We've sent a password reset link to <strong>{submittedEmail}</strong>. Please check
-              your email and follow the instructions to reset your password.
+              We&apos;ve sent a password reset link to <strong>{submittedEmail}</strong>. Please
+              check your email and follow the instructions to reset your password.
             </p>
           </div>
 
@@ -101,7 +98,7 @@ export const PasswordResetPage: React.FC = () => {
           {/* Didn't receive email */}
           <div className="text-center text-sm text-neutral-600 dark:text-neutral-400">
             <p>
-              Didn't receive the email?{' '}
+              Didn&apos;t receive the email?{' '}
               <button
                 onClick={() => setSuccess(false)}
                 className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium"
@@ -112,12 +109,7 @@ export const PasswordResetPage: React.FC = () => {
           </div>
 
           {/* Back to login */}
-          <Button
-            type="button"
-            variant="secondary"
-            fullWidth
-            onClick={() => navigate('/login')}
-          >
+          <Button type="button" variant="secondary" fullWidth onClick={() => navigate('/login')}>
             Back to Sign In
           </Button>
         </div>

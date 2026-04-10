@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 /**
  * useScrollDirection Hook
  * Detects scroll direction (up/down) with configurable threshold
- * 
+ *
  * @param threshold - Minimum pixels scrolled before direction change is detected (default: 50)
  * @returns Object with scrollDirection ('up' | 'down') and scrollY position
  */

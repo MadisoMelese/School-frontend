@@ -89,7 +89,7 @@ export const useOfflineStore = create<OfflineState>((set, get) => {
       return id;
     },
 
-    removePendingAction: (id: string)  => {
+    removePendingAction: (id: string) => {
       set((state) => ({
         pendingActions: state.pendingActions.filter((action) => action.id !== id),
       }));

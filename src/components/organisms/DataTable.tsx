@@ -1,32 +1,31 @@
-import React, { useState, useMemo } from 'react'
-import { Button } from '../atoms/Button'
-import { Input } from '../atoms/Input'
-import { Spinner } from '../atoms/Spinner'
-import { Pagination } from '../molecules/Pagination'
-import { Icon } from '../atoms/Icon'
+import React, { useState } from 'react';
+import { Button } from '../atoms/Button';
+import { Input } from '../atoms/Input';
+import { Pagination } from '../molecules/Pagination';
+import { Icon } from '../atoms/Icon';
 
 export interface Column<T> {
-  key: keyof T
-  label: string
-  sortable?: boolean
-  render?: (value: any, row: T) => React.ReactNode
-  width?: string
+  key: keyof T;
+  label: string;
+  sortable?: boolean;
+  render?: (value: any, row: T) => React.ReactNode;
+  width?: string;
 }
 
 export interface DataTableProps<T> {
-  columns: Column<T>[]
-  data: T[]
-  onSort?: (key: string, direction: 'asc' | 'desc') => void
-  onFilter?: (query: string) => void
-  onPageChange?: (page: number) => void
-  loading?: boolean
-  error?: string
-  pageSize?: number
-  totalItems?: number
-  keyExtractor?: (row: T, index: number) => string
+  columns: Column<T>[];
+  data: T[];
+  onSort?: (key: string, direction: 'asc' | 'desc') => void;
+  onFilter?: (query: string) => void;
+  onPageChange?: (page: number) => void;
+  loading?: boolean;
+  error?: string;
+  pageSize?: number;
+  totalItems?: number;
+  keyExtractor?: (row: T, index: number) => string;
 }
 
-type SortDirection = 'asc' | 'desc' | null
+type SortDirection = 'asc' | 'desc' | null;
 
 export const DataTable: React.FC<DataTableProps<any>> = ({
   columns,
@@ -40,46 +39,46 @@ export const DataTable: React.FC<DataTableProps<any>> = ({
   totalItems = data?.length,
   keyExtractor = (_, index) => index.toString(),
 }) => {
-  const [sortKey, setSortKey] = useState<string | null>(null)
-  const [sortDirection, setSortDirection] = useState<SortDirection>(null)
-  const [filterQuery, setFilterQuery] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+  const [filterQuery, setFilterQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleSort = (key: string) => {
-    let newDirection: SortDirection = 'asc'
+    let newDirection: SortDirection = 'asc';
     if (sortKey === key && sortDirection === 'asc') {
-      newDirection = 'desc'
+      newDirection = 'desc';
     } else if (sortKey === key && sortDirection === 'desc') {
-      newDirection = null
+      newDirection = null;
     }
 
-    setSortKey(newDirection ? key : null)
-    setSortDirection(newDirection)
+    setSortKey(newDirection ? key : null);
+    setSortDirection(newDirection);
 
     if (onSort && newDirection) {
-      onSort(key, newDirection)
+      onSort(key, newDirection);
     }
-  }
+  };
 
   const handleFilter = (query: string) => {
-    setFilterQuery(query)
-    setCurrentPage(1)
+    setFilterQuery(query);
+    setCurrentPage(1);
     if (onFilter) {
-      onFilter(query)
+      onFilter(query);
     }
-  }
+  };
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page)
+    setCurrentPage(page);
     if (onPageChange) {
-      onPageChange(page)
+      onPageChange(page);
     }
-  }
+  };
 
-  const totalPages = Math.ceil(totalItems / pageSize)
-  const startIndex = (currentPage - 1) * pageSize
-  const endIndex = startIndex + pageSize
-  const paginatedData = data?.slice(startIndex, endIndex)
+  const totalPages = Math.ceil(totalItems / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedData = data?.slice(startIndex, endIndex);
 
   if (error) {
     return (
@@ -89,7 +88,7 @@ export const DataTable: React.FC<DataTableProps<any>> = ({
           Try Again
         </Button>
       </div>
-    )
+    );
   }
 
   if (data?.length === 0 && !loading) {
@@ -97,7 +96,7 @@ export const DataTable: React.FC<DataTableProps<any>> = ({
       <div className="p-6 text-center">
         <p className="text-neutral-500">No data available</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -116,12 +115,7 @@ export const DataTable: React.FC<DataTableProps<any>> = ({
 
       {/* Table Container - Responsive */}
       <div className="overflow-x-auto rounded-lg border border-neutral-200">
-        <table
-          className="w-full text-sm"
-          role="table"
-          aria-label="Data table"
-          aria-busy={loading}
-        >
+        <table className="w-full text-sm" role="table" aria-label="Data table" aria-busy={loading}>
           <thead>
             <tr className="bg-neutral-50 border-b border-neutral-200">
               {columns.map((column) => (
@@ -206,5 +200,5 @@ export const DataTable: React.FC<DataTableProps<any>> = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};

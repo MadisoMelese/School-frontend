@@ -8,7 +8,7 @@ import { PortalLayout } from '@/components/templates';
 import { Card, Dropdown, NotificationToast } from '@/components/molecules';
 import { Button, Spinner } from '@/components/atoms';
 import { teacherService } from '@/services/api';
-import { Class, MarkAttendanceRequest } from '@/types/api.types';
+import { MarkAttendanceRequest } from '@/types/api.types';
 
 const attendanceSchema = z.object({
   classId: z.string().min(1, 'Please select a class'),
@@ -151,9 +151,7 @@ export const AttendanceMarkingPage = () => {
 
         <Card>
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
-              Select Class
-            </h2>
+            <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">Select Class</h2>
 
             <Dropdown
               options={
@@ -222,9 +220,8 @@ export const AttendanceMarkingPage = () => {
                               type="button"
                               onClick={() => handleAttendanceChange(student.id, status)}
                               className={`rounded px-3 py-1 text-sm font-medium transition-colors ${
-                                form
-                                  .getValues('attendance')
-                                  .find((a) => a.studentId === student.id)?.status === status
+                                form.getValues('attendance').find((a) => a.studentId === student.id)
+                                  ?.status === status
                                   ? 'bg-primary-600 text-white'
                                   : 'bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300'
                               }`}
@@ -238,9 +235,8 @@ export const AttendanceMarkingPage = () => {
                           type="text"
                           placeholder="Notes (optional)"
                           value={
-                            form
-                              .getValues('attendance')
-                              .find((a) => a.studentId === student.id)?.notes || ''
+                            form.getValues('attendance').find((a) => a.studentId === student.id)
+                              ?.notes || ''
                           }
                           onChange={(e) => handleNotesChange(student.id, e.target.value)}
                           className="rounded border border-neutral-300 px-2 py-1 text-sm dark:border-neutral-600 dark:bg-neutral-800"
@@ -256,11 +252,7 @@ export const AttendanceMarkingPage = () => {
               )}
 
               <div className="flex gap-2 pt-4">
-                <Button
-                  type="submit"
-                  variant="primary"
-                  loading={markAttendanceMutation.isPending}
-                >
+                <Button type="submit" variant="primary" loading={markAttendanceMutation.isPending}>
                   Submit Attendance
                 </Button>
               </div>

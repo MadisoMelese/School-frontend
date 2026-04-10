@@ -74,9 +74,7 @@ export const ChildExamsPage = () => {
       key: 'date' as const,
       label: 'Date',
       render: (value: string) => (
-        <span className="font-semibold">
-          {formatDate(new Date(value), 'long')}
-        </span>
+        <span className="font-semibold">{formatDate(new Date(value), 'long')}</span>
       ),
     },
     {
@@ -93,9 +91,7 @@ export const ChildExamsPage = () => {
       key: 'hallLocation' as const,
       label: 'Hall Location',
       render: (value?: string) => (
-        <span className="text-sm text-neutral-600 dark:text-neutral-400">
-          {value || '-'}
-        </span>
+        <span className="text-sm text-neutral-600 dark:text-neutral-400">{value || '-'}</span>
       ),
     },
   ];
@@ -114,9 +110,7 @@ export const ChildExamsPage = () => {
     {
       key: 'date' as const,
       label: 'Date',
-      render: (value: string) => (
-        <span>{formatDate(new Date(value), 'long')}</span>
-      ),
+      render: (value: string) => <span>{formatDate(new Date(value), 'long')}</span>,
     },
     {
       key: 'result' as const,
@@ -130,9 +124,7 @@ export const ChildExamsPage = () => {
     {
       key: 'grade' as const,
       label: 'Grade',
-      render: (_: unknown, row: Exam) => (
-        <Badge variant="info">{row.result?.grade || '-'}</Badge>
-      ),
+      render: (_: unknown, row: Exam) => <Badge variant="info">{row.result?.grade || '-'}</Badge>,
     },
     {
       key: 'rank' as const,
@@ -201,18 +193,12 @@ export const ChildExamsPage = () => {
                   Upcoming Exams ({filteredUpcomingExams.length})
                 </h3>
 
-                <DataTable
-                  columns={upcomingColumns}
-                  data={filteredUpcomingExams}
-                  pageSize={10}
-                />
+                <DataTable columns={upcomingColumns} data={filteredUpcomingExams} pageSize={10} />
               </div>
             </Card>
           ) : (
             <Card className="text-center">
-              <p className="text-neutral-600 dark:text-neutral-400">
-                No upcoming exams scheduled
-              </p>
+              <p className="text-neutral-600 dark:text-neutral-400">No upcoming exams scheduled</p>
             </Card>
           )
         ) : filteredPastExams.length > 0 ? (
@@ -222,18 +208,12 @@ export const ChildExamsPage = () => {
                 Past Exam Results ({filteredPastExams.length})
               </h3>
 
-              <DataTable
-                columns={pastColumns}
-                data={filteredPastExams}
-                pageSize={10}
-              />
+              <DataTable columns={pastColumns} data={filteredPastExams} pageSize={10} />
             </div>
           </Card>
         ) : (
           <Card className="text-center">
-            <p className="text-neutral-600 dark:text-neutral-400">
-              No past exam results available
-            </p>
+            <p className="text-neutral-600 dark:text-neutral-400">No past exam results available</p>
           </Card>
         )}
       </div>

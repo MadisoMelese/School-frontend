@@ -135,9 +135,7 @@ export const ChangePasswordPage: React.FC = () => {
       <Card className="w-full max-w-md">
         <div className="space-y-6">
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
-              Change Password
-            </h1>
+            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Change Password</h1>
             <p className="text-neutral-600 dark:text-neutral-400 text-sm mt-1">
               Update your password to keep your account secure
             </p>
@@ -172,9 +170,7 @@ export const ChangePasswordPage: React.FC = () => {
                     disabled={isLoading}
                     error={errors.currentPassword?.message}
                     aria-invalid={!!errors.currentPassword}
-                    aria-describedby={
-                      errors.currentPassword ? 'currentPassword-error' : undefined
-                    }
+                    aria-describedby={errors.currentPassword ? 'currentPassword-error' : undefined}
                   />
                 </div>
               )}
@@ -221,9 +217,7 @@ export const ChangePasswordPage: React.FC = () => {
                     disabled={isLoading}
                     error={errors.confirmPassword?.message}
                     aria-invalid={!!errors.confirmPassword}
-                    aria-describedby={
-                      errors.confirmPassword ? 'confirmPassword-error' : undefined
-                    }
+                    aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
                   />
                 </div>
               )}

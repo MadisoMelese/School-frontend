@@ -1,14 +1,14 @@
-import React from 'react'
-import * as Icons from 'lucide-react'
+import React from 'react';
+import * as Icons from 'lucide-react';
 
 interface IconProps {
-  name: keyof typeof Icons
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number
-  color?: 'inherit' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'neutral'
-  className?: string
-  strokeWidth?: number
-  'aria-hidden'?: boolean
-  'aria-label'?: string
+  name: keyof typeof Icons;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
+  color?: 'inherit' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'neutral';
+  className?: string;
+  strokeWidth?: number;
+  'aria-hidden'?: boolean;
+  'aria-label'?: string;
 }
 
 const sizeMap = {
@@ -17,7 +17,7 @@ const sizeMap = {
   md: 24,
   lg: 32,
   xl: 40,
-}
+};
 
 const colorStyles = {
   inherit: 'text-current',
@@ -27,7 +27,7 @@ const colorStyles = {
   warning: 'text-warning-500',
   danger: 'text-danger-500',
   neutral: 'text-neutral-500',
-}
+};
 
 export const Icon: React.FC<IconProps> = ({
   name,
@@ -39,14 +39,14 @@ export const Icon: React.FC<IconProps> = ({
   'aria-label': ariaLabel,
   ...props
 }) => {
-  const IconComponent = Icons[name] as React.ComponentType<any>
+  const IconComponent = Icons[name] as React.ComponentType<any>;
 
   if (!IconComponent) {
-    console.warn(`Icon "${name}" not found in lucide-react`)
-    return null
+    console.warn(`Icon "${name}" not found in lucide-react`);
+    return null;
   }
 
-  const sizeValue = typeof size === 'number' ? size : sizeMap[size]
+  const sizeValue = typeof size === 'number' ? size : sizeMap[size];
 
   return (
     <IconComponent
@@ -57,5 +57,5 @@ export const Icon: React.FC<IconProps> = ({
       aria-label={ariaLabel}
       {...props}
     />
-  )
-}
+  );
+};

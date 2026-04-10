@@ -6,7 +6,10 @@
 /**
  * Format date to readable string
  */
-export const formatDate = (date: string | Date, format: 'short' | 'long' | 'full' = 'short'): string => {
+export const formatDate = (
+  date: string | Date,
+  format: 'short' | 'long' | 'full' = 'short'
+): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
 
   if (isNaN(dateObj.getTime())) {
@@ -25,7 +28,10 @@ export const formatDate = (date: string | Date, format: 'short' | 'long' | 'full
 /**
  * Format time to readable string
  */
-export const formatTimeWithPeriod = (time: string | Date, format: '12h' | '24h' = '12h'): string => {
+export const formatTimeWithPeriod = (
+  time: string | Date,
+  format: '12h' | '24h' = '12h'
+): string => {
   const dateObj = typeof time === 'string' ? new Date(`2000-01-01T${time}`) : time;
 
   if (isNaN(dateObj.getTime())) {

@@ -15,15 +15,6 @@ vi.mock('../../hooks/useHeaderVisibility', () => ({
 import { useHeaderVisibility } from '../../hooks/useHeaderVisibility';
 
 describe('Header Component with Scroll Hiding', () => {
-  const mockUser = {
-    id: '1',
-    email: 'test@example.com',
-    name: 'John Doe',
-    role: 'student' as const,
-    avatar: 'https://example.com/avatar.jpg',
-    status: 'active' as const,
-  };
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -47,9 +38,7 @@ describe('Header Component with Scroll Hiding', () => {
       isMobile: true,
     });
 
-    const { container } = render(
-      <Header enableScrollHiding={true} title="Test" />,
-    );
+    const { container } = render(<Header enableScrollHiding={true} title="Test" />);
     const header = container.querySelector('header');
 
     expect(header).toHaveClass('-translate-y-full');
@@ -64,9 +53,7 @@ describe('Header Component with Scroll Hiding', () => {
       isMobile: true,
     });
 
-    const { container } = render(
-      <Header enableScrollHiding={true} title="Test" />,
-    );
+    const { container } = render(<Header enableScrollHiding={true} title="Test" />);
     const header = container.querySelector('header');
 
     expect(header).toHaveClass('translate-y-0');
@@ -81,9 +68,7 @@ describe('Header Component with Scroll Hiding', () => {
       isMobile: true,
     });
 
-    const { container } = render(
-      <Header enableScrollHiding={false} title="Test" />,
-    );
+    const { container } = render(<Header enableScrollHiding={false} title="Test" />);
     const header = container.querySelector('header');
 
     // Should always show translate-y-0 when disabled
@@ -221,12 +206,7 @@ describe('Header Component with Scroll Hiding', () => {
       },
     ];
 
-    render(
-      <Header
-        notifications={notifications}
-        onNotificationClick={onNotificationClick}
-      />,
-    );
+    render(<Header notifications={notifications} onNotificationClick={onNotificationClick} />);
 
     const notificationButton = screen.getByLabelText('Notifications');
     fireEvent.click(notificationButton);
@@ -274,13 +254,7 @@ describe('Header Component with Scroll Hiding', () => {
 
   it('should support scroll hiding with custom threshold', () => {
     const mockUseHeaderVisibility = useHeaderVisibility as any;
-    render(
-      <Header
-        enableScrollHiding={true}
-        scrollHideThreshold={75}
-        title="Test"
-      />,
-    );
+    render(<Header enableScrollHiding={true} scrollHideThreshold={75} title="Test" />);
 
     expect(mockUseHeaderVisibility).toHaveBeenCalledWith(75);
   });
@@ -296,9 +270,7 @@ describe('Header Component with Scroll Hiding', () => {
       isMobile: true,
     });
 
-    const { container, rerender } = render(
-      <Header enableScrollHiding={true} title="Test" />,
-    );
+    const { container, rerender } = render(<Header enableScrollHiding={true} title="Test" />);
 
     let header = container.querySelector('header');
     expect(header).toHaveClass('translate-y-0');

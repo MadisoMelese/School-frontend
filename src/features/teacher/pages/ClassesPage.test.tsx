@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
@@ -40,9 +40,7 @@ const mockClasses = [
     gradeLevel: '9',
     section: 'A',
     studentCount: 25,
-    schedule: [
-      { day: 'Friday', time: '14:00-15:30' },
-    ],
+    schedule: [{ day: 'Friday', time: '14:00-15:30' }],
   },
 ];
 
@@ -53,13 +51,14 @@ const createWrapper = () => {
     },
   });
 
-  return ({ children }: { children: React.ReactNode }) => (
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        {children}
-      </BrowserRouter>
+      <BrowserRouter>{children}</BrowserRouter>
     </QueryClientProvider>
   );
+
+  Wrapper.displayName = 'TestWrapper';
+  return Wrapper;
 };
 
 describe('ClassesPage', () => {
@@ -97,9 +96,7 @@ describe('ClassesPage', () => {
     });
 
     it('should display error message when fetching fails', async () => {
-      mockTeacherService.teacherService.getClasses.mockRejectedValue(
-        new Error('Failed to fetch')
-      );
+      mockTeacherService.teacherService.getClasses.mockRejectedValue(new Error('Failed to fetch'));
 
       render(<ClassesPage />, { wrapper: createWrapper() });
 
@@ -334,7 +331,7 @@ describe('ClassesPage', () => {
 
       const sortSelect = screen.getByLabelText(/Sort classes by/) as HTMLSelectElement;
       expect(sortSelect).toBeInTheDocument();
-      
+
       // Verify the select has the expected options
       const options = sortSelect.querySelectorAll('option');
       expect(options.length).toBe(3);
@@ -372,7 +369,7 @@ describe('ClassesPage', () => {
         limit: 100,
       });
 
-      const { container } = render(<ClassesPage />, { wrapper: createWrapper() });
+      render(<ClassesPage />, { wrapper: createWrapper() });
 
       await waitFor(() => {
         expect(screen.getByText('Mathematics 101')).toBeInTheDocument();

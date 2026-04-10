@@ -1,31 +1,31 @@
-import React, { useState } from 'react'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { Button } from '../atoms/Button'
-import { FormField } from '../molecules/FormField'
-import { Input } from '../atoms/Input'
-import { Label } from '../atoms/Label'
+import React, { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Button } from '../atoms/Button';
+import { FormField } from '../molecules/FormField';
+import { Input } from '../atoms/Input';
+import { Label } from '../atoms/Label';
 
 export interface FormFieldConfig {
-  name: string
-  label: string
-  type: 'text' | 'email' | 'password' | 'number' | 'date' | 'select' | 'textarea' | 'checkbox'
-  required?: boolean
-  placeholder?: string
-  options?: { value: string; label: string }[]
-  validation?: z.ZodSchema
-  rows?: number
+  name: string;
+  label: string;
+  type: 'text' | 'email' | 'password' | 'number' | 'date' | 'select' | 'textarea' | 'checkbox';
+  required?: boolean;
+  placeholder?: string;
+  options?: { value: string; label: string }[];
+  validation?: z.ZodSchema;
+  rows?: number;
 }
 
 export interface FormProps {
-  fields: FormFieldConfig[]
-  onSubmit: (data: Record<string, any>) => Promise<void>
-  loading?: boolean
-  error?: string
-  submitText?: string
-  cancelText?: string
-  onCancel?: () => void
+  fields: FormFieldConfig[];
+  onSubmit: (data: Record<string, any>) => Promise<void>;
+  loading?: boolean;
+  error?: string;
+  submitText?: string;
+  cancelText?: string;
+  onCancel?: () => void;
 }
 
 export const Form: React.FC<FormProps> = ({
@@ -37,30 +37,30 @@ export const Form: React.FC<FormProps> = ({
   cancelText = 'Cancel',
   onCancel,
 }) => {
-  const [submitError, setSubmitError] = useState<string | null>(error || null)
+  const [submitError, setSubmitError] = useState<string | null>(error || null);
 
   // Build Zod schema dynamically
-  const schemaObject: Record<string, z.ZodSchema> = {}
+  const schemaObject: Record<string, z.ZodSchema> = {};
   fields.forEach((field) => {
     if (field.validation) {
-      schemaObject[field.name] = field.validation
+      schemaObject[field.name] = field.validation;
     } else if (field.required) {
       if (field.type === 'email') {
-        schemaObject[field.name] = z.string().email('Invalid email address')
+        schemaObject[field.name] = z.string().email('Invalid email address');
       } else if (field.type === 'number') {
-        schemaObject[field.name] = z.coerce.number()
+        schemaObject[field.name] = z.coerce.number();
       } else if (field.type === 'checkbox') {
-        schemaObject[field.name] = z.boolean()
+        schemaObject[field.name] = z.boolean();
       } else {
-        schemaObject[field.name] = z.string().min(1, `${field.label} is required`)
+        schemaObject[field.name] = z.string().min(1, `${field.label} is required`);
       }
     } else {
-      schemaObject[field.name] = z.string().optional()
+      schemaObject[field.name] = z.string().optional();
     }
-  })
+  });
 
-  const schema = z.object(schemaObject)
-  type FormData = z.infer<typeof schema>
+  const schema = z.object(schemaObject);
+  type FormData = z.infer<typeof schema>;
 
   const {
     control,
@@ -70,17 +70,17 @@ export const Form: React.FC<FormProps> = ({
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
-  })
+  });
 
   const handleFormSubmit = async (data: FormData) => {
     try {
-      setSubmitError(null)
-      await onSubmit(data)
-      reset()
+      setSubmitError(null);
+      await onSubmit(data);
+      reset();
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'An error occurred')
+      setSubmitError(err instanceof Error ? err.message : 'An error occurred');
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6" noValidate>
@@ -102,15 +102,11 @@ export const Form: React.FC<FormProps> = ({
             name={field.name}
             control={control}
             render={({ field: fieldProps }) => {
-              const fieldError = errors[field.name]?.message as string | undefined
+              const fieldError = errors[field.name]?.message as string | undefined;
 
               if (field.type === 'select') {
                 return (
-                  <FormField
-                    label={field.label}
-                    error={fieldError}
-                    required={field.required}
-                  >
+                  <FormField label={field.label} error={fieldError} required={field.required}>
                     <select
                       {...fieldProps}
                       className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-neutral-100"
@@ -126,16 +122,12 @@ export const Form: React.FC<FormProps> = ({
                       ))}
                     </select>
                   </FormField>
-                )
+                );
               }
 
               if (field.type === 'textarea') {
                 return (
-                  <FormField
-                    label={field.label}
-                    error={fieldError}
-                    required={field.required}
-                  >
+                  <FormField label={field.label} error={fieldError} required={field.required}>
                     <textarea
                       {...fieldProps}
                       placeholder={field.placeholder}
@@ -146,7 +138,7 @@ export const Form: React.FC<FormProps> = ({
                       aria-describedby={fieldError ? `${field.name}-error` : undefined}
                     />
                   </FormField>
-                )
+                );
               }
 
               if (field.type === 'checkbox') {
@@ -168,15 +160,11 @@ export const Form: React.FC<FormProps> = ({
                       </span>
                     )}
                   </div>
-                )
+                );
               }
 
               return (
-                <FormField
-                  label={field.label}
-                  error={fieldError}
-                  required={field.required}
-                >
+                <FormField label={field.label} error={fieldError} required={field.required}>
                   <Input
                     {...fieldProps}
                     type={field.type}
@@ -186,7 +174,7 @@ export const Form: React.FC<FormProps> = ({
                     aria-describedby={fieldError ? `${field.name}-error` : undefined}
                   />
                 </FormField>
-              )
+              );
             }}
           />
         ))}
@@ -195,24 +183,14 @@ export const Form: React.FC<FormProps> = ({
       {/* Actions */}
       <div className="flex gap-3 justify-end pt-4">
         {onCancel && (
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={onCancel}
-            disabled={loading}
-          >
+          <Button type="button" variant="secondary" onClick={onCancel} disabled={loading}>
             {cancelText}
           </Button>
         )}
-        <Button
-          type="submit"
-          variant="primary"
-          loading={loading}
-          disabled={loading}
-        >
+        <Button type="submit" variant="primary" loading={loading} disabled={loading}>
           {submitText}
         </Button>
       </div>
     </form>
-  )
-}
+  );
+};

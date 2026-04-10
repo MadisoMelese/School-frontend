@@ -1,12 +1,12 @@
-import React from 'react'
+import React from 'react';
 
 interface CardProps {
-  header?: React.ReactNode
-  footer?: React.ReactNode
-  children: React.ReactNode
-  className?: string
-  onClick?: () => void
-  hoverable?: boolean
+  header?: React.ReactNode;
+  footer?: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+  hoverable?: boolean;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -18,9 +18,11 @@ export const Card: React.FC<CardProps> = ({
   hoverable = false,
 }) => {
   const baseStyles =
-    'bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden transition-all duration-200'
-  const hoverStyles = hoverable ? 'hover:shadow-md dark:hover:shadow-lg hover:border-neutral-300 dark:hover:border-neutral-600 cursor-pointer' : ''
-  const clickableStyles = onClick ? 'cursor-pointer' : ''
+    'bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden transition-all duration-200';
+  const hoverStyles = hoverable
+    ? 'hover:shadow-md dark:hover:shadow-lg hover:border-neutral-300 dark:hover:border-neutral-600 cursor-pointer'
+    : '';
+  const clickableStyles = onClick ? 'cursor-pointer' : '';
 
   return (
     <article
@@ -32,8 +34,8 @@ export const Card: React.FC<CardProps> = ({
         onClick
           ? (e) => {
               if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                onClick()
+                e.preventDefault();
+                onClick();
               }
             }
           : undefined
@@ -43,19 +45,21 @@ export const Card: React.FC<CardProps> = ({
       <CardBody>{children}</CardBody>
       {footer && <CardFooter>{footer}</CardFooter>}
     </article>
-  )
-}
+  );
+};
 
 export const CardHeader: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="px-4 py-3 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-700">
     <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">{children}</h3>
   </div>
-)
+);
 
 export const CardBody: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="px-4 py-4 text-neutral-900 dark:text-white">{children}</div>
-)
+);
 
 export const CardFooter: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="px-4 py-3 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white">{children}</div>
-)
+  <div className="px-4 py-3 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white">
+    {children}
+  </div>
+);

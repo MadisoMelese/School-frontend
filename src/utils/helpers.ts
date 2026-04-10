@@ -23,9 +23,7 @@ export const deepClone = <T>(obj: T): T => {
 /**
  * Merge objects
  */
-export const mergeObjects = <T extends Record<string, unknown>>(
-  ...objects: Partial<T>[]
-): T => {
+export const mergeObjects = <T extends Record<string, unknown>>(...objects: Partial<T>[]): T => {
   return objects.reduce((acc, obj) => ({ ...acc, ...obj }), {} as Partial<T>) as T;
 };
 
@@ -269,10 +267,7 @@ export const unique = <T>(array: T[]): T[] => {
 /**
  * Unique array by key
  */
-export const uniqueBy = <T extends Record<string, unknown>>(
-  array: T[],
-  key: keyof T
-): T[] => {
+export const uniqueBy = <T extends Record<string, unknown>>(array: T[], key: keyof T): T[] => {
   const seen = new Set();
   return array.filter((item) => {
     const value = item[key];

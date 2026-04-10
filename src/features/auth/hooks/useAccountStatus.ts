@@ -35,8 +35,7 @@ export const useAccountStatus = () => {
     if (user.isBlocked) {
       setStatusError({
         type: 'blocked',
-        message:
-          'Your account has been blocked. Please contact the administrator for assistance.',
+        message: 'Your account has been blocked. Please contact the administrator for assistance.',
       });
 
       // Logout user

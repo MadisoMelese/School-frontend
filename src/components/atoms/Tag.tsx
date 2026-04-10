@@ -1,13 +1,13 @@
-import React from 'react'
-import { Icon } from './Icon'
+import React from 'react';
+import { Icon } from './Icon';
 
 interface TagProps {
-  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'neutral'
-  size?: 'sm' | 'md' | 'lg'
-  children: React.ReactNode
-  onRemove?: () => void
-  icon?: React.ReactNode
-  className?: string
+  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'neutral';
+  size?: 'sm' | 'md' | 'lg';
+  children: React.ReactNode;
+  onRemove?: () => void;
+  icon?: React.ReactNode;
+  className?: string;
 }
 
 const variantStyles = {
@@ -17,13 +17,13 @@ const variantStyles = {
   warning: 'bg-warning-100 text-warning-800 hover:bg-warning-200',
   danger: 'bg-danger-100 text-danger-800 hover:bg-danger-200',
   neutral: 'bg-neutral-100 text-neutral-800 hover:bg-neutral-200',
-}
+};
 
 const sizeStyles = {
   sm: 'px-2 py-1 text-xs gap-1',
   md: 'px-3 py-1.5 text-sm gap-1.5',
   lg: 'px-4 py-2 text-base gap-2',
-}
+};
 
 export const Tag: React.FC<TagProps> = ({
   variant = 'neutral',
@@ -33,7 +33,7 @@ export const Tag: React.FC<TagProps> = ({
   icon,
   className,
 }) => {
-  const baseStyles = 'inline-flex items-center font-medium rounded-full transition-colors'
+  const baseStyles = 'inline-flex items-center font-medium rounded-full transition-colors';
 
   return (
     <span
@@ -53,5 +53,5 @@ export const Tag: React.FC<TagProps> = ({
         </button>
       )}
     </span>
-  )
-}
+  );
+};

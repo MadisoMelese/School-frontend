@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react'
-import { DashboardLayout } from '@components/templates/DashboardLayout'
-import { Card } from '@components/molecules/Card'
-import { Button } from '@components/atoms/Button'
-import { Icon } from '@components/atoms/Icon'
-import { Spinner } from '@components/atoms/Spinner'
-import { useUIStore } from '@store/uiStore'
-import { notificationService, type NotificationPreference } from '@services/api/notificationService'
+import React, { useState, useEffect } from 'react';
+import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { Card } from '@components/molecules/Card';
+import { Icon } from '@components/atoms/Icon';
+import { Spinner } from '@components/atoms/Spinner';
+import { useUIStore } from '@store/uiStore';
+import {
+  notificationService,
+  type NotificationPreference,
+} from '@services/api/notificationService';
 
 /**
  * Notification Preferences Page
@@ -20,67 +22,67 @@ import { notificationService, type NotificationPreference } from '@services/api/
  */
 
 export const NotificationPreferencesPage: React.FC = () => {
-  const addNotification = useUIStore((state) => state.addNotification)
+  const addNotification = useUIStore((state) => state.addNotification);
 
   // State
-  const [preferences, setPreferences] = useState<NotificationPreference | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [pushNotificationEnabled, setPushNotificationEnabled] = useState(false)
+  const [preferences, setPreferences] = useState<NotificationPreference | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pushNotificationEnabled, setPushNotificationEnabled] = useState(false);
 
   // Load preferences
   useEffect(() => {
     const loadPreferences = async () => {
       try {
-        setLoading(true)
-        setError(null)
-        const prefs = await notificationService.getNotificationPreferences()
-        setPreferences(prefs)
+        setLoading(true);
+        setError(null);
+        const prefs = await notificationService.getNotificationPreferences();
+        setPreferences(prefs);
 
         // Check if push notifications are supported and enabled
         if ('serviceWorker' in navigator && 'Notification' in window) {
-          const registration = await navigator.serviceWorker.ready
+          const registration = await navigator.serviceWorker.ready;
           if (registration.pushManager) {
-            const subscription = await registration.pushManager.getSubscription()
-            setPushNotificationEnabled(!!subscription)
+            const subscription = await registration.pushManager.getSubscription();
+            setPushNotificationEnabled(!!subscription);
           }
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load preferences')
+        setError(err instanceof Error ? err.message : 'Failed to load preferences');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadPreferences()
-  }, [])
+    loadPreferences();
+  }, []);
 
   // Handle preference change
   const handlePreferenceChange = async (key: keyof NotificationPreference, value: boolean) => {
-    if (!preferences) return
+    if (!preferences) return;
 
     try {
-      setSaving(true)
+      setSaving(true);
       const updated = await notificationService.updateNotificationPreferences({
         [key]: value,
-      })
-      setPreferences(updated)
+      });
+      setPreferences(updated);
       addNotification({
         type: 'success',
         message: 'Notification preferences updated',
         duration: 3000,
-      })
+      });
     } catch (err) {
       addNotification({
         type: 'error',
         message: err instanceof Error ? err.message : 'Failed to update preferences',
         duration: 5000,
-      })
+      });
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   // Handle push notification toggle
   const handlePushNotificationToggle = async () => {
@@ -90,61 +92,62 @@ export const NotificationPreferencesPage: React.FC = () => {
           type: 'error',
           message: 'Push notifications are not supported in your browser',
           duration: 5000,
-        })
-        return
+        });
+        return;
       }
 
       // Request permission if needed
       if (Notification.permission === 'default') {
-        const permission = await Notification.requestPermission()
+        const permission = await Notification.requestPermission();
         if (permission !== 'granted') {
           addNotification({
             type: 'error',
             message: 'Push notification permission denied',
             duration: 5000,
-          })
-          return
+          });
+          return;
         }
       }
 
       if (Notification.permission !== 'granted') {
         addNotification({
           type: 'error',
-          message: 'Push notifications are not enabled. Please enable them in your browser settings.',
+          message:
+            'Push notifications are not enabled. Please enable them in your browser settings.',
           duration: 5000,
-        })
-        return
+        });
+        return;
       }
 
-      const registration = await navigator.serviceWorker.ready
+      const registration = await navigator.serviceWorker.ready;
       if (!registration.pushManager) {
         addNotification({
           type: 'error',
           message: 'Push notifications are not available',
           duration: 5000,
-        })
-        return
+        });
+        return;
       }
 
       if (pushNotificationEnabled) {
         // Unsubscribe
-        const subscription = await registration.pushManager.getSubscription()
+        const subscription = await registration.pushManager.getSubscription();
         if (subscription) {
-          await subscription.unsubscribe()
-          await notificationService.unsubscribeFromPushNotifications(subscription.endpoint)
-          setPushNotificationEnabled(false)
+          await subscription.unsubscribe();
+          await notificationService.unsubscribeFromPushNotifications(subscription.endpoint);
+          setPushNotificationEnabled(false);
           addNotification({
             type: 'success',
             message: 'Push notifications disabled',
             duration: 3000,
-          })
+          });
         }
       } else {
         // Subscribe
         const subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: process.env.REACT_APP_VAPID_PUBLIC_KEY,
-        })
+        });
 
         await notificationService.subscribeToPushNotifications({
           endpoint: subscription.endpoint,
@@ -162,23 +165,23 @@ export const NotificationPreferencesPage: React.FC = () => {
               )
             ),
           },
-        })
+        });
 
-        setPushNotificationEnabled(true)
+        setPushNotificationEnabled(true);
         addNotification({
           type: 'success',
           message: 'Push notifications enabled',
           duration: 3000,
-        })
+        });
       }
     } catch (err) {
       addNotification({
         type: 'error',
         message: err instanceof Error ? err.message : 'Failed to update push notifications',
         duration: 5000,
-      })
+      });
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -190,7 +193,7 @@ export const NotificationPreferencesPage: React.FC = () => {
           <Spinner size="lg" />
         </div>
       </DashboardLayout>
-    )
+    );
   }
 
   if (error || !preferences) {
@@ -206,7 +209,7 @@ export const NotificationPreferencesPage: React.FC = () => {
           </div>
         </Card>
       </DashboardLayout>
-    )
+    );
   }
 
   return (
@@ -283,9 +286,7 @@ export const NotificationPreferencesPage: React.FC = () => {
             <div className="flex items-center justify-between py-3 border-b border-neutral-200 last:border-b-0">
               <div>
                 <p className="font-medium text-neutral-900">Exam Reminders</p>
-                <p className="text-sm text-neutral-600">
-                  Get reminded when an exam is coming up
-                </p>
+                <p className="text-sm text-neutral-600">Get reminded when an exam is coming up</p>
               </div>
               <button
                 onClick={() =>
@@ -367,9 +368,7 @@ export const NotificationPreferencesPage: React.FC = () => {
             <div className="flex items-center justify-between py-3 border-b border-neutral-200 last:border-b-0">
               <div>
                 <p className="font-medium text-neutral-900">Attendance</p>
-                <p className="text-sm text-neutral-600">
-                  Get notified when attendance is marked
-                </p>
+                <p className="text-sm text-neutral-600">Get notified when attendance is marked</p>
               </div>
               <button
                 onClick={() =>
@@ -397,9 +396,7 @@ export const NotificationPreferencesPage: React.FC = () => {
             <div className="flex items-center justify-between py-3">
               <div>
                 <p className="font-medium text-neutral-900">Announcements</p>
-                <p className="text-sm text-neutral-600">
-                  Get notified about new announcements
-                </p>
+                <p className="text-sm text-neutral-600">Get notified about new announcements</p>
               </div>
               <button
                 onClick={() =>
@@ -442,7 +439,7 @@ export const NotificationPreferencesPage: React.FC = () => {
         </Card>
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default NotificationPreferencesPage
+export default NotificationPreferencesPage;

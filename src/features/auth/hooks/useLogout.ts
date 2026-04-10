@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import authService from '@/services/api/authService';
 
 /**
  * useLogout Hook

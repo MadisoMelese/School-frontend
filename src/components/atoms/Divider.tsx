@@ -1,9 +1,9 @@
-import React from 'react'
+import React from 'react';
 
 interface DividerProps {
-  orientation?: 'horizontal' | 'vertical'
-  label?: string
-  className?: string
+  orientation?: 'horizontal' | 'vertical';
+  label?: string;
+  className?: string;
 }
 
 export const Divider: React.FC<DividerProps> = ({
@@ -18,7 +18,7 @@ export const Divider: React.FC<DividerProps> = ({
         role="separator"
         aria-orientation="vertical"
       />
-    )
+    );
   }
 
   if (label) {
@@ -28,7 +28,7 @@ export const Divider: React.FC<DividerProps> = ({
         <span className="text-sm text-neutral-500 font-medium">{label}</span>
         <div className="flex-1 h-px bg-neutral-200" />
       </div>
-    )
+    );
   }
 
   return (
@@ -37,5 +37,5 @@ export const Divider: React.FC<DividerProps> = ({
       role="separator"
       aria-orientation="horizontal"
     />
-  )
-}
+  );
+};

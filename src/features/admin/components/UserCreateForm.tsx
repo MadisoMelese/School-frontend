@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
-import { Modal } from '@components/molecules/Modal'
-import { Button } from '@components/atoms/Button'
-import { Input } from '@components/atoms/Input'
-import type { UserRole } from '@/types/api.types'
+import React, { useState } from 'react';
+import { Modal } from '@components/molecules/Modal';
+import { Button } from '@components/atoms/Button';
+import { Input } from '@components/atoms/Input';
+import type { UserRole } from '@/types/api.types';
 
 interface UserCreateFormProps {
-  onSubmit: (data: any) => Promise<void>
-  onClose: () => void
+  onSubmit: (data: any) => Promise<void>;
+  onClose: () => void;
 }
 
 const roleOptions = [
@@ -14,7 +14,7 @@ const roleOptions = [
   { value: 'teacher', label: 'Teacher' },
   { value: 'parent', label: 'Parent' },
   { value: 'admin', label: 'Admin' },
-]
+];
 
 export const UserCreateForm: React.FC<UserCreateFormProps> = ({ onSubmit, onClose }) => {
   const [formData, setFormData] = useState({
@@ -22,53 +22,53 @@ export const UserCreateForm: React.FC<UserCreateFormProps> = ({ onSubmit, onClos
     lastname: '',
     email: '',
     role: 'student' as UserRole,
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     // Validate required fields
     if (!formData.firstname.trim()) {
-      setError('First name is required')
-      setLoading(false)
-      return
+      setError('First name is required');
+      setLoading(false);
+      return;
     }
 
     if (!formData.lastname.trim()) {
-      setError('Last name is required')
-      setLoading(false)
-      return
+      setError('Last name is required');
+      setLoading(false);
+      return;
     }
 
     if (!formData.email.trim()) {
-      setError('Email is required')
-      setLoading(false)
-      return
+      setError('Email is required');
+      setLoading(false);
+      return;
     }
 
     if (!formData.role) {
-      setError('Role is required')
-      setLoading(false)
-      return
+      setError('Role is required');
+      setLoading(false);
+      return;
     }
 
     try {
-      await onSubmit(formData)
+      await onSubmit(formData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create user')
+      setError(err instanceof Error ? err.message : 'Failed to create user');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Modal
@@ -160,7 +160,7 @@ export const UserCreateForm: React.FC<UserCreateFormProps> = ({ onSubmit, onClos
         </div>
       </form>
     </Modal>
-  )
-}
+  );
+};
 
-export default UserCreateForm
+export default UserCreateForm;

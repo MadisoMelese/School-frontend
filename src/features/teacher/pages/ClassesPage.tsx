@@ -29,9 +29,10 @@ export const ClassesPage = () => {
   const filteredAndSortedClasses = useMemo(() => {
     if (!data?.data) return [];
 
-    const filtered = data.data.filter((cls) =>
-      cls.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-      cls.gradeLevel.toLowerCase().includes(debouncedSearch.toLowerCase())
+    const filtered = data.data.filter(
+      (cls) =>
+        cls.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        cls.gradeLevel.toLowerCase().includes(debouncedSearch.toLowerCase())
     );
 
     filtered.sort((a, b) => {
@@ -50,9 +51,13 @@ export const ClassesPage = () => {
       }
 
       if (typeof aVal === 'string') {
-        return sortOrder === 'asc' ? aVal.localeCompare(bVal as string) : (bVal as string).localeCompare(aVal);
+        return sortOrder === 'asc'
+          ? aVal.localeCompare(bVal as string)
+          : (bVal as string).localeCompare(aVal);
       }
-      return sortOrder === 'asc' ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
+      return sortOrder === 'asc'
+        ? (aVal as number) - (bVal as number)
+        : (bVal as number) - (aVal as number);
     });
 
     return filtered;
@@ -152,17 +157,18 @@ interface ClassCardProps {
   onViewDetails: () => void;
 }
 
+// eslint-disable-next-line react/prop-types
 const ClassCard: React.FC<ClassCardProps> = ({ classData, onViewDetails }) => {
   const formatSchedule = (schedule?: any[]) => {
     if (!schedule || schedule.length === 0) return 'No schedule';
-    return schedule.slice(0, 2).map((s) => s.day).join(', ');
+    return schedule
+      .slice(0, 2)
+      .map((s) => s.day)
+      .join(', ');
   };
 
   return (
-    <Card
-      className="flex flex-col h-full hover:shadow-md transition-shadow duration-200"
-      hoverable
-    >
+    <Card className="flex flex-col h-full hover:shadow-md transition-shadow duration-200" hoverable>
       <div className="space-y-4 flex-1">
         {/* Class Header */}
         <div>
@@ -197,17 +203,13 @@ const ClassCard: React.FC<ClassCardProps> = ({ classData, onViewDetails }) => {
       </div>
 
       {/* Action Button */}
-      <Button
-        size="sm"
-        variant="primary"
-        fullWidth
-        onClick={onViewDetails}
-        className="mt-4"
-      >
+      <Button size="sm" variant="primary" fullWidth onClick={onViewDetails} className="mt-4">
         View Details
       </Button>
     </Card>
   );
 };
+
+ClassCard.displayName = 'ClassCard';
 
 export default ClassesPage;

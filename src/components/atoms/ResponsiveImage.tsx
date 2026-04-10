@@ -1,38 +1,38 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 
 interface ResponsiveImageProps {
   /** Mobile image URL (320px-768px) */
-  mobileSrc?: string
+  mobileSrc?: string;
   /** Tablet image URL (768px-1024px) */
-  tabletSrc?: string
+  tabletSrc?: string;
   /** Desktop image URL (1024px+) */
-  desktopSrc?: string
+  desktopSrc?: string;
   /** Fallback image URL */
-  src?: string
+  src?: string;
   /** Alt text for accessibility */
-  alt: string
+  alt: string;
   /** WebP format image URL for modern browsers */
-  webpSrc?: string
+  webpSrc?: string;
   /** JPEG format image URL as fallback */
-  jpegSrc?: string
+  jpegSrc?: string;
   /** CSS class name */
-  className?: string
+  className?: string;
   /** Enable lazy loading with Intersection Observer */
-  lazy?: boolean
+  lazy?: boolean;
   /** Aspect ratio (e.g., "16/9", "4/3", "1/1") */
-  aspectRatio?: string
+  aspectRatio?: string;
   /** Callback when image loads successfully */
-  onLoad?: () => void
+  onLoad?: () => void;
   /** Callback when image fails to load */
-  onError?: () => void
+  onError?: () => void;
   /** Show placeholder while loading */
-  showPlaceholder?: boolean
+  showPlaceholder?: boolean;
   /** Placeholder background color */
-  placeholderColor?: string
+  placeholderColor?: string;
   /** Image sizes for responsive loading */
-  sizes?: string
+  sizes?: string;
   /** Enable srcset for different pixel densities */
-  enableSrcSet?: boolean
+  enableSrcSet?: boolean;
 }
 
 export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
@@ -53,86 +53,85 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   sizes,
   enableSrcSet = true,
 }) => {
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [hasError, setHasError] = useState(false)
-  const [isVisible, setIsVisible] = useState(true)
-  const imgRef = useRef<HTMLImageElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Setup Intersection Observer for lazy loading
   useEffect(() => {
-    if (!lazy) return
+    if (!lazy) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true)
-          observer.unobserve(entry.target)
+          setIsVisible(true);
+          observer.unobserve(entry.target);
         }
       },
       {
         rootMargin: '50px',
       }
-    )
+    );
 
     if (containerRef.current) {
-      observer.observe(containerRef.current)
+      observer.observe(containerRef.current);
     }
 
     return () => {
-      observer.disconnect()
-    }
-  }, [lazy])
+      observer.disconnect();
+    };
+  }, [lazy]);
 
   const handleLoad = () => {
-    setIsLoaded(true)
-    onLoad?.()
-  }
+    setIsLoaded(true);
+    onLoad?.();
+  };
 
   const handleError = () => {
-    setHasError(true)
-    onError?.()
-  }
+    setHasError(true);
+    onError?.();
+  };
 
   // Determine which image source to use based on viewport
   const getImageSource = (): string | undefined => {
-    if (!isVisible) return undefined
+    if (!isVisible) return undefined;
 
     // Use responsive sources if available
     if (typeof window !== 'undefined') {
-      const width = window.innerWidth
-      if (width < 768 && mobileSrc) return mobileSrc
-      if (width < 1024 && tabletSrc) return tabletSrc
-      if (desktopSrc) return desktopSrc
+      const width = window.innerWidth;
+      if (width < 768 && mobileSrc) return mobileSrc;
+      if (width < 1024 && tabletSrc) return tabletSrc;
+      if (desktopSrc) return desktopSrc;
     }
 
-    return src
-  }
+    return src;
+  };
 
   // Generate srcset for different pixel densities
   const generateSrcSet = (imageSrc?: string): string | undefined => {
-    if (!enableSrcSet || !imageSrc) return undefined
+    if (!enableSrcSet || !imageSrc) return undefined;
     // Format: url 1x, url 2x
-    return `${imageSrc} 1x, ${imageSrc}?dpr=2 2x`
-  }
+    return `${imageSrc} 1x, ${imageSrc}?dpr=2 2x`;
+  };
 
-  const imageSource = getImageSource()
-  const srcSet = generateSrcSet(imageSource)
+  const imageSource = getImageSource();
+  const srcSet = generateSrcSet(imageSource);
 
   // Determine sizes attribute for responsive images
-  const responsiveSizes =
-    sizes || '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw'
+  const responsiveSizes = sizes || '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw';
 
-  const baseStyles = 'w-full h-full object-cover'
-  const loadingStyles = !isLoaded && showPlaceholder ? `${placeholderColor} animate-pulse` : ''
-  const containerClasses = `relative overflow-hidden ${className}`
+  const baseStyles = 'w-full h-full object-cover';
+  const loadingStyles = !isLoaded && showPlaceholder ? `${placeholderColor} animate-pulse` : '';
+  const containerClasses = `relative overflow-hidden ${className}`;
 
   // Aspect ratio styles
   const aspectRatioStyle = aspectRatio
     ? {
         aspectRatio: aspectRatio,
       }
-    : {}
+    : {};
 
   return (
     <div ref={containerRef} className={containerClasses} style={aspectRatioStyle}>
@@ -146,20 +145,12 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
         <picture>
           {/* WebP format for modern browsers */}
           {webpSrc && (
-            <source
-              srcSet={generateSrcSet(webpSrc)}
-              type="image/webp"
-              sizes={responsiveSizes}
-            />
+            <source srcSet={generateSrcSet(webpSrc)} type="image/webp" sizes={responsiveSizes} />
           )}
 
           {/* JPEG format as fallback */}
           {jpegSrc && (
-            <source
-              srcSet={generateSrcSet(jpegSrc)}
-              type="image/jpeg"
-              sizes={responsiveSizes}
-            />
+            <source srcSet={generateSrcSet(jpegSrc)} type="image/jpeg" sizes={responsiveSizes} />
           )}
 
           {/* Responsive image sources */}
@@ -210,5 +201,5 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};

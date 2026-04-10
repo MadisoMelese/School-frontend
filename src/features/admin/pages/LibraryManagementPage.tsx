@@ -1,37 +1,37 @@
-import React, { useEffect, useState } from 'react'
-import { DashboardLayout } from '@components/templates/DashboardLayout'
-import { apiClient } from '@services/api/client'
+import React, { useEffect, useState } from 'react';
+import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { apiClient } from '@services/api/client';
 
 interface Book {
-  id: string
-  title: string
-  author: string
-  isbn: string
-  quantity: number
-  available: number
+  id: string;
+  title: string;
+  author: string;
+  isbn: string;
+  quantity: number;
+  available: number;
 }
 
 export const LibraryManagementPage: React.FC = () => {
-  const [books, setBooks] = useState<Book[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadBooks = async () => {
       try {
-        setLoading(true)
-        const response = await apiClient.get('/library/books')
-        const data = response.data.data
-        setBooks(Array.isArray(data) ? data : data?.books || [])
+        setLoading(true);
+        const response = await apiClient.get('/library/books');
+        const data = response.data.data;
+        setBooks(Array.isArray(data) ? data : data?.books || []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load books')
+        setError(err instanceof Error ? err.message : 'Failed to load books');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadBooks()
-  }, [])
+    loadBooks();
+  }, []);
 
   return (
     <DashboardLayout title="Library Management" description="Manage library books">
@@ -45,16 +45,29 @@ export const LibraryManagementPage: React.FC = () => {
               <table className="w-full text-sm">
                 <thead className="bg-neutral-50 dark:bg-neutral-700">
                   <tr>
-                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Title</th>
-                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Author</th>
-                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">ISBN</th>
-                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Quantity</th>
-                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">Available</th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">
+                      Title
+                    </th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">
+                      Author
+                    </th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">
+                      ISBN
+                    </th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">
+                      Quantity
+                    </th>
+                    <th className="px-4 py-2 text-left text-neutral-900 dark:text-neutral-300">
+                      Available
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {books.map((book) => (
-                    <tr key={book.id} className="border-t border-neutral-200 dark:border-neutral-700 dark:hover:bg-neutral-700 dark:text-white">
+                    <tr
+                      key={book.id}
+                      className="border-t border-neutral-200 dark:border-neutral-700 dark:hover:bg-neutral-700 dark:text-white"
+                    >
                       <td className="px-4 py-2">{book.title}</td>
                       <td className="px-4 py-2">{book.author}</td>
                       <td className="px-4 py-2">{book.isbn}</td>
@@ -69,7 +82,7 @@ export const LibraryManagementPage: React.FC = () => {
         )}
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default LibraryManagementPage
+export default LibraryManagementPage;

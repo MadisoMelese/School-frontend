@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react'
-import { DashboardLayout } from '@components/templates/DashboardLayout'
-import { Card } from '@components/molecules/Card'
-import { Button } from '@components/atoms/Button'
-import { Badge } from '@components/atoms/Badge'
-import { Icon } from '@components/atoms/Icon'
-import { Spinner } from '@components/atoms/Spinner'
-import { useMediaQuery } from '@hooks/useMediaQuery'
-import { studentService } from '@services/api/studentService'
-import type { Timetable } from '@types'
-import { formatTime, getWeekDates, getDayNameFromNumber, isToday, isCurrentOrUpcoming } from '@utils/dateHelpers'
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { Card } from '@components/molecules/Card';
+import { Button } from '@components/atoms/Button';
+import { Badge } from '@components/atoms/Badge';
+import { Icon } from '@components/atoms/Icon';
+import { Spinner } from '@components/atoms/Spinner';
+import { useMediaQuery } from '@hooks/useMediaQuery';
+import { studentService } from '@services/api/studentService';
+import type { Timetable } from '@types';
+import { formatTime, getDayNameFromNumber, isToday, isCurrentOrUpcoming } from '@utils/dateHelpers';
 
 /**
  * Student Timetable Page
@@ -23,79 +23,79 @@ import { formatTime, getWeekDates, getDayNameFromNumber, isToday, isCurrentOrUpc
  */
 
 interface TimetableWithStatus extends Timetable {
-  isToday: boolean
-  isCurrentOrUpcoming: boolean
-  minutesUntilStart?: number
+  isToday: boolean;
+  isCurrentOrUpcoming: boolean;
+  minutesUntilStart?: number;
 }
 
 interface DaySchedule {
-  dayOfWeek: number
-  dayName: string
-  date: Date
-  classes: TimetableWithStatus[]
-  isToday: boolean
+  dayOfWeek: number;
+  dayName: string;
+  date: Date;
+  classes: TimetableWithStatus[];
+  isToday: boolean;
 }
 
 export const TimetablePage: React.FC = () => {
-  const isMobile = useMediaQuery('(max-width: 768px)')
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   // State
-  const [timetable, setTimetable] = useState<TimetableWithStatus[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [currentDate, setCurrentDate] = useState(new Date())
-  const [selectedDay, setSelectedDay] = useState<number | null>(null)
+  const [timetable, setTimetable] = useState<TimetableWithStatus[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
   // Load timetable data
   useEffect(() => {
     const loadTimetable = async () => {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
 
         // Get week string for API (ISO week format)
-        const weekStart = getWeekStart(currentDate)
-        const weekString = weekStart.toISOString().split('T')[0]
+        const weekStart = getWeekStart(currentDate);
+        const weekString = weekStart.toISOString().split('T')[0];
 
-        const data = await studentService.getTimetable({ week: weekString })
+        const data = await studentService.getTimetable({ week: weekString });
 
         // Enrich with status information
         const enrichedData: TimetableWithStatus[] = data.map((item) => {
-          const classDate = getClassDate(currentDate, item.dayOfWeek)
-          const isClassToday = isToday(classDate)
-          const isUpcoming = isCurrentOrUpcoming(classDate, item.startTime)
-          const minutesUntil = getMinutesUntilClass(classDate, item.startTime)
+          const classDate = getClassDate(currentDate, item.dayOfWeek);
+          const isClassToday = isToday(classDate);
+          const isUpcoming = isCurrentOrUpcoming(classDate, item.startTime);
+          const minutesUntil = getMinutesUntilClass(classDate, item.startTime);
 
           return {
             ...item,
             isToday: isClassToday,
             isCurrentOrUpcoming: isUpcoming,
             minutesUntilStart: minutesUntil,
-          }
-        })
+          };
+        });
 
-        setTimetable(enrichedData)
+        setTimetable(enrichedData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load timetable')
+        setError(err instanceof Error ? err.message : 'Failed to load timetable');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadTimetable()
-  }, [currentDate])
+    loadTimetable();
+  }, [currentDate]);
 
   // Get week schedule organized by day
   const weekSchedule = useMemo(() => {
-    const weekStart = getWeekStart(currentDate)
-    const schedule: DaySchedule[] = []
+    const weekStart = getWeekStart(currentDate);
+    const schedule: DaySchedule[] = [];
 
     for (let i = 0; i < 7; i++) {
-      const date = new Date(weekStart)
-      date.setDate(date.getDate() + i)
-      const dayOfWeek = date.getDay()
+      const date = new Date(weekStart);
+      date.setDate(date.getDate() + i);
+      const dayOfWeek = date.getDay();
 
-      const dayClasses = timetable.filter((t) => t.dayOfWeek === dayOfWeek)
+      const dayClasses = timetable.filter((t) => t.dayOfWeek === dayOfWeek);
 
       schedule.push({
         dayOfWeek,
@@ -103,42 +103,42 @@ export const TimetablePage: React.FC = () => {
         date,
         classes: dayClasses.sort((a, b) => a.startTime.localeCompare(b.startTime)),
         isToday: isToday(date),
-      })
+      });
     }
 
-    return schedule
-  }, [timetable, currentDate])
+    return schedule;
+  }, [timetable, currentDate]);
 
   // Handle week navigation
   const handlePreviousWeek = useCallback(() => {
-    const newDate = new Date(currentDate)
-    newDate.setDate(newDate.getDate() - 7)
-    setCurrentDate(newDate)
-    setSelectedDay(null)
-  }, [currentDate])
+    const newDate = new Date(currentDate);
+    newDate.setDate(newDate.getDate() - 7);
+    setCurrentDate(newDate);
+    setSelectedDay(null);
+  }, [currentDate]);
 
   const handleNextWeek = useCallback(() => {
-    const newDate = new Date(currentDate)
-    newDate.setDate(newDate.getDate() + 7)
-    setCurrentDate(newDate)
-    setSelectedDay(null)
-  }, [currentDate])
+    const newDate = new Date(currentDate);
+    newDate.setDate(newDate.getDate() + 7);
+    setCurrentDate(newDate);
+    setSelectedDay(null);
+  }, [currentDate]);
 
   const handleToday = useCallback(() => {
-    setCurrentDate(new Date())
-    setSelectedDay(null)
-  }, [])
+    setCurrentDate(new Date());
+    setSelectedDay(null);
+  }, []);
 
   // Handle calendar export
   const handleExportCalendar = useCallback(() => {
-    const icsContent = generateICalendar(timetable, currentDate)
-    downloadICalendar(icsContent)
-  }, [timetable, currentDate])
+    const icsContent = generateICalendar(timetable, currentDate);
+    downloadICalendar(icsContent);
+  }, [timetable, currentDate]);
 
   // Format week display
-  const weekStart = getWeekStart(currentDate)
-  const weekEnd = new Date(weekStart)
-  weekEnd.setDate(weekEnd.getDate() + 6)
+  const weekStart = getWeekStart(currentDate);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekEnd.getDate() + 6);
 
   const weekLabel = `${weekStart.toLocaleDateString('en-US', {
     month: 'short',
@@ -147,7 +147,7 @@ export const TimetablePage: React.FC = () => {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
-  })}`
+  })}`;
 
   if (loading) {
     return (
@@ -156,7 +156,7 @@ export const TimetablePage: React.FC = () => {
           <Spinner size="lg" />
         </div>
       </DashboardLayout>
-    )
+    );
   }
 
   return (
@@ -190,12 +190,7 @@ export const TimetablePage: React.FC = () => {
                 Previous
               </Button>
 
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={handleToday}
-                className="flex-1"
-              >
+              <Button variant="secondary" size="sm" onClick={handleToday} className="flex-1">
                 Today
               </Button>
 
@@ -258,14 +253,14 @@ export const TimetablePage: React.FC = () => {
         )}
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
 
 /**
  * Desktop Weekly Grid View
  */
 interface DesktopWeeklyViewProps {
-  weekSchedule: DaySchedule[]
+  weekSchedule: DaySchedule[];
 }
 
 const DesktopWeeklyView: React.FC<DesktopWeeklyViewProps> = ({ weekSchedule }) => {
@@ -282,7 +277,9 @@ const DesktopWeeklyView: React.FC<DesktopWeeklyViewProps> = ({ weekSchedule }) =
             }`}
           >
             <p className="text-xs font-semibold text-neutral-600 uppercase">{day.dayName}</p>
-            <p className={`text-sm font-bold ${day.isToday ? 'text-primary-600' : 'text-neutral-900'}`}>
+            <p
+              className={`text-sm font-bold ${day.isToday ? 'text-primary-600' : 'text-neutral-900'}`}
+            >
               {day.date.getDate()}
             </p>
           </div>
@@ -292,29 +289,31 @@ const DesktopWeeklyView: React.FC<DesktopWeeklyViewProps> = ({ weekSchedule }) =
             {day.classes.length === 0 ? (
               <div className="text-center py-4 text-neutral-400 text-xs">No classes</div>
             ) : (
-              day.classes.map((classItem) => (
-                <ClassCard key={classItem.id} classItem={classItem} />
-              ))
+              day.classes.map((classItem) => <ClassCard key={classItem.id} classItem={classItem} />)
             )}
           </div>
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
 /**
  * Mobile Day View
  */
 interface MobileDayViewProps {
-  weekSchedule: DaySchedule[]
-  selectedDay: number | null
-  onSelectDay: (day: number | null) => void
+  weekSchedule: DaySchedule[];
+  selectedDay: number | null;
+  onSelectDay: (day: number | null) => void;
 }
 
-const MobileDayView: React.FC<MobileDayViewProps> = ({ weekSchedule, selectedDay, onSelectDay }) => {
-  const todaySchedule = weekSchedule.find((d) => d.isToday)
-  const displaySchedule = selectedDay !== null ? weekSchedule[selectedDay] : todaySchedule
+const MobileDayView: React.FC<MobileDayViewProps> = ({
+  weekSchedule,
+  selectedDay,
+  onSelectDay,
+}) => {
+  const todaySchedule = weekSchedule.find((d) => d.isToday);
+  const displaySchedule = selectedDay !== null ? weekSchedule[selectedDay] : todaySchedule;
 
   return (
     <div className="space-y-4">
@@ -326,7 +325,7 @@ const MobileDayView: React.FC<MobileDayViewProps> = ({ weekSchedule, selectedDay
               key={day.dayOfWeek}
               onClick={() => onSelectDay(index)}
               className={`flex-shrink-0 px-3 py-2 rounded-lg text-center transition-colors ${
-                (selectedDay === index || (selectedDay === null && day.isToday))
+                selectedDay === index || (selectedDay === null && day.isToday)
                   ? 'bg-primary-600 text-white'
                   : 'bg-neutral-100 text-neutral-900 hover:bg-neutral-200'
               }`}
@@ -342,7 +341,8 @@ const MobileDayView: React.FC<MobileDayViewProps> = ({ weekSchedule, selectedDay
       {displaySchedule && (
         <div className="space-y-3">
           <h3 className="font-semibold text-neutral-900">
-            {displaySchedule.dayName}, {displaySchedule.date.toLocaleDateString('en-US', {
+            {displaySchedule.dayName},{' '}
+            {displaySchedule.date.toLocaleDateString('en-US', {
               month: 'short',
               day: 'numeric',
             })}
@@ -365,18 +365,21 @@ const MobileDayView: React.FC<MobileDayViewProps> = ({ weekSchedule, selectedDay
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
 /**
  * Class Card Component
  */
 interface ClassCardProps {
-  classItem: TimetableWithStatus
+  classItem: TimetableWithStatus;
 }
 
 const ClassCard: React.FC<ClassCardProps> = ({ classItem }) => {
-  const isApproaching = classItem.isCurrentOrUpcoming && classItem.minutesUntilStart !== undefined && classItem.minutesUntilStart <= 30
+  const isApproaching =
+    classItem.isCurrentOrUpcoming &&
+    classItem.minutesUntilStart !== undefined &&
+    classItem.minutesUntilStart <= 30;
 
   return (
     <Card className={`${isApproaching ? 'border-l-4 border-l-warning-600 bg-warning-50' : ''}`}>
@@ -419,65 +422,66 @@ const ClassCard: React.FC<ClassCardProps> = ({ classItem }) => {
         {/* Approaching Indicator */}
         {isApproaching && classItem.minutesUntilStart !== undefined && (
           <div className="bg-warning-100 border border-warning-300 rounded p-2 text-xs font-medium text-warning-900">
-            Starting in {classItem.minutesUntilStart} minute{classItem.minutesUntilStart !== 1 ? 's' : ''}
+            Starting in {classItem.minutesUntilStart} minute
+            {classItem.minutesUntilStart !== 1 ? 's' : ''}
           </div>
         )}
       </div>
     </Card>
-  )
-}
+  );
+};
 
 /**
  * Utility Functions
  */
 
 function getWeekStart(date: Date): Date {
-  const d = new Date(date)
-  const day = d.getDay()
-  const diff = d.getDate() - day
-  return new Date(d.setDate(diff))
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day;
+  return new Date(d.setDate(diff));
 }
 
 function getClassDate(weekStart: Date, dayOfWeek: number): Date {
-  const date = new Date(weekStart)
-  date.setDate(date.getDate() + dayOfWeek)
-  return date
+  const date = new Date(weekStart);
+  date.setDate(date.getDate() + dayOfWeek);
+  return date;
 }
 
 function getMinutesUntilClass(classDate: Date, startTime: string): number {
-  const now = new Date()
-  const [hours, minutes] = startTime.split(':').map(Number)
+  const now = new Date();
+  const [hours, minutes] = startTime.split(':').map(Number);
 
-  const classDateTime = new Date(classDate)
-  classDateTime.setHours(hours, minutes, 0, 0)
+  const classDateTime = new Date(classDate);
+  classDateTime.setHours(hours, minutes, 0, 0);
 
-  const diffMs = classDateTime.getTime() - now.getTime()
-  return Math.ceil(diffMs / (1000 * 60))
+  const diffMs = classDateTime.getTime() - now.getTime();
+  return Math.ceil(diffMs / (1000 * 60));
 }
 
 function generateICalendar(timetable: TimetableWithStatus[], weekStart: Date): string {
-  const weekStartDate = getWeekStart(weekStart)
+  const weekStartDate = getWeekStart(weekStart);
   const lines: string[] = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
     'PRODID:-//SchoolOS//Timetable//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
-  ]
+  ];
 
   timetable.forEach((item) => {
-    const classDate = getClassDate(weekStartDate, item.dayOfWeek)
-    const [startHours, startMinutes] = item.startTime.split(':').map(Number)
-    const [endHours, endMinutes] = item.endTime.split(':').map(Number)
+    const classDate = getClassDate(weekStartDate, item.dayOfWeek);
+    const [startHours, startMinutes] = item.startTime.split(':').map(Number);
+    const [endHours, endMinutes] = item.endTime.split(':').map(Number);
 
-    const startDateTime = new Date(classDate)
-    startDateTime.setHours(startHours, startMinutes, 0, 0)
+    const startDateTime = new Date(classDate);
+    startDateTime.setHours(startHours, startMinutes, 0, 0);
 
-    const endDateTime = new Date(classDate)
-    endDateTime.setHours(endHours, endMinutes, 0, 0)
+    const endDateTime = new Date(classDate);
+    endDateTime.setHours(endHours, endMinutes, 0, 0);
 
-    const dtStart = formatICalendarDate(startDateTime)
-    const dtEnd = formatICalendarDate(endDateTime)
+    const dtStart = formatICalendarDate(startDateTime);
+    const dtEnd = formatICalendarDate(endDateTime);
 
     lines.push(
       'BEGIN:VEVENT',
@@ -489,36 +493,36 @@ function generateICalendar(timetable: TimetableWithStatus[], weekStart: Date): s
       `DESCRIPTION:Teacher: ${item.teacherName}\\nLocation: ${item.roomNumber}`,
       `LOCATION:${item.roomNumber}`,
       'END:VEVENT'
-    )
-  })
+    );
+  });
 
-  lines.push('END:VCALENDAR')
-  return lines.join('\r\n')
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
 }
 
 function formatICalendarDate(date: Date): string {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  const hours = String(date.getHours()).padStart(2, '0')
-  const minutes = String(date.getMinutes()).padStart(2, '0')
-  const seconds = String(date.getSeconds()).padStart(2, '0')
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
 
-  return `${year}${month}${day}T${hours}${minutes}${seconds}`
+  return `${year}${month}${day}T${hours}${minutes}${seconds}`;
 }
 
 function downloadICalendar(content: string): void {
-  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' })
-  const link = document.createElement('a')
-  const url = URL.createObjectURL(blob)
+  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
 
-  link.setAttribute('href', url)
-  link.setAttribute('download', `timetable-${new Date().toISOString().split('T')[0]}.ics`)
-  link.style.visibility = 'hidden'
+  link.setAttribute('href', url);
+  link.setAttribute('download', `timetable-${new Date().toISOString().split('T')[0]}.ics`);
+  link.style.visibility = 'hidden';
 
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
-export default TimetablePage
+export default TimetablePage;

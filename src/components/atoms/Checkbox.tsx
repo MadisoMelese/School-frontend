@@ -1,38 +1,29 @@
-import React from 'react'
-import { Icon } from './Icon'
+import React from 'react';
+import { Icon } from './Icon';
 
-export interface CheckboxProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'> {
-  label?: string
-  error?: string
-  helperText?: string
-  size?: 'sm' | 'md' | 'lg'
+export interface CheckboxProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'size'
+> {
+  label?: string;
+  error?: string;
+  helperText?: string;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
-  (
-    {
-      label,
-      error,
-      helperText,
-      size = 'md',
-      className = '',
-      disabled = false,
-      ...props
-    },
-    ref
-  ) => {
+  ({ label, error, helperText, size = 'md', className = '', disabled = false, ...props }, ref) => {
     const sizeClasses = {
       sm: 'w-4 h-4',
       md: 'w-5 h-5',
       lg: 'w-6 h-6',
-    }
+    };
 
     const labelSizeClasses = {
       sm: 'text-xs',
       md: 'text-sm',
       lg: 'text-base',
-    }
+    };
 
     return (
       <div className="flex flex-col gap-1">
@@ -88,10 +79,10 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         {error && <p className="text-xs text-danger-600">{error}</p>}
         {helperText && <p className="text-xs text-neutral-500">{helperText}</p>}
       </div>
-    )
+    );
   }
-)
+);
 
-Checkbox.displayName = 'Checkbox'
+Checkbox.displayName = 'Checkbox';
 
-export default Checkbox
+export default Checkbox;

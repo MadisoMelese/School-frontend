@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import { DashboardLayout } from '@components/templates/DashboardLayout'
-import { Card } from '@components/molecules/Card'
-import { Button } from '@components/atoms/Button'
-import { Badge } from '@components/atoms/Badge'
-import { Icon } from '@components/atoms/Icon'
-import { Spinner } from '@components/atoms/Spinner'
-import { notificationService } from '@services/api/notificationService'
+import React, { useState, useEffect } from 'react';
+import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { Card } from '@components/molecules/Card';
+import { Button } from '@components/atoms/Button';
+import { Badge } from '@components/atoms/Badge';
+import { Icon } from '@components/atoms/Icon';
+import { Spinner } from '@components/atoms/Spinner';
+import { notificationService } from '@services/api/notificationService';
 
 /**
  * Notification Center Page
@@ -69,54 +69,54 @@ const notificationTypeConfig = {
     textColor: 'text-indigo-900',
     label: 'Announcement',
   },
-}
+};
 
 export const NotificationCenterPage: React.FC = () => {
   // State
-  const [notifications, setNotifications] = useState<Notification[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [selectedFilter, setSelectedFilter] = useState<string | null>(null)
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
 
   // Load notifications
   useEffect(() => {
     const loadNotifications = async () => {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
         const result = await notificationService.getNotifications({
           limit: 50,
-        })
-        setNotifications(result.notifications)
+        });
+        setNotifications(result.notifications);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load notifications')
+        setError(err instanceof Error ? err.message : 'Failed to load notifications');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadNotifications()
-  }, [])
+    loadNotifications();
+  }, []);
 
   // Handle mark as read
   const handleMarkAsRead = async (notificationId: string) => {
     try {
-      await notificationService.markNotificationAsRead(notificationId)
+      await notificationService.markNotificationAsRead(notificationId);
       setNotifications((prev) =>
         prev.map((n) => (n.id === notificationId ? { ...n, isRead: true } : n))
-      )
+      );
     } catch (err) {
-      console.error('Failed to mark notification as read:', err)
+      console.error('Failed to mark notification as read:', err);
     }
-  }
+  };
 
   // Filter notifications
   const filteredNotifications = selectedFilter
     ? notifications.filter((n) => n.type === selectedFilter)
-    : notifications
+    : notifications;
 
   // Get unread count
-  const unreadCount = notifications.filter((n) => !n.isRead).length
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   if (loading) {
     return (
@@ -125,7 +125,7 @@ export const NotificationCenterPage: React.FC = () => {
           <Spinner size="lg" />
         </div>
       </DashboardLayout>
-    )
+    );
   }
 
   if (error) {
@@ -138,7 +138,7 @@ export const NotificationCenterPage: React.FC = () => {
           </div>
         </Card>
       </DashboardLayout>
-    )
+    );
   }
 
   return (
@@ -190,7 +190,7 @@ export const NotificationCenterPage: React.FC = () => {
         ) : (
           <div className="space-y-3">
             {filteredNotifications.map((notification) => {
-              const config = notificationTypeConfig[notification.type]
+              const config = notificationTypeConfig[notification.type];
               return (
                 <Card
                   key={notification.id}
@@ -202,11 +202,7 @@ export const NotificationCenterPage: React.FC = () => {
                   <div className="flex items-start gap-4">
                     {/* Icon */}
                     <div className="flex-shrink-0">
-                      <Icon
-                        name={config.icon as any}
-                        size={24}
-                        className={config.textColor}
-                      />
+                      <Icon name={config.icon as any} size={24} className={config.textColor} />
                     </div>
 
                     {/* Content */}
@@ -239,13 +235,13 @@ export const NotificationCenterPage: React.FC = () => {
                     </div>
                   </div>
                 </Card>
-              )
+              );
             })}
           </div>
         )}
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default NotificationCenterPage
+export default NotificationCenterPage;

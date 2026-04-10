@@ -1,24 +1,24 @@
-import React from 'react'
-import { Dropdown, DropdownOption } from './Dropdown'
-import { DatePicker } from './DatePicker'
-import { SearchBar } from './SearchBar'
-import { Button } from '../atoms/Button'
-import { Icon } from '../atoms/Icon'
+import React from 'react';
+import { Dropdown, DropdownOption } from './Dropdown';
+import { DatePicker } from './DatePicker';
+import { SearchBar } from './SearchBar';
+import { Button } from '../atoms/Button';
+import { Icon } from '../atoms/Icon';
 
 export interface Filter {
-  id: string
-  label: string
-  type: 'select' | 'date' | 'text'
-  value?: string | string[] | Date
-  options?: DropdownOption[]
+  id: string;
+  label: string;
+  type: 'select' | 'date' | 'text';
+  value?: string | string[] | Date;
+  options?: DropdownOption[];
 }
 
 interface FilterBarProps {
-  filters: Filter[]
-  onChange: (filterId: string, value: any) => void
-  onReset?: () => void
-  showReset?: boolean
-  className?: string
+  filters: Filter[];
+  onChange: (filterId: string, value: any) => void;
+  onReset?: () => void;
+  showReset?: boolean;
+  className?: string;
 }
 
 export const FilterBar: React.FC<FilterBarProps> = ({
@@ -28,7 +28,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   showReset = true,
   className,
 }) => {
-  const hasActiveFilters = filters.some((f) => f.value !== undefined && f.value !== '')
+  const hasActiveFilters = filters.some((f) => f.value !== undefined && f.value !== '');
 
   const renderFilter = (filter: Filter) => {
     switch (filter.type) {
@@ -42,7 +42,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             placeholder={filter.label}
             searchable
           />
-        )
+        );
       case 'date':
         return (
           <DatePicker
@@ -51,7 +51,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             onChange={(date) => onChange(filter.id, date)}
             placeholder={filter.label}
           />
-        )
+        );
       case 'text':
         return (
           <SearchBar
@@ -61,11 +61,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             placeholder={filter.label}
             debounceDelay={300}
           />
-        )
+        );
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <div className={`flex flex-col gap-4 ${className || ''}`}>
@@ -77,17 +77,12 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       {/* Reset button */}
       {showReset && hasActiveFilters && (
         <div className="flex justify-end">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onReset}
-            className="flex items-center gap-2"
-          >
+          <Button variant="ghost" size="sm" onClick={onReset} className="flex items-center gap-2">
             <Icon name="RotateCcw" size="sm" />
             Reset Filters
           </Button>
         </div>
       )}
     </div>
-  )
-}
+  );
+};

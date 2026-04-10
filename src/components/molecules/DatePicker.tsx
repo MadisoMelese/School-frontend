@@ -1,15 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { Icon } from '../atoms/Icon'
+import React, { useState, useRef, useEffect } from 'react';
+import { Icon } from '../atoms/Icon';
 
 interface DatePickerProps {
-  value?: Date
-  onChange: (date: Date) => void
-  minDate?: Date
-  maxDate?: Date
-  disabled?: boolean
-  format?: string
-  placeholder?: string
-  id?: string
+  value?: Date;
+  onChange: (date: Date) => void;
+  minDate?: Date;
+  maxDate?: Date;
+  disabled?: boolean;
+  format?: string;
+  placeholder?: string;
+  id?: string;
 }
 
 export const DatePicker: React.FC<DatePickerProps> = ({
@@ -22,76 +22,73 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   placeholder = 'Select a date',
   id,
 }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [currentMonth, setCurrentMonth] = useState(value ? new Date(value) : new Date())
-  const containerRef = useRef<HTMLDivElement>(null)
-  const datePickerId = id || `datepicker-${Math.random().toString(36).substr(2, 9)}`
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(value ? new Date(value) : new Date());
+  const containerRef = useRef<HTMLDivElement>(null);
+  const datePickerId = id || `datepicker-${Math.random().toString(36).substr(2, 9)}`;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
+        setIsOpen(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const formatDate = (date: Date): string => {
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
 
-    return format
-      .replace('YYYY', String(year))
-      .replace('MM', month)
-      .replace('DD', day)
-  }
+    return format.replace('YYYY', String(year)).replace('MM', month).replace('DD', day);
+  };
 
   const getDaysInMonth = (date: Date): number => {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
-  }
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  };
 
   const getFirstDayOfMonth = (date: Date): number => {
-    return new Date(date.getFullYear(), date.getMonth(), 1).getDay()
-  }
+    return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+  };
 
   const isDateDisabled = (date: Date): boolean => {
-    if (minDate && date < minDate) return true
-    if (maxDate && date > maxDate) return true
-    return false
-  }
+    if (minDate && date < minDate) return true;
+    if (maxDate && date > maxDate) return true;
+    return false;
+  };
 
   const handlePrevMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))
-  }
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+  };
 
   const handleNextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))
-  }
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+  };
 
   const handleDateClick = (day: number) => {
-    const selectedDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+    const selectedDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
     if (!isDateDisabled(selectedDate)) {
-      onChange(selectedDate)
-      setIsOpen(false)
+      onChange(selectedDate);
+      setIsOpen(false);
     }
-  }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      setIsOpen(!isOpen)
+      e.preventDefault();
+      setIsOpen(!isOpen);
     } else if (e.key === 'Escape') {
-      setIsOpen(false)
+      setIsOpen(false);
     }
-  }
+  };
 
-  const daysInMonth = getDaysInMonth(currentMonth)
-  const firstDay = getFirstDayOfMonth(currentMonth)
-  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1)
-  const emptyDays = Array.from({ length: firstDay }, (_, i) => i)
+  const daysInMonth = getDaysInMonth(currentMonth);
+  const firstDay = getFirstDayOfMonth(currentMonth);
+  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const emptyDays = Array.from({ length: firstDay }, (_, i) => i);
 
   const monthNames = [
     'January',
@@ -106,7 +103,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     'October',
     'November',
     'December',
-  ]
+  ];
 
   return (
     <div ref={containerRef} className="relative w-full">
@@ -119,7 +116,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         aria-expanded={isOpen}
         onKeyDown={handleKeyDown}
       >
-        <span className={value ? 'text-neutral-900 dark:text-white' : 'text-neutral-500 dark:text-neutral-400'}>
+        <span
+          className={
+            value ? 'text-neutral-900 dark:text-white' : 'text-neutral-500 dark:text-neutral-400'
+          }
+        >
           {value ? formatDate(value) : placeholder}
         </span>
         <Icon name="Calendar" size="md" />
@@ -151,7 +152,10 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           {/* Weekday headers */}
           <div className="grid grid-cols-7 gap-1 mb-2">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-              <div key={day} className="text-center text-xs font-medium text-neutral-500 dark:text-neutral-400 py-2">
+              <div
+                key={day}
+                className="text-center text-xs font-medium text-neutral-500 dark:text-neutral-400 py-2"
+              >
                 {day}
               </div>
             ))}
@@ -163,10 +167,10 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               <div key={`empty-${i}`} />
             ))}
             {days.map((day) => {
-              const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
-              const isSelected = value && date.toDateString() === value.toDateString()
-              const isDisabled = isDateDisabled(date)
-              const isToday = date.toDateString() === new Date().toDateString()
+              const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+              const isSelected = value && date.toDateString() === value.toDateString();
+              const isDisabled = isDateDisabled(date);
+              const isToday = date.toDateString() === new Date().toDateString();
 
               return (
                 <button
@@ -185,11 +189,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 >
                   {day}
                 </button>
-              )
+              );
             })}
           </div>
         </div>
       )}
     </div>
-  )
-}
+  );
+};

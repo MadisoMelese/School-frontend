@@ -39,10 +39,7 @@ describe('useScrollDirection Hook', () => {
 
     unmount();
 
-    expect(removeEventListenerSpy).toHaveBeenCalledWith(
-      'scroll',
-      expect.any(Function),
-    );
+    expect(removeEventListenerSpy).toHaveBeenCalledWith('scroll', expect.any(Function));
     removeEventListenerSpy.mockRestore();
   });
 
@@ -50,11 +47,9 @@ describe('useScrollDirection Hook', () => {
     const addEventListenerSpy = vi.spyOn(window, 'addEventListener');
     renderHook(() => useScrollDirection());
 
-    expect(addEventListenerSpy).toHaveBeenCalledWith(
-      'scroll',
-      expect.any(Function),
-      { passive: true },
-    );
+    expect(addEventListenerSpy).toHaveBeenCalledWith('scroll', expect.any(Function), {
+      passive: true,
+    });
     addEventListenerSpy.mockRestore();
   });
 
