@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSafeNavigate } from '@hooks/useSafeNavigate';
 import { useMediaQuery } from '@hooks/useMediaQuery';
 import { useUIStore } from '@store/uiStore';
 import { useAuth } from '@hooks/useAuth';
@@ -29,7 +29,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   title,
   description,
 }) => {
-  const navigate = useNavigate();
+  const navigate = useSafeNavigate();
   const isMobile = useMediaQuery('(max-width: 768px)');
   const { sidebarOpen, setSidebarOpen } = useUIStore();
   const { user, logout } = useAuth();
