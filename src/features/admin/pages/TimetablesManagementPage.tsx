@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '@components/templates/DashboardLayout';
+import { SkeletonTable } from '@components/atoms/SkeletonTable';
 import { apiClient } from '@services/api/client';
 
 interface Timetable {
@@ -37,7 +38,11 @@ export const TimetablesManagementPage: React.FC = () => {
   return (
     <DashboardLayout title="Timetables Management" description="Manage all timetables">
       <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6">
-        {loading && <p className="text-neutral-600 dark:text-neutral-400">Loading timetables...</p>}
+        {loading && (
+          <div className="p-6">
+            <SkeletonTable rows={5} columns={5} showHeader />
+          </div>
+        )}
         {error && <p className="text-danger-600 dark:text-danger-200">{error}</p>}
         {!loading && !error && (
           <div>
