@@ -7,3 +7,11 @@ export type {
 } from './userService';
 export { systemLogsService } from './systemLogsService';
 export type { SystemLogsListResponse, SystemLogsFilters, ExportOptions } from './systemLogsService';
+export { studentService } from './studentService';
+export type {
+  Student,
+  StudentListResponse,
+  CreateStudentRequest,
+  UpdateStudentRequest,
+  StudentFilters,
+} from './studentService';
