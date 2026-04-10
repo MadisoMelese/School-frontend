@@ -96,7 +96,7 @@ describe('Multi-Screen Comprehensive Testing Suite (Task 23.9)', () => {
       breakpoints.forEach((bp) => {
         setViewportToBreakpoint(bp)
         const { container } = render(<ResponsiveGridComponent />)
-        const grid = container.querySelector('.grid')
+        const grid = container.querySelector('.grid') as HTMLElement | null
         expect(hasResponsiveGrid(grid!)).toBe(true)
       })
     })
@@ -350,7 +350,7 @@ describe('Multi-Screen Comprehensive Testing Suite (Task 23.9)', () => {
       breakpoints.forEach((bp) => {
         setViewportToBreakpoint(bp)
         const { container } = render(<CompletePageComponent />)
-        const grid = container.querySelector('.grid')
+        const grid = container.querySelector('.grid') as HTMLElement | null
         expect(hasResponsiveGrid(grid!)).toBe(true)
       })
     })

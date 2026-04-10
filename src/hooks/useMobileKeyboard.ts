@@ -78,7 +78,7 @@ export const useMobileKeyboard = (options: UseMobileKeyboardOptions = {}) => {
   const dismissKeyboard = useCallback(() => {
     setIsKeyboardDismissing(true)
     if (focusedElement) {
-      ;(focusedElement as HTMLInputElement | HTMLTextAreaElement).blur()
+      (focusedElement as HTMLInputElement | HTMLTextAreaElement).blur()
     }
   }, [focusedElement])
 

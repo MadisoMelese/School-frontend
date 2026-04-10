@@ -130,7 +130,7 @@ describe('ExamsPage - Exam Notifications Integration', () => {
   })
 
   it('should respect notification preferences', async () => {
-    ;(notificationService.notificationService.getNotificationPreferences as any).mockResolvedValue({
+    (notificationService.notificationService.getNotificationPreferences as any).mockResolvedValue({
       examResultsNotification: false,
     })
 

@@ -115,7 +115,7 @@ describe('TimetablePage', () => {
   })
 
   it('displays loading spinner while fetching data', () => {
-    ;(studentService.studentService.getTimetable as any).mockImplementation(
+    (studentService.studentService.getTimetable as any).mockImplementation(
       () => new Promise(() => {}) // Never resolves
     )
 
@@ -161,7 +161,7 @@ describe('TimetablePage', () => {
   })
 
   it('displays empty state when no classes scheduled', async () => {
-    ;(studentService.studentService.getTimetable as any).mockResolvedValue([])
+    (studentService.studentService.getTimetable as any).mockResolvedValue([])
 
     render(<TimetablePage />)
 
@@ -239,7 +239,7 @@ describe('TimetablePage', () => {
   })
 
   it('disables export button when no classes', async () => {
-    ;(studentService.studentService.getTimetable as any).mockResolvedValue([])
+    (studentService.studentService.getTimetable as any).mockResolvedValue([])
 
     render(<TimetablePage />)
 
@@ -269,7 +269,7 @@ describe('TimetablePage', () => {
   })
 
   it('handles retry on error', async () => {
-    ;(studentService.studentService.getTimetable as any).mockRejectedValueOnce(
+    (studentService.studentService.getTimetable as any).mockRejectedValueOnce(
       new Error('Network error')
     )
 

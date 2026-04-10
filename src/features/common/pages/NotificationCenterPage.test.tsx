@@ -116,7 +116,7 @@ describe('NotificationCenterPage', () => {
   })
 
   it('should display empty state when no notifications', async () => {
-    ;(notificationService.notificationService.getNotifications as any).mockResolvedValueOnce({
+    (notificationService.notificationService.getNotifications as any).mockResolvedValueOnce({
       notifications: [],
       total: 0,
     })
@@ -155,7 +155,7 @@ describe('NotificationCenterPage', () => {
   })
 
   it('should handle notification loading errors', async () => {
-    ;(notificationService.notificationService.getNotifications as any).mockRejectedValueOnce(
+    (notificationService.notificationService.getNotifications as any).mockRejectedValueOnce(
       new Error('Failed to load notifications')
     )
 

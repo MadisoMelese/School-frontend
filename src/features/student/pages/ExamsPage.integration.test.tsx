@@ -236,7 +236,7 @@ describe('ExamsPage Integration Tests', () => {
   })
 
   it('handles API errors gracefully', async () => {
-    ;(studentService.studentService.getExams as any).mockRejectedValue(
+    (studentService.studentService.getExams as any).mockRejectedValue(
       new Error('Failed to load exams')
     )
 

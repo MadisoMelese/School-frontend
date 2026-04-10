@@ -25,7 +25,7 @@ describe('DashboardLayout - Responsive Design', () => {
 
   describe('Mobile Layout (320px - 640px)', () => {
     beforeEach(() => {
-      ;(useMediaQuery as any).mockReturnValue(true) // isMobile = true
+      (useMediaQuery as any).mockReturnValue(true) // isMobile = true
     })
 
     it('should render bottom navigation on mobile', () => {
@@ -87,7 +87,7 @@ describe('DashboardLayout - Responsive Design', () => {
 
   describe('Tablet Layout (768px - 1024px)', () => {
     beforeEach(() => {
-      ;(useMediaQuery as any).mockReturnValue(false) // isMobile = false
+      (useMediaQuery as any).mockReturnValue(false) // isMobile = false
     })
 
     it('should render sidebar on tablet', () => {
@@ -127,7 +127,7 @@ describe('DashboardLayout - Responsive Design', () => {
 
   describe('Desktop Layout (1024px+)', () => {
     beforeEach(() => {
-      ;(useMediaQuery as any).mockReturnValue(false) // isMobile = false
+      (useMediaQuery as any).mockReturnValue(false) // isMobile = false
     })
 
     it('should render sidebar on desktop', () => {
@@ -166,7 +166,7 @@ describe('DashboardLayout - Responsive Design', () => {
 
   describe('Touch Targets', () => {
     it('should have minimum 44px touch targets on mobile', () => {
-      ;(useMediaQuery as any).mockReturnValue(true)
+      (useMediaQuery as any).mockReturnValue(true)
 
       const { container } = render(
         <DashboardLayout title="Test Page">

@@ -29,7 +29,7 @@ export const ClassesPage = () => {
   const filteredAndSortedClasses = useMemo(() => {
     if (!data?.data) return [];
 
-    let filtered = data.data.filter((cls) =>
+    const filtered = data.data.filter((cls) =>
       cls.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
       cls.gradeLevel.toLowerCase().includes(debouncedSearch.toLowerCase())
     );

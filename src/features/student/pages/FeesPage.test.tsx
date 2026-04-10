@@ -226,7 +226,7 @@ describe('FeesPage', () => {
   })
 
   it('initiates payment when pay button is clicked', async () => {
-    ;(studentService.studentService.initiateFeePayment as any).mockResolvedValue({
+    (studentService.studentService.initiateFeePayment as any).mockResolvedValue({
       message: 'Payment initiated',
     })
 
@@ -261,7 +261,7 @@ describe('FeesPage', () => {
   })
 
   it('displays error message on API failure', async () => {
-    ;(studentService.studentService.getFees as any).mockRejectedValue(
+    (studentService.studentService.getFees as any).mockRejectedValue(
       new Error('Failed to load fees')
     )
 
@@ -272,7 +272,7 @@ describe('FeesPage', () => {
   })
 
   it('displays no fees message when list is empty', async () => {
-    ;(studentService.studentService.getFees as any).mockResolvedValue({
+    (studentService.studentService.getFees as any).mockResolvedValue({
       data: [],
       pagination: { page: 1, limit: 10, total: 0, pages: 0 },
     })

@@ -170,7 +170,7 @@ describe('GradesPage', () => {
   })
 
   it('displays no grades message when list is empty', async () => {
-    ;(studentService.studentService.getGrades as any).mockResolvedValueOnce({
+    (studentService.studentService.getGrades as any).mockResolvedValueOnce({
       data: [],
       pagination: { page: 1, limit: 10, total: 0, pages: 0 },
     })

@@ -106,7 +106,7 @@ describe('AttendancePage Integration Tests', () => {
   })
 
   it('handles API errors gracefully', async () => {
-    ;(studentService.studentService.getAttendance as any).mockRejectedValue(
+    (studentService.studentService.getAttendance as any).mockRejectedValue(
       new Error('Server error')
     )
 
@@ -151,7 +151,7 @@ describe('AttendancePage Integration Tests', () => {
   })
 
   it('displays warning indicator when attendance is below 75%', async () => {
-    ;(studentService.studentService.getAttendancePercentage as any).mockResolvedValue({
+    (studentService.studentService.getAttendancePercentage as any).mockResolvedValue({
       percentage: 70,
       term: 'Term 1',
     })
@@ -201,7 +201,7 @@ describe('AttendancePage Integration Tests', () => {
   })
 
   it('handles empty attendance records', async () => {
-    ;(studentService.studentService.getAttendance as any).mockResolvedValue({
+    (studentService.studentService.getAttendance as any).mockResolvedValue({
       data: [],
       pagination: {
         page: 1,

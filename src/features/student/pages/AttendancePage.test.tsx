@@ -105,7 +105,7 @@ describe('AttendancePage', () => {
   })
 
   it('displays loading spinner while fetching data', () => {
-    ;(studentService.studentService.getAttendance as any).mockImplementation(
+    (studentService.studentService.getAttendance as any).mockImplementation(
       () => new Promise(() => {})
     )
     render(<AttendancePage />)
@@ -129,7 +129,7 @@ describe('AttendancePage', () => {
   })
 
   it('shows warning indicator when attendance < 75%', async () => {
-    ;(studentService.studentService.getAttendancePercentage as any).mockResolvedValue({
+    (studentService.studentService.getAttendancePercentage as any).mockResolvedValue({
       percentage: 70,
       term: 'Term 1',
     })
@@ -197,7 +197,7 @@ describe('AttendancePage', () => {
   })
 
   it('displays empty state when no records found', async () => {
-    ;(studentService.studentService.getAttendance as any).mockResolvedValue({
+    (studentService.studentService.getAttendance as any).mockResolvedValue({
       data: [],
     })
     render(<AttendancePage />)

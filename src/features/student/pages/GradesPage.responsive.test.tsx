@@ -47,7 +47,7 @@ describe('GradesPage - Responsive Design', () => {
 
   describe('Mobile Layout (320px - 640px)', () => {
     beforeEach(() => {
-      ;(useMediaQuery as any).mockImplementation((query: string) => {
+      (useMediaQuery as any).mockImplementation((query: string) => {
         if (query === '(max-width: 768px)') return true
         if (query === '(max-width: 1024px)') return true
         return false
@@ -74,7 +74,7 @@ describe('GradesPage - Responsive Design', () => {
     })
 
     it('should display card layout on mobile instead of table', async () => {
-      ;(useMediaQuery as any).mockImplementation((query: string) => {
+      (useMediaQuery as any).mockImplementation((query: string) => {
         if (query === '(max-width: 768px)') return true
         return false
       })
@@ -109,7 +109,7 @@ describe('GradesPage - Responsive Design', () => {
 
   describe('Tablet Layout (768px - 1024px)', () => {
     beforeEach(() => {
-      ;(useMediaQuery as any).mockImplementation((query: string) => {
+      (useMediaQuery as any).mockImplementation((query: string) => {
         if (query === '(max-width: 768px)') return false
         if (query === '(max-width: 1024px)') return true
         return false
@@ -126,7 +126,7 @@ describe('GradesPage - Responsive Design', () => {
     })
 
     it('should display table layout on tablet', async () => {
-      ;(useMediaQuery as any).mockImplementation((query: string) => {
+      (useMediaQuery as any).mockImplementation((query: string) => {
         if (query === '(max-width: 768px)') return false
         return false
       })
@@ -143,7 +143,7 @@ describe('GradesPage - Responsive Design', () => {
 
   describe('Desktop Layout (1024px+)', () => {
     beforeEach(() => {
-      ;(useMediaQuery as any).mockImplementation((query: string) => {
+      (useMediaQuery as any).mockImplementation((query: string) => {
         return false
       })
     })

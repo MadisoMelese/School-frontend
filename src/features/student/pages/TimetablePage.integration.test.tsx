@@ -150,7 +150,7 @@ describe('TimetablePage Integration Tests', () => {
   })
 
   it('handles API errors gracefully', async () => {
-    ;(studentService.studentService.getTimetable as any).mockRejectedValueOnce(
+    (studentService.studentService.getTimetable as any).mockRejectedValueOnce(
       new Error('Server error')
     )
 
@@ -162,7 +162,7 @@ describe('TimetablePage Integration Tests', () => {
   })
 
   it('handles empty timetable response', async () => {
-    ;(studentService.studentService.getTimetable as any).mockResolvedValueOnce([])
+    (studentService.studentService.getTimetable as any).mockResolvedValueOnce([])
 
     render(<TimetablePage />)
 
@@ -306,7 +306,7 @@ describe('TimetablePage Integration Tests', () => {
   })
 
   it('handles retry on error', async () => {
-    ;(studentService.studentService.getTimetable as any).mockRejectedValueOnce(
+    (studentService.studentService.getTimetable as any).mockRejectedValueOnce(
       new Error('Network error')
     )
 
