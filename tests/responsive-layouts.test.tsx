@@ -101,22 +101,22 @@ describe('Responsive Layout Tests', () => {
 
     it('should have responsive grid classes', () => {
       const { container } = render(<GridComponent />)
-      const grid = container.querySelector('.grid')
+      const grid = container.querySelector('.grid') as HTMLElement
       expect(grid).toBeTruthy()
-      expect(hasResponsiveGrid(grid!)).toBe(true)
+      expect(hasResponsiveGrid(grid)).toBe(true)
     })
 
     it('should have responsive gap classes', () => {
       const { container } = render(<GridComponent />)
-      const grid = container.querySelector('.grid')
-      expect(hasResponsiveGap(grid!)).toBe(true)
+      const grid = container.querySelector('.grid') as HTMLElement
+      expect(hasResponsiveGap(grid)).toBe(true)
     })
 
     it('should assert responsive grid layout', () => {
       const { container } = render(<GridComponent />)
-      const grid = container.querySelector('.grid')
+      const grid = container.querySelector('.grid') as HTMLElement
       expect(() => {
-        assertResponsiveGrid(grid!, {
+        assertResponsiveGrid(grid, {
           mobile: 1,
           tablet: 2,
           desktop: 3,
