@@ -1,25 +1,33 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useUsers } from './useUsers'
-import type { User } from '@types/api.types'
+import type { User } from '../../../types/api.types'
 
 describe('useUsers Hook', () => {
   const mockUsers: User[] = [
     {
       id: '1',
       email: 'user1@example.com',
-      name: 'User One',
+      firstname: 'User',
+      lastname: 'One',
+      username: 'user.one',
       role: 'student',
-      status: 'active',
+      isBlocked: false,
+      isVerified: true,
+      isActive: true,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
     },
     {
       id: '2',
       email: 'user2@example.com',
-      name: 'User Two',
+      firstname: 'User',
+      lastname: 'Two',
+      username: 'user.two',
       role: 'teacher',
-      status: 'active',
+      isBlocked: false,
+      isVerified: true,
+      isActive: true,
       createdAt: '2024-01-02T00:00:00Z',
       updatedAt: '2024-01-02T00:00:00Z',
     },

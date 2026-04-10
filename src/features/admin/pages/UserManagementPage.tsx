@@ -245,7 +245,7 @@ export const UserManagementPage: React.FC = () => {
             onClick={() => openDetailsModal(row)}
             className="p-1 text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900 rounded transition-colors"
             title="View details"
-            aria-label={`View details for ${row.name}`}
+            aria-label={`View details for ${row.firstname} ${row.lastname}`}
           >
             <Icon name="Eye" size={16} />
           </button>
@@ -253,7 +253,7 @@ export const UserManagementPage: React.FC = () => {
             onClick={() => openEditModal(row)}
             className="p-1 text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900 rounded transition-colors"
             title="Edit user"
-            aria-label={`Edit ${row.name}`}
+            aria-label={`Edit ${row.firstname} ${row.lastname}`}
           >
             <Icon name="Edit2" size={16} />
           </button>
@@ -273,7 +273,7 @@ export const UserManagementPage: React.FC = () => {
             onClick={() => openDeleteConfirm(row.id)}
             className="p-1 text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900 rounded transition-colors"
             title="Delete user"
-            aria-label={`Delete ${row.name}`}
+            aria-label={`Delete ${row.firstname} ${row.lastname}`}
           >
             <Icon name="Trash2" size={16} />
           </button>

@@ -100,7 +100,7 @@ export const MessagesPage: React.FC = () => {
     const query = debouncedSearchQuery.toLowerCase()
     return messages.filter(
       (msg) =>
-        msg.sender.name.toLowerCase().includes(query) ||
+        `${msg.sender.firstname} ${msg.sender.lastname}`.toLowerCase().includes(query) ||
         msg.subject.toLowerCase().includes(query) ||
         msg.content.toLowerCase().includes(query)
     )
@@ -307,7 +307,7 @@ export const MessagesPage: React.FC = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-semibold text-neutral-900 truncate">
-                        {message.sender.name}
+                        {message.sender.firstname} {message.sender.lastname}
                       </h3>
                       {!message.isRead && (
                         <Badge variant="info" size="sm">
@@ -341,13 +341,13 @@ export const MessagesPage: React.FC = () => {
           <Modal
             isOpen={!!selectedMessage}
             onClose={() => setSelectedMessage(null)}
-            title={selectedMessage.sender.name}
+            title={`${selectedMessage.sender.firstname} ${selectedMessage.sender.lastname}`}
             size="lg"
           >
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-neutral-600 mb-1">From</p>
-                <p className="font-medium text-neutral-900">{selectedMessage.sender.name}</p>
+                <p className="font-medium text-neutral-900">{selectedMessage.sender.firstname} {selectedMessage.sender.lastname}</p>
                 <p className="text-sm text-neutral-600">{selectedMessage.sender.email}</p>
               </div>
 
@@ -396,7 +396,7 @@ export const MessagesPage: React.FC = () => {
                 <option value="">Select a recipient...</option>
                 {recipients.map((recipient) => (
                   <option key={recipient.id} value={recipient.id}>
-                    {recipient.name}
+                    {recipient.firstname} {recipient.lastname}
                   </option>
                 ))}
               </select>

@@ -37,7 +37,7 @@ export const DataTable: React.FC<DataTableProps<any>> = ({
   loading = false,
   error,
   pageSize = 10,
-  totalItems = data.length,
+  totalItems = data?.length,
   keyExtractor = (_, index) => index.toString(),
 }) => {
   const [sortKey, setSortKey] = useState<string | null>(null)
@@ -79,7 +79,7 @@ export const DataTable: React.FC<DataTableProps<any>> = ({
   const totalPages = Math.ceil(totalItems / pageSize)
   const startIndex = (currentPage - 1) * pageSize
   const endIndex = startIndex + pageSize
-  const paginatedData = data.slice(startIndex, endIndex)
+  const paginatedData = data?.slice(startIndex, endIndex)
 
   if (error) {
     return (
@@ -92,7 +92,7 @@ export const DataTable: React.FC<DataTableProps<any>> = ({
     )
   }
 
-  if (data.length === 0 && !loading) {
+  if (data?.length === 0 && !loading) {
     return (
       <div className="p-6 text-center">
         <p className="text-neutral-500">No data available</p>
@@ -169,14 +169,14 @@ export const DataTable: React.FC<DataTableProps<any>> = ({
                   ))}
                 </tr>
               ))
-            ) : paginatedData.length === 0 ? (
+            ) : paginatedData?.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-4 py-6 text-center text-neutral-500">
+                <td colSpan={columns?.length} className="px-4 py-6 text-center text-neutral-500">
                   No results found
                 </td>
               </tr>
             ) : (
-              paginatedData.map((row, rowIndex) => (
+              paginatedData?.map((row, rowIndex) => (
                 <tr
                   key={keyExtractor(row, rowIndex)}
                   className="border-b border-neutral-200 hover:bg-neutral-50 transition-colors"

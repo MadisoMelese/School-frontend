@@ -221,7 +221,7 @@ export const NotificationCenterPage: React.FC = () => {
                           </p>
                         </div>
                         {!notification.isRead && (
-                          <Badge variant="primary" size="sm">
+                          <Badge variant="info" size="sm">
                             New
                           </Badge>
                         )}

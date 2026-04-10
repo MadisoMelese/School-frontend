@@ -41,11 +41,15 @@ describe('Navigation Integration Tests', () => {
   const mockUser: User = {
     id: '1',
     email: 'student@example.com',
-    name: 'John Doe',
+    firstname: 'John',
+    lastname: 'Doe',
+    username: 'john.doe',
     role: 'student',
-    status: 'active',
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    isBlocked: false,
+    isVerified: true,
+    isActive: true,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
   }
 
   const mockOnItemClick = vi.fn()

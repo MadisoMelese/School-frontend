@@ -14,10 +14,16 @@ describe('Navigation Component - Sidebar Navigation for Desktop', () => {
   const mockUser: User = {
     id: '1',
     email: 'student@example.com',
-    name: 'John Doe',
+    firstname: 'John',
+    lastname: 'Doe',
+    username: 'john.doe',
     role: 'student',
     avatar: 'https://example.com/avatar.jpg',
-    status: 'active',
+    isBlocked: false,
+    isVerified: true,
+    isActive: true,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
   }
 
   const mockNavItems: NavItem[] = [
@@ -393,7 +399,7 @@ describe('Navigation Component - Sidebar Navigation for Desktop', () => {
       )
 
       const userSection = container.querySelector('.border-t')
-      expect(userSection?.textContent).toContain(mockUser.name)
+      expect(userSection?.textContent).toContain(`${mockUser.firstname} ${mockUser.lastname}`)
       expect(userSection?.textContent).toContain(mockUser.role)
     })
 
@@ -411,7 +417,7 @@ describe('Navigation Component - Sidebar Navigation for Desktop', () => {
       const userSection = container.querySelector('.border-t')
       expect(userSection).toBeTruthy()
       // Avatar is rendered as part of the user section
-      expect(userSection?.textContent).toContain(mockUser.name)
+      expect(userSection?.textContent).toContain(`${mockUser.firstname} ${mockUser.lastname}`)
     })
 
     it('should display logout button in user section', () => {

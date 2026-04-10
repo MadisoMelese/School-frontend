@@ -89,7 +89,7 @@ vi.mock('@components/atoms/Spinner', () => ({
 const mockMessages = [
   {
     id: '1',
-    sender: { id: 'sender1', name: 'John Teacher', email: 'john@school.com', role: 'teacher' as const, status: 'active' as const, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+    sender: { id: 'sender1', firstname: 'John', lastname: 'Teacher', username: 'john.teacher', email: 'john@school.com', role: 'teacher' as const, isBlocked: false, isVerified: true, isActive: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
     subject: 'Grade Update',
     content: 'Your grades have been updated',
     timestamp: '2024-01-15T10:00:00Z',
@@ -97,7 +97,7 @@ const mockMessages = [
   },
   {
     id: '2',
-    sender: { id: 'sender2', name: 'Admin User', email: 'admin@school.com', role: 'admin' as const, status: 'active' as const, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+    sender: { id: 'sender2', firstname: 'Admin', lastname: 'User', username: 'admin.user', email: 'admin@school.com', role: 'admin' as const, isBlocked: false, isVerified: true, isActive: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
     subject: 'Announcement',
     content: 'School will be closed tomorrow',
     timestamp: '2024-01-14T09:00:00Z',
@@ -267,7 +267,7 @@ describe('MessagesPage', () => {
 
     const newMessage = {
       id: '3',
-      sender: { id: 'me', name: 'Me', email: 'me@school.com', role: 'student' as const, status: 'active' as const, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+      sender: { id: 'me', firstname: 'Me', lastname: 'User', username: 'me.user', email: 'me@school.com', role: 'student' as const, isBlocked: false, isVerified: true, isActive: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
       subject: 'Test Message',
       content: 'This is a test',
       timestamp: '2024-01-16T10:00:00Z',

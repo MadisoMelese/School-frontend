@@ -45,7 +45,7 @@ describe('ExamsPage - Exam Notifications Integration', () => {
     vi.clearAllMocks()
 
     // Mock studentService
-    ;(studentService.studentService.getExams as any).mockImplementation((params) => {
+    ;(studentService.studentService.getExams as any).mockImplementation((params: any) => {
       if (params?.status === 'upcoming') {
         return Promise.resolve({
           data: [mockUpcomingExam],

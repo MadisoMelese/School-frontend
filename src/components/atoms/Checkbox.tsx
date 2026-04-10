@@ -2,7 +2,7 @@ import React from 'react'
 import { Icon } from './Icon'
 
 export interface CheckboxProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'> {
   label?: string
   error?: string
   helperText?: string

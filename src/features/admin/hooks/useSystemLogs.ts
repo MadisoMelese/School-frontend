@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { systemLogsService, type SystemLogsFilters } from '@services/admin/systemLogsService'
 import { downloadCSV, downloadPDF, formatExportFilename } from '@utils/exportHelpers'
-import type { SystemLog } from '@types/api.types'
+import type { SystemLog } from '../../../types/api.types'
 
 interface UseSystemLogsState {
   logs: SystemLog[]

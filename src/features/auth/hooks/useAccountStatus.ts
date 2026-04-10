@@ -32,7 +32,7 @@ export const useAccountStatus = () => {
     }
 
     // Check account status
-    if (user.status === 'blocked') {
+    if (user.isBlocked) {
       setStatusError({
         type: 'blocked',
         message:
@@ -42,7 +42,7 @@ export const useAccountStatus = () => {
       // Logout user
       logout();
       navigate('/login', { replace: true });
-    } else if (user.status === 'inactive') {
+    } else if (!user.isActive) {
       setStatusError({
         type: 'inactive',
         message: 'Your account is inactive. Please contact the administrator to reactivate it.',

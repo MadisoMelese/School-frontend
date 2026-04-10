@@ -12,9 +12,13 @@ describe('AdminDashboardPage', () => {
   const mockUser = {
     id: 'admin-1',
     email: 'admin@example.com',
-    name: 'Admin User',
+    firstname: 'Admin',
+    lastname: 'User',
+    username: 'admin.user',
     role: 'admin' as const,
-    status: 'active' as const,
+    isBlocked: false,
+    isVerified: true,
+    isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   }
@@ -35,6 +39,7 @@ describe('AdminDashboardPage', () => {
       refreshTokenAction: vi.fn(),
       setUser: vi.fn(),
       setError: vi.fn(),
+      initializeAuth: vi.fn(),
     })
 
     // Mock useLocalStorage

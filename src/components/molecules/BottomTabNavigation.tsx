@@ -144,9 +144,9 @@ export const BottomTabNavigation: React.FC<BottomTabNavigationProps> = ({
                     animate-pulse
                   `}
                   role="status"
-                  aria-label={`${item.badge} unread`}
+                  aria-label={`${item.badge || 0} unread`}
                 >
-                  {item.badge > 99 ? '99+' : item.badge}
+                  {(item.badge || 0) > 99 ? '99+' : item.badge}
                 </div>
               )}
             </div>

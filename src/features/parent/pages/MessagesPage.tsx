@@ -101,7 +101,7 @@ export const ParentMessagesPage: React.FC = () => {
     const query = debouncedSearchQuery.toLowerCase()
     return messages.filter(
       (msg) =>
-        msg.sender.name.toLowerCase().includes(query) ||
+        `${msg.sender.firstname} ${msg.sender.lastname}`.toLowerCase().includes(query) ||
         msg.subject.toLowerCase().includes(query)
     )
   }, [messages, debouncedSearchQuery])
@@ -314,7 +314,7 @@ export const ParentMessagesPage: React.FC = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-semibold text-neutral-900 truncate">
-                        {message.sender.name}
+                        {message.sender.firstname} {message.sender.lastname}
                       </h3>
                       {!message.isRead && (
                         <Badge variant="info" size="sm">
@@ -348,7 +348,7 @@ export const ParentMessagesPage: React.FC = () => {
           <Modal
             isOpen={!!selectedMessage}
             onClose={() => setSelectedMessage(null)}
-            title={`Conversation with ${selectedMessage.sender.name}`}
+            title={`Conversation with ${selectedMessage.sender.firstname} ${selectedMessage.sender.lastname}`}
             size="lg"
           >
             <div className="space-y-4 max-h-96 overflow-y-auto">
@@ -363,7 +363,7 @@ export const ParentMessagesPage: React.FC = () => {
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <p className="font-semibold text-neutral-900">{msg.sender.name}</p>
+                      <p className="font-semibold text-neutral-900">{msg.sender.firstname} {msg.sender.lastname}</p>
                       <p className="text-xs text-neutral-600">{msg.sender.email}</p>
                     </div>
                     <p className="text-xs text-neutral-500">
@@ -408,7 +408,7 @@ export const ParentMessagesPage: React.FC = () => {
                 <option value="">Select a teacher or administrator...</option>
                 {recipients.map((recipient) => (
                   <option key={recipient.id} value={recipient.id}>
-                    {recipient.name}
+                    {recipient.firstname} {recipient.lastname}
                   </option>
                 ))}
               </select>

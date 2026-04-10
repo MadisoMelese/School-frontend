@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { UserManagementPage } from './UserManagementPage'
 import * as useUsersModule from '../hooks/useUsers'
-import type { User } from '@types/api.types'
+import type { User } from '../../../types/api.types'
 
 // Mock the useUsers hook
 vi.mock('../hooks/useUsers')
@@ -12,27 +12,39 @@ describe('UserManagementPage', () => {
     {
       id: '1',
       email: 'student@example.com',
-      name: 'John Student',
+      firstname: 'John',
+      lastname: 'Student',
+      username: 'john.student',
       role: 'student',
-      status: 'active',
+      isBlocked: false,
+      isVerified: true,
+      isActive: true,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
     },
     {
       id: '2',
       email: 'teacher@example.com',
-      name: 'Jane Teacher',
+      firstname: 'Jane',
+      lastname: 'Teacher',
+      username: 'jane.teacher',
       role: 'teacher',
-      status: 'active',
+      isBlocked: false,
+      isVerified: true,
+      isActive: true,
       createdAt: '2024-01-02T00:00:00Z',
       updatedAt: '2024-01-02T00:00:00Z',
     },
     {
       id: '3',
       email: 'blocked@example.com',
-      name: 'Blocked User',
+      firstname: 'Blocked',
+      lastname: 'User',
+      username: 'blocked.user',
       role: 'student',
-      status: 'blocked',
+      isBlocked: true,
+      isVerified: true,
+      isActive: false,
       createdAt: '2024-01-03T00:00:00Z',
       updatedAt: '2024-01-03T00:00:00Z',
     },

@@ -197,10 +197,10 @@ export const TeachersManagementPage: React.FC = () => {
 
   // Handle edit teacher
   const handleEdit = (teacher: Teacher) => {
+
     setEditingId(teacher._id)
-    const userIdStr = typeof teacher.userId === 'string' ? teacher.userId : (teacher.userId as User)._id
     setFormData({
-      userId: userIdStr || '',
+      userId: typeof teacher.userId === 'string' ? teacher.userId : (teacher.userId as any)?.id || '',
       teacherId: teacher.teacherId || '',
       firstName: teacher.firstName || '',
       lastName: teacher.lastName || '',

@@ -8,7 +8,7 @@ describe('MobileForm', () => {
     // Mock scrollIntoView for JSDOM
     Element.prototype.scrollIntoView = vi.fn()
     // Mock scrollTo for JSDOM
-    window.scrollTo = vi.fn()
+    window.scrollTo = vi.fn() as any
   })
 
   it('should render form with children', () => {

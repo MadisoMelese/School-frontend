@@ -75,7 +75,7 @@ export const TeacherMessagesPage = () => {
     if (!messagesData?.data) return [];
     return messagesData.data.filter(
       (msg) =>
-        msg.sender.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        `${msg.sender.firstname} ${msg.sender.lastname}`.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
         msg.subject.toLowerCase().includes(debouncedSearch.toLowerCase())
     );
   }, [messagesData?.data, debouncedSearch]);
@@ -99,7 +99,7 @@ export const TeacherMessagesPage = () => {
       key: 'sender' as const,
       label: 'From',
       render: (_: unknown, row: Message) => (
-        <span className="font-medium">{row.sender.name}</span>
+        <span className="font-medium">{row.sender.firstname} {row.sender.lastname}</span>
       ),
     },
     {

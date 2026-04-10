@@ -185,7 +185,7 @@ export const Header: React.FC<HeaderProps> = ({
                 aria-expanded={userMenuOpen}
                 aria-label="User menu"
               >
-                <Avatar name={user.name} src={user.avatar} size="sm" />
+                <Avatar name={`${user.firstname} ${user.lastname}`} src={user.avatar} size="sm" />
                 <Icon
                   name={userMenuOpen ? 'ChevronUp' : 'ChevronDown'}
                   size={16}
@@ -197,7 +197,7 @@ export const Header: React.FC<HeaderProps> = ({
               {userMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg overflow-hidden">
                   <div className="px-4 py-3 border-b border-neutral-200 dark:border-neutral-700">
-                    <p className="text-sm font-medium text-neutral-900 dark:text-white">{user.name}</p>
+                    <p className="text-sm font-medium text-neutral-900 dark:text-white">{user.firstname} {user.lastname}</p>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400 capitalize">{user.role}</p>
                   </div>
 

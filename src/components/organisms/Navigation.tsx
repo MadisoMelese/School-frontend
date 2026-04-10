@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { User } from '../../types'
+import type { User } from '../../types'
 import { Button } from '../atoms/Button'
 import { Avatar } from '../atoms/Avatar'
 import { Icon } from '../atoms/Icon'
@@ -109,9 +109,9 @@ export const Navigation: React.FC<NavigationProps> = ({
                 aria-expanded={userMenuOpen}
                 aria-label="User menu"
               >
-                <Avatar name={user.name} src={user.avatar} size="md" />
+                <Avatar name={`${user.firstname} ${user.lastname}`} src={user.avatar} size="md" />
                 <div className="flex-1 text-left">
-                  <p className="text-sm font-medium text-neutral-900 dark:text-white">{user.name}</p>
+                  <p className="text-sm font-medium text-neutral-900 dark:text-white">{user.firstname} {user.lastname}</p>
                   <p className="text-xs text-neutral-500 dark:text-neutral-400 capitalize">{user.role}</p>
                 </div>
                 <Icon

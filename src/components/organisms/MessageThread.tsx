@@ -96,7 +96,7 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
                 {/* Avatar */}
                 {showAvatar ? (
                   <Avatar
-                    name={message.sender.name}
+                    name={`${message.sender.firstname} ${message.sender.lastname}`}
                     src={message.sender.avatar}
                     size="sm"
                     className="flex-shrink-0"
@@ -109,7 +109,7 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
                 <div className={`flex flex-col gap-1 max-w-xs ${isSent ? 'items-end' : 'items-start'}`}>
                   {showAvatar && (
                     <p className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
-                      {message.sender.name}
+                      {message.sender.firstname} {message.sender.lastname}
                     </p>
                   )}
                   <div

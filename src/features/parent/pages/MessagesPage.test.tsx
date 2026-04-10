@@ -89,7 +89,7 @@ vi.mock('@components/atoms/Spinner', () => ({
 const mockMessages = [
   {
     id: '1',
-    sender: { id: 'teacher1', name: 'John Teacher', email: 'john@school.com', role: 'teacher' as const, status: 'active' as const, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+    sender: { id: 'teacher1', firstname: 'John', lastname: 'Teacher', username: 'john.teacher', email: 'john@school.com', role: 'teacher' as const, isBlocked: false, isVerified: true, isActive: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
     subject: 'Your child progress update',
     content: 'Your child is doing well in class',
     timestamp: '2024-01-15T10:00:00Z',
@@ -97,7 +97,7 @@ const mockMessages = [
   },
   {
     id: '2',
-    sender: { id: 'admin1', name: 'School Admin', email: 'admin@school.com', role: 'admin' as const, status: 'active' as const, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+    sender: { id: 'admin1', firstname: 'School', lastname: 'Admin', username: 'school.admin', email: 'admin@school.com', role: 'admin' as const, isBlocked: false, isVerified: true, isActive: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
     subject: 'Fee payment reminder',
     content: 'Please pay the pending fees',
     timestamp: '2024-01-14T09:00:00Z',
@@ -303,7 +303,7 @@ describe('ParentMessagesPage', () => {
 
     const newMessage = {
       id: '4',
-      sender: { id: 'me', name: 'Me', email: 'me@school.com', role: 'parent' as const, status: 'active' as const, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+      sender: { id: 'me', firstname: 'Me', lastname: 'User', username: 'me.user', email: 'me@school.com', role: 'parent' as const, isBlocked: false, isVerified: true, isActive: true, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
       subject: 'Question about homework',
       content: 'Can you help with the homework?',
       timestamp: '2024-01-16T10:00:00Z',

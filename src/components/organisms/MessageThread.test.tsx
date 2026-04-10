@@ -7,9 +7,13 @@ describe('MessageThread Component', () => {
   const currentUser: User = {
     id: '1',
     email: 'user@example.com',
-    name: 'John Doe',
+    firstname: 'John',
+    lastname: 'Doe',
+    username: 'john.doe',
     role: 'student',
-    status: 'active',
+    isBlocked: false,
+    isVerified: true,
+    isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   }
@@ -17,9 +21,13 @@ describe('MessageThread Component', () => {
   const otherUser: User = {
     id: '2',
     email: 'teacher@example.com',
-    name: 'Jane Smith',
+    firstname: 'Jane',
+    lastname: 'Smith',
+    username: 'jane.smith',
     role: 'teacher',
-    status: 'active',
+    isBlocked: false,
+    isVerified: true,
+    isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   }

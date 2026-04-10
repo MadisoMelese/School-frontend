@@ -12,9 +12,13 @@ describe('TeacherDashboardPage', () => {
   const mockUser = {
     id: 'teacher-1',
     email: 'teacher@example.com',
-    name: 'Mr. Smith',
+    firstname: 'Mr.',
+    lastname: 'Smith',
+    username: 'mr.smith',
     role: 'teacher' as const,
-    status: 'active' as const,
+    isBlocked: false,
+    isVerified: true,
+    isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   }
@@ -35,6 +39,7 @@ describe('TeacherDashboardPage', () => {
       refreshTokenAction: vi.fn(),
       setUser: vi.fn(),
       setError: vi.fn(),
+      initializeAuth: vi.fn(),
     })
 
     // Mock useLocalStorage

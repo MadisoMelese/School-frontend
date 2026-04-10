@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useSystemLogs } from './useSystemLogs'
 import * as systemLogsServiceModule from '@services/admin/systemLogsService'
-import type { SystemLog } from '@types/api.types'
+import type { SystemLog } from '../../../types/api.types'
 
 // Mock the systemLogsService
 vi.mock('@services/admin/systemLogsService')

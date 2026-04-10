@@ -9,7 +9,7 @@ import { ImageUpload } from '@components/molecules/ImageUpload'
 import { NotificationToast } from '@components/molecules/NotificationToast'
 import { Icon } from '@components/atoms/Icon'
 import { adminService } from '@services/api/adminService'
-import { SchoolSettings, UpdateSettingsRequest, Holiday, Term } from '@types/api.types'
+import { SchoolSettings, UpdateSettingsRequest, Holiday, Term } from '../../../types/api.types'
 import { z } from 'zod'
 
 /**

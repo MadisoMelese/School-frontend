@@ -1,5 +1,5 @@
 import { apiClient } from '../api/client'
-import type { SystemLog } from '@types/api.types'
+import type { SystemLog } from '../../types/api.types'
 
 export interface SystemLogsListResponse {
   logs: SystemLog[]

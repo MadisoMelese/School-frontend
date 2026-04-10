@@ -6,10 +6,16 @@ describe('Navigation Component with Scroll Hiding', () => {
   const mockUser = {
     id: '1',
     email: 'test@example.com',
-    name: 'John Doe',
+    firstname: 'John',
+    lastname: 'Doe',
+    username: 'john.doe',
     role: 'student' as const,
     avatar: 'https://example.com/avatar.jpg',
-    status: 'active' as const,
+    isBlocked: false,
+    isVerified: true,
+    isActive: true,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
   };
 
   const mockItems = [
