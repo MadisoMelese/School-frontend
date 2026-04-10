@@ -133,6 +133,28 @@
   }
 }
 
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToTop {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
 /* Animation utility classes */
 .animate-fade-in {
   animation: fadeIn 0.3s ease-in-out;
@@ -191,6 +213,14 @@
 
 .animate-slide-in-right {
   animation: slideInFromRight 0.4s ease-out;
+}
+
+.animate-slide-in-top {
+  animation: slideInFromTop 0.3s ease-out;
+}
+
+.animate-slide-out-top {
+  animation: slideOutToTop 0.3s ease-in;
 }
 
 /* Respect prefers-reduced-motion */
