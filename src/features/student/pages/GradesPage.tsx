@@ -8,8 +8,12 @@ import { Input } from '@components/atoms/Input';
 import { Badge } from '@components/atoms/Badge';
 import { Icon } from '@components/atoms/Icon';
 import { Spinner } from '@components/atoms/Spinner';
+import { SkeletonCard } from '@components/atoms/SkeletonCard';
+import { SkeletonTable } from '@components/atoms/SkeletonTable';
 import { useDebounce } from '@hooks/useDebounce';
 import { useMediaQuery } from '@hooks/useMediaQuery';
+import { useCachedGrades } from '@hooks/useCachedGrades';
+import { useOffline } from '@hooks/useOffline';
 import { studentService } from '@services/api/studentService';
 import type { Grade } from '@types';
 
@@ -32,11 +36,9 @@ interface PerformanceSummary {
 
 export const GradesPage: React.FC = () => {
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const { isOnline } = useOffline();
 
   // State
-  const [grades, setGrades] = useState<Grade[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedYear, setSelectedYear] = useState<string>('');
   const [selectedSubject, setSelectedSubject] = useState<string>('');
@@ -44,36 +46,37 @@ export const GradesPage: React.FC = () => {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | null>(null);
 
+  // Use cached grades with filters
+  const {
+    data: gradesResponse,
+    loading,
+    error,
+    isFromCache,
+  } = useCachedGrades({
+    academicYear: selectedYear || undefined,
+    subject: selectedSubject || undefined,
+  });
+
+  const grades = gradesResponse?.data || [];
+
   // Debounce search query
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  // Load grades data
+  // Load performance summary
   useEffect(() => {
-    const loadGrades = async () => {
+    const loadPerformanceSummary = async () => {
+      if (!isOnline) return; // Skip if offline
+
       try {
-        setLoading(true);
-        setError(null);
-
-        // Fetch grades with filters
-        const response = await studentService.getGrades({
-          academicYear: selectedYear || undefined,
-          subject: selectedSubject || undefined,
-        });
-
-        setGrades(response.data || []);
-
-        // Fetch performance summary
         const summary = await studentService.getPerformanceSummary();
         setPerformanceSummary(summary);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load grades');
-      } finally {
-        setLoading(false);
+        console.error('Failed to load performance summary:', err);
       }
     };
 
-    loadGrades();
-  }, [selectedYear, selectedSubject]);
+    loadPerformanceSummary();
+  }, [isOnline]);
 
   // Filter and search grades
   const filteredGrades = useMemo(() => {
@@ -217,16 +220,57 @@ export const GradesPage: React.FC = () => {
   if (loading) {
     return (
       <DashboardLayout title="Grades" description="View your academic performance">
-        <div className="flex items-center justify-center py-12">
-          <Spinner size="lg" />
+        <div className="space-y-6">
+          {/* Performance Summary Skeleton */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <SkeletonCard key={index} lines={1} showHeader={false} />
+            ))}
+          </div>
+
+          {/* Grade Distribution Skeleton */}
+          <SkeletonCard lines={5} showHeader />
+
+          {/* Filters Skeleton */}
+          <SkeletonCard lines={4} showHeader />
+
+          {/* Grades Table/Cards Skeleton */}
+          {isMobile ? (
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <SkeletonCard key={index} lines={3} showHeader />
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <SkeletonTable rows={5} columns={6} showHeader />
+            </Card>
+          )}
         </div>
       </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout title="Grades" description="View your academic performance">
+    <DashboardLayout
+      title="Grades"
+      description={
+        isFromCache
+          ? 'Showing cached grades (offline mode)'
+          : 'View your academic performance'
+      }
+    >
       <div className="space-y-6">
+        {/* Offline Indicator */}
+        {!isOnline && (
+          <div className="p-3 bg-warning-50 border border-warning-200 rounded-lg flex items-center gap-2">
+            <Icon name="WifiOff" size={20} className="text-warning-600" />
+            <span className="text-sm text-warning-800">
+              You're offline. Showing cached data.
+            </span>
+          </div>
+        )}
+
         {/* Performance Summary */}
         {performanceSummary && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
@@ -394,7 +438,7 @@ export const GradesPage: React.FC = () => {
           <Card>
             <div className="text-center py-8">
               <Icon name="AlertCircle" size={32} className="text-danger-600 mx-auto mb-3" />
-              <p className="text-danger-600 font-medium">{error}</p>
+              <p className="text-danger-600 font-medium">{error.message || 'Failed to load grades'}</p>
               <Button variant="secondary" size="sm" className="mt-4" onClick={handleResetFilters}>
                 Try Again
               </Button>
