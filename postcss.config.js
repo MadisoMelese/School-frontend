@@ -1,5 +1,5 @@
 export default {
-  plugins: {
+  plugins: process.env.NODE_ENV === 'test' ? {} : {
     '@tailwindcss/postcss': {},
   },
 }
