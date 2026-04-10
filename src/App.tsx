@@ -2,9 +2,17 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-
 import { useEffect } from 'react';
 import { useAuth } from '@hooks/useAuth';
 import { useTheme } from '@hooks/useTheme';
+import { initializeSyncEngine, cleanupSyncEngine } from '@/services/offline/syncEngine';
+import { initializeDB } from '@/services/offline/indexedDB';
 
 // Layouts
 import { AuthLayout } from '@components/templates/AuthLayout';
+
+// PWA Components
+import { PWAUpdatePrompt } from '@components/organisms/PWAUpdatePrompt';
+import { PWAInstallPrompt } from '@components/organisms/PWAInstallPrompt';
+import { OfflineIndicator } from '@components/organisms/OfflineIndicator';
+import { ErrorBoundary } from '@components/organisms/ErrorBoundary';
 
 // Auth Pages
 import { LoginPage } from '@features/auth/pages/LoginPage';
@@ -124,9 +132,32 @@ function App() {
     }
   }, [theme]);
 
+  // Initialize offline sync engine and IndexedDB
+  useEffect(() => {
+    const initOffline = async () => {
+      try {
+        await initializeDB();
+        initializeSyncEngine();
+      } catch (error) {
+        console.error('Failed to initialize offline features:', error);
+      }
+    };
+
+    initOffline();
+
+    // Cleanup on unmount
+    return () => {
+      cleanupSyncEngine();
+    };
+  }, []);
+
   return (
     <Router>
-      <Routes>
+      <ErrorBoundary>
+        <OfflineIndicator />
+        <PWAUpdatePrompt />
+        <PWAInstallPrompt />
+        <Routes>
         {/* Auth Routes */}
         <Route element={<AuthLayoutWrapper />}>
           <Route path="/login" element={<LoginPage />} />
@@ -429,7 +460,8 @@ function App() {
         {/* Error Routes */}
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+        </Routes>
+      </ErrorBoundary>
     </Router>
   );
 }
