@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { PortalLayout } from '@/components/templates';
 import { Card, SearchBar } from '@/components/molecules';
-import { Button, Badge } from '@/components/atoms';
+import { Button, Badge, SkeletonCard } from '@/components/atoms';
 import { teacherService } from '@/services/api';
 import { Class } from '@/types/api.types';
 import { useDebounce } from '@/hooks';
@@ -66,14 +66,7 @@ export const ClassesPage = () => {
   const renderSkeletonLoader = () => (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 6 }).map((_, index) => (
-        <Card key={index} className="animate-pulse">
-          <div className="space-y-3">
-            <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-3/4" />
-            <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-1/2" />
-            <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-2/3" />
-            <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded w-full" />
-          </div>
-        </Card>
+        <SkeletonCard key={index} lines={4} showHeader />
       ))}
     </div>
   );
