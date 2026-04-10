@@ -40,6 +40,12 @@ export interface UIState {
   openModal: (id: string, title?: string, content?: React.ReactNode) => void;
   closeModal: (id: string) => void;
   closeAllModals: () => void;
+
+  // Service Worker Update
+  serviceWorkerUpdateAvailable: boolean;
+  setServiceWorkerUpdateAvailable: (available: boolean) => void;
+  serviceWorkerOfflineReady: boolean;
+  setServiceWorkerOfflineReady: (ready: boolean) => void;
 }
 
 export const useUIStore = create<UIState>((set) => {
@@ -145,6 +151,19 @@ export const useUIStore = create<UIState>((set) => {
         });
         return { modals: updatedModals };
       });
+    },
+
+    // Service Worker Update
+    serviceWorkerUpdateAvailable: false,
+
+    setServiceWorkerUpdateAvailable: (available: boolean) => {
+      set({ serviceWorkerUpdateAvailable: available });
+    },
+
+    serviceWorkerOfflineReady: false,
+
+    setServiceWorkerOfflineReady: (ready: boolean) => {
+      set({ serviceWorkerOfflineReady: ready });
     },
   };
 });
