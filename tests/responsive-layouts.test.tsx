@@ -464,7 +464,7 @@ describe('Responsive Layout Tests', () => {
     it('should have responsive form labels', () => {
       const { container } = render(<FormComponent />)
       const labels = container.querySelectorAll('label')
-      labels.forEach((label) => {
+      labels.forEach((label: Element) => {
         expect(label).toHaveClass('text-xs', 'sm:text-sm')
       })
     })
@@ -472,7 +472,7 @@ describe('Responsive Layout Tests', () => {
     it('should have responsive form inputs', () => {
       const { container } = render(<FormComponent />)
       const inputs = container.querySelectorAll('input')
-      inputs.forEach((input) => {
+      inputs.forEach((input: Element) => {
         expect(input).toHaveClass('w-full', 'min-h-[44px]')
       })
     })
