@@ -28,6 +28,8 @@
       "@styles/*": ["src/styles/*"]
     }
   },
-  "include": ["src", "tests"],
+
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx", "tests"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
