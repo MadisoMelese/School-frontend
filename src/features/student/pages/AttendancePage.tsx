@@ -5,7 +5,10 @@ import { Button } from '@components/atoms/Button';
 import { Badge } from '@components/atoms/Badge';
 import { Icon } from '@components/atoms/Icon';
 import { Spinner } from '@components/atoms/Spinner';
+import { SkeletonCard } from '@components/atoms/SkeletonCard';
 import { useMediaQuery } from '@hooks/useMediaQuery';
+import { useCachedAttendance } from '@hooks/useCachedAttendance';
+import { useOffline } from '@hooks/useOffline';
 import { studentService } from '@services/api/studentService';
 import type { Attendance } from '@types';
 
@@ -66,47 +69,47 @@ const formatDateKey = (date: Date): string => {
 
 export const AttendancePage: React.FC = () => {
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const { isOnline } = useOffline();
 
   // State
-  const [attendance, setAttendance] = useState<Attendance[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [attendanceSummary, setAttendanceSummary] = useState<AttendanceSummary | null>(null);
 
-  // Load attendance data
+  // Format month for API
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+  const year = currentDate.getFullYear();
+
+  // Use cached attendance
+  const {
+    data: attendanceResponse,
+    loading,
+    error,
+    isFromCache,
+  } = useCachedAttendance({
+    month: `${year}-${month}`,
+    year: String(year),
+  });
+
+  const attendance = attendanceResponse?.data || [];
+
+  // Load attendance percentage when online
   useEffect(() => {
-    const loadAttendance = async () => {
+    const loadAttendancePercentage = async () => {
+      if (!isOnline) return; // Skip if offline
+
       try {
-        setLoading(true);
-        setError(null);
-
-        // Fetch attendance records for the current month
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-        const year = currentDate.getFullYear();
-
-        const response = await studentService.getAttendance({
-          month: `${year}-${month}`,
-          year: String(year),
-        });
-
-        setAttendance(response.data || []);
-
-        // Fetch attendance percentage
         const percentageData = await studentService.getAttendancePercentage();
-
-        // Calculate summary
-        const summary = calculateSummary(response.data || [], percentageData.percentage);
+        const summary = calculateSummary(attendance, percentageData.percentage);
         setAttendanceSummary(summary);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load attendance');
-      } finally {
-        setLoading(false);
+        console.error('Failed to load attendance percentage:', err);
       }
     };
 
-    loadAttendance();
-  }, [currentDate]);
+    if (attendance.length > 0) {
+      loadAttendancePercentage();
+    }
+  }, [attendance, isOnline]);
 
   // Calculate attendance summary
   const calculateSummary = (records: Attendance[], percentage: number): AttendanceSummary => {
@@ -195,16 +198,48 @@ export const AttendancePage: React.FC = () => {
   if (loading) {
     return (
       <DashboardLayout title="Attendance" description="View your attendance records">
-        <div className="flex items-center justify-center py-12">
-          <Spinner size="lg" />
+        <div className="space-y-6">
+          {/* Summary Cards Skeleton */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <SkeletonCard key={index} lines={1} showHeader={false} />
+            ))}
+          </div>
+
+          {/* Calendar Skeleton */}
+          <SkeletonCard lines={8} showHeader />
+
+          {/* Attendance List Skeleton */}
+          <div className="space-y-3">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <SkeletonCard key={index} lines={2} showHeader />
+            ))}
+          </div>
         </div>
       </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout title="Attendance" description="View your attendance records">
+    <DashboardLayout
+      title="Attendance"
+      description={
+        isFromCache
+          ? 'Showing cached attendance (offline mode)'
+          : 'View your attendance records'
+      }
+    >
       <div className="space-y-6">
+        {/* Offline Indicator */}
+        {!isOnline && (
+          <div className="p-3 bg-warning-50 border border-warning-200 rounded-lg flex items-center gap-2">
+            <Icon name="WifiOff" size={20} className="text-warning-600" />
+            <span className="text-sm text-warning-800">
+              You're offline. Showing cached data.
+            </span>
+          </div>
+        )}
+
         {/* Attendance Summary Cards */}
         {attendanceSummary && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -436,7 +471,7 @@ export const AttendancePage: React.FC = () => {
             {error ? (
               <div className="text-center py-8">
                 <Icon name="AlertCircle" size={32} className="text-danger-600 mx-auto mb-3" />
-                <p className="text-danger-600 font-medium">{error}</p>
+                <p className="text-danger-600 font-medium">{error.message || 'Failed to load attendance'}</p>
                 <Button
                   variant="secondary"
                   size="sm"
