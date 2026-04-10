@@ -7,6 +7,7 @@ import { Input } from '@components/atoms/Input';
 import { Badge } from '@components/atoms/Badge';
 import { Icon } from '@components/atoms/Icon';
 import { Spinner } from '@components/atoms/Spinner';
+import { SkeletonCard } from '@components/atoms/SkeletonCard';
 import { useDebounce } from '@hooks/useDebounce';
 import { useExamNotifications } from '@hooks/useExamNotifications';
 import { studentService } from '@services/api/studentService';
@@ -160,8 +161,19 @@ export const ExamsPage: React.FC = () => {
   if (loading) {
     return (
       <DashboardLayout title="Exams" description="View your exam schedule and results">
-        <div className="flex items-center justify-center py-12">
-          <Spinner size="lg" />
+        <div className="space-y-6">
+          {/* Tabs Skeleton */}
+          <SkeletonCard lines={1} showHeader={false} />
+
+          {/* Search Skeleton */}
+          <SkeletonCard lines={2} showHeader />
+
+          {/* Exams List Skeleton */}
+          <div className="space-y-3">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <SkeletonCard key={index} lines={3} showHeader />
+            ))}
+          </div>
         </div>
       </DashboardLayout>
     );
