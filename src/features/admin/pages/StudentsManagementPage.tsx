@@ -158,7 +158,7 @@ export const StudentsManagementPage: React.FC = () => {
                 placeholder="Search by name or student ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
               <Search
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400"
@@ -241,7 +241,7 @@ export const StudentsManagementPage: React.FC = () => {
                         </td>
                         <td className="px-4 py-3 text-neutral-900 dark:text-white">
                           {student.classId
-                            ? `${student.classId.name} - ${student.classId.section}`
+                            ? `${student.classId.grade}-${student.classId.section}`
                             : 'Not Assigned'}
                         </td>
                         <td className="px-4 py-3">
