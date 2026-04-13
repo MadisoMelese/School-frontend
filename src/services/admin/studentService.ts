@@ -22,6 +22,7 @@ export interface Student {
     _id: string;
     name: string;
     section: string;
+    grade: string;
   };
   parentName: string;
   parentPhone: string;
