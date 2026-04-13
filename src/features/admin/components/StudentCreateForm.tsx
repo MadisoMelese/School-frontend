@@ -66,10 +66,10 @@ export const StudentCreateForm: React.FC<StudentCreateFormProps> = ({ onSubmit, 
         // Fetch classes
         const classesResponse = await apiClient.get('/classes');
         const classesData = classesResponse.data.data;
-        // Handle different response structures
+        // Handle different response structures - API returns { classes, total, page, totalPages }
         const classList = Array.isArray(classesData) 
           ? classesData 
-          : (classesData?.classes || []);
+          : (Array.isArray(classesData?.classes) ? classesData.classes : []);
         setClasses(classList);
       } catch (err) {
         console.error('Failed to load data:', err);
