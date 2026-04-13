@@ -26,7 +26,7 @@ export const studentService = {
     page?: number;
     limit?: number;
   }): Promise<PaginatedResponse<Grade>> => {
-    const response = await apiClient.get<PaginatedResponse<Grade>>('/student/grades', {
+    const response = await apiClient.get<PaginatedResponse<Grade>>('/grades', {
       params,
     });
     return response.data;
@@ -41,7 +41,7 @@ export const studentService = {
     page?: number;
     limit?: number;
   }): Promise<PaginatedResponse<Attendance>> => {
-    const response = await apiClient.get<PaginatedResponse<Attendance>>('/student/attendance', {
+    const response = await apiClient.get<PaginatedResponse<Attendance>>('/attendance', {
       params,
     });
     return response.data;
