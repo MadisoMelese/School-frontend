@@ -58,9 +58,12 @@ export const StudentCreateForm: React.FC<StudentCreateFormProps> = ({ onSubmit, 
         const usersResponse = await apiClient.get('/users');
         const allUsers = usersResponse.data.data.users || [];
         
+        console.log("All users from API:", allUsers);
+        
         // Filter users who don't have student role or are available
         const availableUsers = allUsers.filter((u: User) => u.role === 'student' || u.role === 'user');
-        console.log("users", availableUsers)
+        console.log("Filtered users:", availableUsers);
+        console.log("First user ID:", availableUsers[0]?._id);
         setUsers(availableUsers);
 
         // Fetch classes
@@ -70,6 +73,7 @@ export const StudentCreateForm: React.FC<StudentCreateFormProps> = ({ onSubmit, 
         const classList = Array.isArray(classesData) 
           ? classesData 
           : (Array.isArray(classesData?.classes) ? classesData.classes : []);
+        console.log("Classes:", classList);
         setClasses(classList);
       } catch (err) {
         console.error('Failed to load data:', err);
