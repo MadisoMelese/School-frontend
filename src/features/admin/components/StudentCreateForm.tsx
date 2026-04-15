@@ -86,7 +86,11 @@ export const StudentCreateForm: React.FC<StudentCreateFormProps> = ({ onSubmit, 
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    console.log(`Setting ${name} to:`, value);
+    console.log(`Setting ${name} to:`, value, 'Type:', typeof value);
+    if (name === 'userId') {
+      console.log('userId target element:', e.target);
+      console.log('userId target value:', (e.target as HTMLSelectElement).value);
+    }
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
