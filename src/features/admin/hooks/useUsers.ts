@@ -28,7 +28,7 @@ export const useUsers = () => {
     try {
       setState((prev) => ({ ...prev, loading: true, error: null }));
       const data = await userService.getUsers(filters);
-      console.log('user data', data);
+      console.log('all user data', data);
       setState((prev) => ({
         ...prev,
         users: data.users,
