@@ -58,12 +58,8 @@ export const StudentCreateForm: React.FC<StudentCreateFormProps> = ({ onSubmit, 
         const usersResponse = await apiClient.get('/users');
         const allUsers = usersResponse.data.data.users || [];
         
-        console.log("All users from API:", allUsers);
-        
         // Filter users who don't have student role or are available
         const availableUsers = allUsers.filter((u: User) => u.role === 'student' || u.role === 'user');
-        console.log("Filtered users:", availableUsers);
-        console.log("First user ID:", availableUsers[0]?._id);
         setUsers(availableUsers);
 
         // Fetch classes
@@ -73,7 +69,6 @@ export const StudentCreateForm: React.FC<StudentCreateFormProps> = ({ onSubmit, 
         const classList = Array.isArray(classesData) 
           ? classesData 
           : (Array.isArray(classesData?.classes) ? classesData.classes : []);
-        console.log("Classes:", classList);
         setClasses(classList);
       } catch (err) {
         console.error('Failed to load data:', err);
@@ -90,11 +85,6 @@ export const StudentCreateForm: React.FC<StudentCreateFormProps> = ({ onSubmit, 
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    console.log(`Setting ${name} to:`, value, 'Type:', typeof value);
-    if (name === 'userId') {
-      console.log('userId target element:', e.target);
-      console.log('userId target value:', (e.target as HTMLSelectElement).value);
-    }
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -102,11 +92,6 @@ export const StudentCreateForm: React.FC<StudentCreateFormProps> = ({ onSubmit, 
     e.preventDefault();
     setLoading(true);
     setError(null);
-
-    console.log('Form data being submitted:', formData);
-    console.log('userId value:', formData.userId);
-    console.log('userId type:', typeof formData.userId);
-    console.log('userId length:', formData.userId.length);
 
     // Validate required fields
     if (!formData.userId || !formData.userId.trim()) {
