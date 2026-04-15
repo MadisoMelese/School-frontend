@@ -109,8 +109,15 @@ export const StudentCreateForm: React.FC<StudentCreateFormProps> = ({ onSubmit, 
     console.log('userId length:', formData.userId.length);
 
     // Validate required fields
-    if (!formData.userId.trim()) {
+    if (!formData.userId || !formData.userId.trim()) {
       setError('User is required');
+      setLoading(false);
+      return;
+    }
+
+    // Check if userId looks like a valid ObjectId (24 hex characters)
+    if (!/^[0-9a-f]{24}$/i.test(formData.userId)) {
+      setError(`Invalid user ID format. Got: "${formData.userId}"`);
       setLoading(false);
       return;
     }
