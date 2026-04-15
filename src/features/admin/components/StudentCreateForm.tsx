@@ -206,11 +206,14 @@ export const StudentCreateForm: React.FC<StudentCreateFormProps> = ({ onSubmit, 
                 required
               >
                 <option value="">Select User</option>
-                {Array.isArray(users) && users.map((user) => (
-                  <option key={user._id} value={user._id}>
-                    {user.firstname} {user.lastname} ({user.email})
-                  </option>
-                ))}
+                {Array.isArray(users) && users.map((user) => {
+                  const userId = user._id || user.id;
+                  return (
+                    <option key={userId} value={userId}>
+                      {user.firstname} {user.lastname} ({user.email})
+                    </option>
+                  );
+                })}
               </select>
             </div>
 
