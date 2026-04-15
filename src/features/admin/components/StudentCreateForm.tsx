@@ -104,6 +104,9 @@ export const StudentCreateForm: React.FC<StudentCreateFormProps> = ({ onSubmit, 
     setError(null);
 
     console.log('Form data being submitted:', formData);
+    console.log('userId value:', formData.userId);
+    console.log('userId type:', typeof formData.userId);
+    console.log('userId length:', formData.userId.length);
 
     // Validate required fields
     if (!formData.userId.trim()) {
