@@ -86,6 +86,7 @@ export const StudentCreateForm: React.FC<StudentCreateFormProps> = ({ onSubmit, 
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+    console.log(`Setting ${name} to:`, value);
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -93,6 +94,8 @@ export const StudentCreateForm: React.FC<StudentCreateFormProps> = ({ onSubmit, 
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    console.log('Form data being submitted:', formData);
 
     // Validate required fields
     if (!formData.userId.trim()) {
