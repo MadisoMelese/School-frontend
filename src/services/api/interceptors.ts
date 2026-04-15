@@ -81,7 +81,7 @@ export const setupResponseInterceptor = (client: AxiosInstance): void => {
 
         try {
           // Attempt to refresh token
-          const response = await client.post('/auth/refresh', {});
+          const response = await client.post('/token', {});
           const { accessToken, refreshToken, expiresIn, refreshExpiresIn } = response.data;
 
           // Store new tokens
