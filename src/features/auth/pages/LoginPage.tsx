@@ -47,8 +47,8 @@ export const LoginPage: React.FC = () => {
     mode: 'onBlur',
     defaultValues: {
       email: 'madisomelese2@gmail.com',
-      password: '@madisha5423$$',
-      rememberMe: false,
+      password: '@Madisha5423$$',
+      rememberMe: true,
     },
   });
 
