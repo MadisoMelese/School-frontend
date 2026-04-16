@@ -131,8 +131,12 @@ export const LoginPage: React.FC = () => {
                   Password
                 </Label>
                 <a
-                  href="/forgot-password"
-                  className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium"
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    alert('Password reset functionality is not yet available. Please contact support.');
+                  }}
+                  className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium cursor-pointer"
                 >
                   Forgot password?
                 </a>
