@@ -51,27 +51,23 @@ export const authService = {
 
   /**
    * Request password reset link
-   * TODO: Implement on backend - endpoint does not exist yet
    */
   requestPasswordReset: async (data: PasswordResetRequest): Promise<PasswordResetResponse> => {
-    throw new Error('Password reset is not yet implemented. Please contact support.');
-    // const response = await apiClient.post<PasswordResetResponse>('/auth/password-reset', data);
-    // return response.data;
+    const response = await apiClient.post<PasswordResetResponse>('/auth/password-reset', data);
+    return response.data;
   },
 
   /**
    * Confirm password reset with token and new password
-   * TODO: Implement on backend - endpoint does not exist yet
    */
   confirmPasswordReset: async (
     data: PasswordResetConfirmRequest
   ): Promise<PasswordResetConfirmResponse> => {
-    throw new Error('Password reset is not yet implemented. Please contact support.');
-    // const response = await apiClient.post<PasswordResetConfirmResponse>(
-    //   '/auth/password-reset/confirm',
-    //   data
-    // );
-    // return response.data;
+    const response = await apiClient.post<PasswordResetConfirmResponse>(
+      '/auth/password-reset/confirm',
+      data
+    );
+    return response.data;
   },
 
   /**
