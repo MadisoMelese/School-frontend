@@ -1,6 +1,6 @@
 import { useCachedQuery } from './useCachedQuery';
 import { useAuth } from './useAuth';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { studentService } from '@/services/api/studentService';
 import { cacheAttendance } from '@/services/offline/cacheService';
 import { Attendance, PaginatedResponse } from '@/types/api.types';
@@ -29,10 +29,13 @@ export const useCachedAttendance = (options: UseCachedAttendanceOptions = {}) =>
     }
 
     return response;
-  }, [options]);
+  }, [options.month, options.year, options.page, options.limit]);
 
   // Create cache key based on options
-  const cacheKey = `attendance-${user?.id}-${JSON.stringify(options)}`;
+  const cacheKey = useMemo(
+    () => `attendance-${user?.id}-${JSON.stringify(options)}`,
+    [user?.id, options.month, options.year, options.page, options.limit]
+  );
 
   return useCachedQuery<PaginatedResponse<Attendance>>({
     storeName: 'attendance',

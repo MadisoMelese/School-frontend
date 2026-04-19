@@ -1,6 +1,6 @@
 import { useCachedQuery } from './useCachedQuery';
 import { useAuth } from './useAuth';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { studentService } from '@/services/api/studentService';
 import { cacheGrades } from '@/services/offline/cacheService';
 import { Grade, PaginatedResponse } from '@/types/api.types';
@@ -29,10 +29,13 @@ export const useCachedGrades = (options: UseCachedGradesOptions = {}) => {
     }
 
     return response;
-  }, [options]);
+  }, [options.academicYear, options.subject, options.page, options.limit]);
 
   // Create cache key based on options
-  const cacheKey = `grades-${user?.id}-${JSON.stringify(options)}`;
+  const cacheKey = useMemo(
+    () => `grades-${user?.id}-${JSON.stringify(options)}`,
+    [user?.id, options.academicYear, options.subject, options.page, options.limit]
+  );
 
   return useCachedQuery<PaginatedResponse<Grade>>({
     storeName: 'grades',
