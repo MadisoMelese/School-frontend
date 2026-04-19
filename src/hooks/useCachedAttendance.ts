@@ -1,5 +1,6 @@
 import { useCachedQuery } from './useCachedQuery';
 import { useAuth } from './useAuth';
+import { useCallback } from 'react';
 import { studentService } from '@/services/api/studentService';
 import { cacheAttendance } from '@/services/offline/cacheService';
 import { Attendance, PaginatedResponse } from '@/types/api.types';
@@ -19,16 +20,16 @@ export interface UseCachedAttendanceOptions {
 export const useCachedAttendance = (options: UseCachedAttendanceOptions = {}) => {
   const { user } = useAuth();
 
-  const fetchAttendance = async (): Promise<PaginatedResponse<Attendance>> => {
+  const fetchAttendance = useCallback(async (): Promise<PaginatedResponse<Attendance>> => {
     const response = await studentService.getAttendance(options);
 
     // Cache attendance for offline access
-    if (response.data && response.data.length > 0) {
-      await cacheAttendance(response.data);
+    if (response.attendance && Array.isArray(response.attendance) && response.attendance.length > 0) {
+      await cacheAttendance(response.attendance);
     }
 
     return response;
-  };
+  }, [options]);
 
   // Create cache key based on options
   const cacheKey = `attendance-${user?.id}-${JSON.stringify(options)}`;
