@@ -62,21 +62,31 @@ export const GradesPage: React.FC = () => {
   // Debounce search query
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  // Load performance summary
+  // Calculate performance summary from grades
   useEffect(() => {
-    const loadPerformanceSummary = async () => {
-      if (!isOnline) return; // Skip if offline
+    if (grades.length === 0) {
+      setPerformanceSummary(null);
+      return;
+    }
 
-      try {
-        const summary = await studentService.getPerformanceSummary();
-        setPerformanceSummary(summary);
-      } catch (err) {
-        console.error('Failed to load performance summary:', err);
-      }
-    };
+    const totalMarks = grades.reduce((sum, g) => sum + g.marksObtained, 0);
+    const totalPossible = grades.reduce((sum, g) => sum + g.totalMarks, 0);
+    const averagePercentage = totalPossible > 0 ? (totalMarks / totalPossible) * 100 : 0;
 
-    loadPerformanceSummary();
-  }, [isOnline]);
+    const percentages = grades.map((g) => (g.marksObtained / g.totalMarks) * 100);
+    const highestScore = Math.max(...percentages);
+    const lowestScore = Math.min(...percentages);
+
+    // Simple GPA calculation (4.0 scale)
+    const gpa = (averagePercentage / 100) * 4.0;
+
+    setPerformanceSummary({
+      averageGrade: averagePercentage,
+      highestScore: Math.round(highestScore),
+      lowestScore: Math.round(lowestScore),
+      gpa: Math.min(gpa, 4.0), // Cap at 4.0
+    });
+  }, [grades]);
 
   // Filter and search grades
   const filteredGrades = useMemo(() => {
