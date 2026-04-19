@@ -57,7 +57,7 @@ export const GradesPage: React.FC = () => {
     subject: selectedSubject || undefined,
   });
 
-  const grades = gradesResponse?.data || [];
+  const grades = gradesResponse?.grades || [];
 
   // Debounce search query
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
