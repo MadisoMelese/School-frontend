@@ -50,9 +50,13 @@ export const StudentDashboardPage: React.FC = () => {
         size: 'large',
         content: (
           <div className="space-y-3">
-            {dashboardData.grades.slice(0, 2).map((grade: any) => (
-              <GradeCard key={grade.id || grade.subject} {...grade} />
-            ))}
+            {Array.isArray(dashboardData.grades) && dashboardData.grades.length > 0 ? (
+              dashboardData.grades.slice(0, 2).map((grade: any) => (
+                <GradeCard key={grade._id || grade.id || grade.subject} {...grade} />
+              ))
+            ) : (
+              <p className="text-sm text-neutral-500">No grades available yet</p>
+            )}
           </div>
         ),
       },
@@ -72,12 +76,16 @@ export const StudentDashboardPage: React.FC = () => {
                 {dashboardData.attendancePercentage}%
               </Badge>
             </div>
-            <AttendanceCalendar
-              attendanceData={dashboardData.attendance.map((a: any) => ({
-                date: a.date,
-                status: a.status,
-              }))}
-            />
+            {Array.isArray(dashboardData.attendance) && dashboardData.attendance.length > 0 ? (
+              <AttendanceCalendar
+                attendanceData={dashboardData.attendance.map((a: any) => ({
+                  date: a.date,
+                  status: a.status,
+                }))}
+              />
+            ) : (
+              <p className="text-sm text-neutral-500">No attendance records available</p>
+            )}
           </div>
         ),
       },
@@ -88,34 +96,38 @@ export const StudentDashboardPage: React.FC = () => {
         size: 'medium',
         content: (
           <div className="space-y-3">
-            {dashboardData.exams.map((exam: any) => {
-              const examDate = new Date(exam.date);
-              const daysUntil = Math.ceil(
-                (examDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-              );
-              return (
-                <div
-                  key={exam.id}
-                  className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg"
-                >
-                  <Icon
-                    name="Calendar"
-                    size={20}
-                    className="text-primary-600 flex-shrink-0 mt-0.5"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-neutral-900">{exam.subject}</p>
-                    <p className="text-xs text-neutral-600 mt-1">
-                      {examDate.toLocaleDateString()} at {exam.time}
-                    </p>
-                    <p className="text-xs text-neutral-500 mt-1">{exam.hallLocation}</p>
+            {Array.isArray(dashboardData.exams) && dashboardData.exams.length > 0 ? (
+              dashboardData.exams.map((exam: any) => {
+                const examDate = new Date(exam.date);
+                const daysUntil = Math.ceil(
+                  (examDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+                );
+                return (
+                  <div
+                    key={exam._id || exam.id}
+                    className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg"
+                  >
+                    <Icon
+                      name="Calendar"
+                      size={20}
+                      className="text-primary-600 flex-shrink-0 mt-0.5"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-neutral-900">{exam.subject}</p>
+                      <p className="text-xs text-neutral-600 mt-1">
+                        {examDate.toLocaleDateString()} at {exam.startTime}
+                      </p>
+                      <p className="text-xs text-neutral-500 mt-1">{exam.title}</p>
+                    </div>
+                    {daysUntil <= 7 && (
+                      <Badge variant="warning">In {daysUntil} days</Badge>
+                    )}
                   </div>
-                  {daysUntil <= 7 && (
-                    <Badge variant="warning">In {daysUntil} days</Badge>
-                  )}
-                </div>
-              );
-            })}
+                );
+              })
+            ) : (
+              <p className="text-sm text-neutral-500">No upcoming exams</p>
+            )}
           </div>
         ),
       },
@@ -126,30 +138,34 @@ export const StudentDashboardPage: React.FC = () => {
         size: 'medium',
         content: (
           <div className="space-y-3">
-            {dashboardData.fees.map((fee: any) => (
-              <div
-                key={fee.id}
-                className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg"
-              >
-                <div>
-                  <p className="font-medium text-neutral-900">{fee.title}</p>
-                  <p className="text-xs text-neutral-600">
-                    ₹{fee.paidAmount} / ₹{fee.amount}
-                  </p>
-                </div>
-                <Badge
-                  variant={
-                    fee.status === 'paid'
-                      ? 'success'
-                      : fee.status === 'pending'
-                        ? 'warning'
-                        : 'danger'
-                  }
+            {Array.isArray(dashboardData.fees) && dashboardData.fees.length > 0 ? (
+              dashboardData.fees.map((fee: any) => (
+                <div
+                  key={fee._id || fee.id}
+                  className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg"
                 >
-                  {fee.status}
-                </Badge>
-              </div>
-            ))}
+                  <div>
+                    <p className="font-medium text-neutral-900">{fee.title || fee.description}</p>
+                    <p className="text-xs text-neutral-600">
+                      ₹{fee.paidAmount || 0} / ₹{fee.amount}
+                    </p>
+                  </div>
+                  <Badge
+                    variant={
+                      fee.status === 'paid'
+                        ? 'success'
+                        : fee.status === 'pending'
+                          ? 'warning'
+                          : 'danger'
+                    }
+                  >
+                    {fee.status}
+                  </Badge>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-neutral-500">No fees available</p>
+            )}
           </div>
         ),
       },
@@ -160,30 +176,34 @@ export const StudentDashboardPage: React.FC = () => {
         size: 'medium',
         content: (
           <div className="space-y-3">
-            {dashboardData.messages.map((msg: any) => {
-              const senderName = msg.senderId?.firstName 
-                ? `${msg.senderId.firstName} ${msg.senderId.lastName || ''}`.trim()
-                : 'Unknown Sender';
-              return (
-                <div
-                  key={msg._id || msg.id}
-                  className="p-3 bg-neutral-50 rounded-lg border-l-4 border-primary-500"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-neutral-900">{senderName}</p>
-                      <p className="text-sm text-neutral-700 mt-1 truncate">{msg.subject}</p>
-                      <p className="text-xs text-neutral-500 mt-1">
-                        {new Date(msg.createdAt).toLocaleString()}
-                      </p>
+            {Array.isArray(dashboardData.messages) && dashboardData.messages.length > 0 ? (
+              dashboardData.messages.map((msg: any) => {
+                const senderName = msg.senderId?.firstName 
+                  ? `${msg.senderId.firstName} ${msg.senderId.lastName || ''}`.trim()
+                  : 'Unknown Sender';
+                return (
+                  <div
+                    key={msg._id || msg.id}
+                    className="p-3 bg-neutral-50 rounded-lg border-l-4 border-primary-500"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-neutral-900">{senderName}</p>
+                        <p className="text-sm text-neutral-700 mt-1 truncate">{msg.subject}</p>
+                        <p className="text-xs text-neutral-500 mt-1">
+                          {new Date(msg.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+                      {!msg.isRead && (
+                        <div className="w-2 h-2 bg-primary-600 rounded-full flex-shrink-0 mt-1" />
+                      )}
                     </div>
-                    {!msg.isRead && (
-                      <div className="w-2 h-2 bg-primary-600 rounded-full flex-shrink-0 mt-1" />
-                    )}
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            ) : (
+              <p className="text-sm text-neutral-500">No messages</p>
+            )}
           </div>
         ),
       },
