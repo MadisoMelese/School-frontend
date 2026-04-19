@@ -1,5 +1,6 @@
 import { useCachedQuery } from './useCachedQuery';
 import { useAuth } from './useAuth';
+import { useCallback } from 'react';
 import { studentService } from '@/services/api/studentService';
 
 /**
@@ -25,11 +26,11 @@ export interface DashboardData {
 export const useCachedDashboard = () => {
   const { user } = useAuth();
 
-  const fetchDashboardData = async (): Promise<DashboardData> => {
+  const fetchDashboardData = useCallback(async (): Promise<DashboardData> => {
     // Fetch dashboard data from single aggregated endpoint
     const response = await studentService.getDashboard();
     return response;
-  };
+  }, []);
 
   return useCachedQuery<DashboardData>({
     storeName: 'user',
