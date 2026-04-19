@@ -66,7 +66,7 @@ export const studentService = {
     page?: number;
     limit?: number;
   }): Promise<PaginatedResponse<Exam>> => {
-    const response = await apiClient.get<PaginatedResponse<Exam>>('/student/exams', {
+    const response = await apiClient.get<PaginatedResponse<Exam>>('/exams', {
       params,
     });
     return response.data;
@@ -76,7 +76,7 @@ export const studentService = {
    * Get exam details
    */
   getExamDetails: async (examId: string): Promise<Exam> => {
-    const response = await apiClient.get<Exam>(`/student/exams/${examId}`);
+    const response = await apiClient.get<Exam>(`/exams/${examId}`);
     return response.data;
   },
 
@@ -90,7 +90,7 @@ export const studentService = {
     page?: number;
     limit?: number;
   }): Promise<PaginatedResponse<Fee>> => {
-    const response = await apiClient.get<PaginatedResponse<Fee>>('/student/fees', {
+    const response = await apiClient.get<PaginatedResponse<Fee>>('/fees', {
       params,
     });
     return response.data;
@@ -108,7 +108,7 @@ export const studentService = {
       totalFees: number;
       totalPaid: number;
       outstandingBalance: number;
-    }>('/student/fees/summary');
+    }>('/fees/summary/:studentId');
     return response.data;
   },
 
@@ -120,7 +120,7 @@ export const studentService = {
     page?: number;
     limit?: number;
   }): Promise<PaginatedResponse<Message>> => {
-    const response = await apiClient.get<PaginatedResponse<Message>>('/student/messages', {
+    const response = await apiClient.get<PaginatedResponse<Message>>('/messages/inbox', {
       params,
     });
     return response.data;
@@ -130,7 +130,7 @@ export const studentService = {
    * Get message details
    */
   getMessageDetails: async (messageId: string): Promise<Message> => {
-    const response = await apiClient.get<Message>(`/student/messages/${messageId}`);
+    const response = await apiClient.get<Message>(`/messages/${messageId}`);
     return response.data;
   },
 
@@ -138,8 +138,8 @@ export const studentService = {
    * Mark message as read
    */
   markMessageAsRead: async (messageId: string): Promise<{ message: string }> => {
-    const response = await apiClient.put<{ message: string }>(
-      `/student/messages/${messageId}/read`,
+    const response = await apiClient.patch<{ message: string }>(
+      `/messages/${messageId}/read`,
       {}
     );
     return response.data;
@@ -149,7 +149,7 @@ export const studentService = {
    * Send message
    */
   sendMessage: async (data: SendMessageRequest): Promise<SendMessageResponse> => {
-    const response = await apiClient.post<SendMessageResponse>('/student/messages', data);
+    const response = await apiClient.post<SendMessageResponse>('/messages', data);
     return response.data;
   },
 
@@ -157,7 +157,7 @@ export const studentService = {
    * Get unread message count
    */
   getUnreadMessageCount: async (): Promise<{ count: number }> => {
-    const response = await apiClient.get<{ count: number }>('/student/messages/unread/count');
+    const response = await apiClient.get<{ count: number }>('/messages/unread-count');
     return response.data;
   },
 
@@ -165,7 +165,7 @@ export const studentService = {
    * Get student's timetable
    */
   getTimetable: async (params?: { week?: string }): Promise<Timetable[]> => {
-    const response = await apiClient.get<Timetable[]>('/student/timetable', {
+    const response = await apiClient.get<Timetable[]>('/timetable', {
       params,
     });
     return response.data;
