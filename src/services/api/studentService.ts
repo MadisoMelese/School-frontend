@@ -172,7 +172,7 @@ export const studentService = {
    * Get student's timetable
    */
   getTimetable: async (params?: { week?: string }): Promise<Timetable[]> => {
-    const response = await apiClient.get<{ timetables: Timetable[]; total: number; page: number; totalPages: number }>('/timetable', {
+    const response = await apiClient.get<{ timetables: Timetable[]; total: number; page: number; totalPages: number }>('/timetables', {
       params,
     });
     return response.data.timetables || [];
