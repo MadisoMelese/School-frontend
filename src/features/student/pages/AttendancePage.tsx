@@ -90,7 +90,7 @@ export const AttendancePage: React.FC = () => {
     year: String(year),
   });
 
-  const attendance = attendanceResponse?.data || [];
+  const attendance = attendanceResponse?.attendance || [];
 
   // Load attendance percentage when online
   useEffect(() => {
