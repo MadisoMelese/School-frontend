@@ -160,25 +160,30 @@ export const StudentDashboardPage: React.FC = () => {
         size: 'medium',
         content: (
           <div className="space-y-3">
-            {dashboardData.messages.map((msg: any) => (
-              <div
-                key={msg.id}
-                className="p-3 bg-neutral-50 rounded-lg border-l-4 border-primary-500"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-neutral-900">{msg.sender.name}</p>
-                    <p className="text-sm text-neutral-700 mt-1 truncate">{msg.subject}</p>
-                    <p className="text-xs text-neutral-500 mt-1">
-                      {new Date(msg.timestamp).toLocaleString()}
-                    </p>
+            {dashboardData.messages.map((msg: any) => {
+              const senderName = msg.senderId?.firstName 
+                ? `${msg.senderId.firstName} ${msg.senderId.lastName || ''}`.trim()
+                : 'Unknown Sender';
+              return (
+                <div
+                  key={msg._id || msg.id}
+                  className="p-3 bg-neutral-50 rounded-lg border-l-4 border-primary-500"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-neutral-900">{senderName}</p>
+                      <p className="text-sm text-neutral-700 mt-1 truncate">{msg.subject}</p>
+                      <p className="text-xs text-neutral-500 mt-1">
+                        {new Date(msg.createdAt).toLocaleString()}
+                      </p>
+                    </div>
+                    {!msg.isRead && (
+                      <div className="w-2 h-2 bg-primary-600 rounded-full flex-shrink-0 mt-1" />
+                    )}
                   </div>
-                  {!msg.isRead && (
-                    <div className="w-2 h-2 bg-primary-600 rounded-full flex-shrink-0 mt-1" />
-                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ),
       },
