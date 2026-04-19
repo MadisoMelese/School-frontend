@@ -10,6 +10,7 @@ import {
   Timetable,
   PaginatedResponse,
 } from '@/types/api.types';
+import type { DashboardData } from '@/hooks/useCachedDashboard';
 
 /**
  * Student Service
@@ -167,6 +168,14 @@ export const studentService = {
     const response = await apiClient.get<Timetable[]>('/student/timetable', {
       params,
     });
+    return response.data;
+  },
+
+  /**
+   * Get dashboard data (aggregated)
+   */
+  getDashboard: async (): Promise<DashboardData> => {
+    const response = await apiClient.get<DashboardData>('/students/dashboard');
     return response.data;
   },
 
