@@ -135,7 +135,19 @@ export const setItem = async <T extends keyof SchoolOSDB>(
   value: SchoolOSDB[T]['value']
 ): Promise<void> => {
   const database = await getDB();
-  await database.put(storeName as any, value, key);
+  
+  // For stores with keyPath (grades, attendance, exams, fees, messages, timetable),
+  // don't pass the key parameter - it's extracted from the value
+  const storesWithKeyPath = ['grades', 'attendance', 'exams', 'fees', 'messages', 'timetable'];
+  
+  if (storesWithKeyPath.includes(storeName as string)) {
+    // Ensure the value has the id field set
+    const valueWithId = { ...value, id: key };
+    await database.put(storeName as any, valueWithId);
+  } else {
+    // For stores without keyPath (user, syncQueue, conflictLog), pass the key
+    await database.put(storeName as any, value, key);
+  }
 };
 
 /**
