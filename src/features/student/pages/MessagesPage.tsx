@@ -84,8 +84,8 @@ export const MessagesPage: React.FC = () => {
 
         // Fetch messages
         const response = await studentService.getMessages();
-        const sortedMessages = (response.data || []).sort(
-          (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        const sortedMessages = (response.messages || []).sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         setMessages(sortedMessages);
 
