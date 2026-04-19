@@ -64,7 +64,7 @@ export const ExamsPage: React.FC = () => {
 
         // Combine and enrich with status information
         const allExams: ExamWithStatus[] = [
-          ...(upcomingResponse.data || []).map((exam) => {
+          ...(upcomingResponse.exams || []).map((exam) => {
             const examDate = new Date(exam.date);
             const today = new Date();
             const daysUntil = Math.ceil(
@@ -78,7 +78,7 @@ export const ExamsPage: React.FC = () => {
               isWithin7Days: daysUntil <= 7 && daysUntil > 0,
             };
           }),
-          ...(pastResponse.data || []).map((exam) => ({
+          ...(pastResponse.exams || []).map((exam) => ({
             ...exam,
             isUpcoming: false,
           })),
