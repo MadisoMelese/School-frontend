@@ -104,12 +104,19 @@ export const studentService = {
     totalPaid: number;
     outstandingBalance: number;
   }> => {
-    const response = await apiClient.get<{
-      totalFees: number;
-      totalPaid: number;
-      outstandingBalance: number;
-    }>('/fees/summary/:studentId');
-    return response.data;
+    // Get all fees and calculate summary
+    const feesResponse = await apiClient.get<PaginatedResponse<Fee>>('/fees');
+    const fees = feesResponse.data.fees || [];
+    
+    const totalFees = fees.reduce((sum, fee: any) => sum + (fee.amount || 0), 0);
+    const totalPaid = fees.reduce((sum, fee: any) => sum + (fee.paidAmount || 0), 0);
+    const outstandingBalance = totalFees - totalPaid;
+    
+    return {
+      totalFees,
+      totalPaid,
+      outstandingBalance,
+    };
   },
 
   /**
