@@ -71,7 +71,7 @@ export const FeesPage: React.FC = () => {
           term: selectedTerm || undefined,
         });
 
-        setFees(response.data || []);
+        setFees(response.fees || []);
 
         // Fetch fee summary
         const summary = await studentService.getFeeSummary();
