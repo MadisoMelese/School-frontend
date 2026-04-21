@@ -49,6 +49,7 @@ export const userService = {
   }): Promise<User[]> => {
     const response = await apiClient.get<{ data: { users: User[] } }>('/users', {
       params: {
+        role: 'user',
         ...params,
         limit: 1000,
       },
