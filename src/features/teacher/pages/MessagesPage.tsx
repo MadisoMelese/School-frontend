@@ -75,15 +75,15 @@ export const TeacherMessagesPage = () => {
   });
 
   const filteredMessages = useMemo(() => {
-    if (!messagesData?.data) return [];
-    return messagesData.data.filter(
+    if (!messagesData?.messages) return [];
+    return messagesData.messages.filter(
       (msg) =>
-        `${msg.sender.firstname} ${msg.sender.lastname}`
+        `${msg.senderId.firstname} ${msg.senderId.lastname}`
           .toLowerCase()
           .includes(debouncedSearch.toLowerCase()) ||
         msg.subject.toLowerCase().includes(debouncedSearch.toLowerCase())
     );
-  }, [messagesData?.data, debouncedSearch]);
+  }, [messagesData?.messages, debouncedSearch]);
 
   const onSubmit = (data: MessageFormData) => {
     const payload: SendMessageRequest & { classId?: string } = {
@@ -101,11 +101,11 @@ export const TeacherMessagesPage = () => {
 
   const messageColumns = [
     {
-      key: 'sender' as const,
+      key: 'senderId' as const,
       label: 'From',
-      render: (_: unknown, row: Message) => (
+      render: (_: unknown, row: any) => (
         <span className="font-medium">
-          {row.sender.firstname} {row.sender.lastname}
+          {row.senderId.firstname} {row.senderId.lastname}
         </span>
       ),
     },
@@ -115,7 +115,7 @@ export const TeacherMessagesPage = () => {
       render: (value: string) => <span>{value}</span>,
     },
     {
-      key: 'timestamp' as const,
+      key: 'createdAt' as const,
       label: 'Date',
       render: (value: string) => (
         <span className="text-sm text-neutral-600 dark:text-neutral-400">
@@ -215,9 +215,9 @@ export const TeacherMessagesPage = () => {
               <Dropdown
                 options={
                   form.watch('recipientType') === 'class'
-                    ? classesData?.data.map((cls) => ({
-                        value: cls.id,
-                        label: `${cls.name} (${cls.studentCount} students)`,
+                    ? classesData?.classes.map((cls) => ({
+                        value: cls._id,
+                        label: `${cls.name} (${cls.students?.length || 0} students)`,
                       })) || []
                     : [
                         { value: 'student1', label: 'Student 1' },
