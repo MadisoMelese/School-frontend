@@ -149,6 +149,38 @@ export const teacherService = {
     });
     return response.data;
   },
+
+  /**
+   * Get class and students for a teacher
+   */
+  getClassStudents: async (teacherId: string): Promise<{
+    class: {
+      _id: string;
+      name: string;
+      section: string;
+      grade: string;
+      capacity: number;
+      academicYear: string;
+      status: string;
+    } | null;
+    students: Array<{
+      _id: string;
+      studentId: string;
+      firstName: string;
+      lastName: string;
+      email?: string;
+      gender: string;
+      status: string;
+    }>;
+  }> => {
+    const response = await apiClient.get<{
+      data: {
+        class: any;
+        students: any[];
+      };
+    }>(`/teachers/${teacherId}/class-students`);
+    return response.data.data;
+  },
 };
 
 export default teacherService;
