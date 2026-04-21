@@ -49,7 +49,8 @@ export const TeacherDashboardPage: React.FC = () => {
         if (user?.id) {
           try {
             setClassStudentsLoading(true);
-            const studentsData = await teacherService.getClassStudents(user.id);
+            // Use "me" to get the current teacher's class students
+            const studentsData = await teacherService.getClassStudents('me');
             setClassStudents(studentsData);
           } catch (err) {
             console.error('Failed to fetch class students:', err);
