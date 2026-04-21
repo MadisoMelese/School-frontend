@@ -212,6 +212,8 @@ export const MessagesManagementPage: React.FC = () => {
 
     try {
       setError(null);
+      console.log('Sending message with receiverId:', composeData.receiverId, 'Type:', typeof composeData.receiverId);
+      
       await apiClient.post('/messages', {
         receiverId: composeData.receiverId,
         subject: composeData.subject,
@@ -661,24 +663,35 @@ export const MessagesManagementPage: React.FC = () => {
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     To *
                   </label>
-                  <select
-                    value={composeData.receiverId}
-                    onChange={(e) =>
-                      setComposeData({ ...composeData, receiverId: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  >
-                    <option value="">Select a user...</option>
-                    {loadingUsers ? (
-                      <option>Loading users...</option>
-                    ) : (
-                      allUsers.map((user) => (
-                        <option key={user._id} value={user._id}>
-                          {user.firstname} {user.lastname} ({user.email})
-                        </option>
-                      ))
+                  <div className="relative">
+                    <select
+                      value={composeData.receiverId}
+                      onChange={(e) => {
+                        const selectedId = e.target.value;
+                        console.log('Selected user ID:', selectedId);
+                        setComposeData({ ...composeData, receiverId: selectedId });
+                      }}
+                      className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    >
+                      <option value="">Select a user...</option>
+                      {loadingUsers ? (
+                        <option disabled>Loading users...</option>
+                      ) : allUsers.length === 0 ? (
+                        <option disabled>No users available</option>
+                      ) : (
+                        allUsers.map((user) => (
+                          <option key={user._id} value={user._id || user.id}>
+                            {user.firstname} {user.lastname} ({user.email})
+                          </option>
+                        ))
+                      )}
+                    </select>
+                    {composeData.receiverId && (
+                      <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
+                        Selected ID: {composeData.receiverId}
+                      </p>
                     )}
-                  </select>
+                  </div>
                 </div>
 
                 <div>
