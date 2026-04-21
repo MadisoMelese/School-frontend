@@ -33,7 +33,6 @@ export const TeacherDashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [widgets, setWidgets] = useState<Widget[]>([]);
-  const [dashboardData, setDashboardData] = useState<any>(null);
   const [classStudents, setClassStudents] = useState<any>(null);
   const [classStudentsLoading, setClassStudentsLoading] = useState(false);
 
@@ -45,7 +44,6 @@ export const TeacherDashboardPage: React.FC = () => {
         setError(null);
 
         const data = await teacherService.getDashboard();
-        setDashboardData(data);
 
         // Fetch class students if teacher has an ID
         if (user?.id) {
