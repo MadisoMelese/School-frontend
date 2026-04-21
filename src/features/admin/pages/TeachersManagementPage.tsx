@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { DashboardLayout } from '@components/templates/DashboardLayout';
 import { Button } from '@components/atoms/Button';
 import { Input } from '@components/atoms/Input';
 import { SkeletonTable } from '@components/atoms/SkeletonTable';
 import { apiClient } from '@services/api/client';
+import { userService } from '@services/api/userService';
 
 /**
  * Teachers Management Page
@@ -12,7 +13,18 @@ import { apiClient } from '@services/api/client';
 
 interface User {
   _id: string;
+  id: string;
+  firstname: string;
+  lastname: string;
   email: string;
+  birthday?: string;
+  gender?: 'male' | 'female' | 'other';
+  location?: {
+    city?: string;
+    country?: string;
+  };
+  avatar?: string;
+  createdAt: string;
 }
 
 interface Teacher {
@@ -65,6 +77,15 @@ export const TeachersManagementPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+
+  // User dropdown state
+  const [users, setUsers] = useState<User[]>([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [userSearchTerm, setUserSearchTerm] = useState('');
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [userSortBy, setUserSortBy] = useState<'created' | 'name'>('created');
+  const [userSortOrder, setUserSortOrder] = useState<'asc' | 'desc'>('desc');
+
   const [formData, setFormData] = useState<FormData>({
     userId: '',
     teacherId: '',
@@ -111,9 +132,69 @@ export const TeachersManagementPage: React.FC = () => {
     }
   };
 
+  // Load users for dropdown
+  const loadUsers = async () => {
+    try {
+      setUsersLoading(true);
+      const data = await userService.getAllUsers();
+      setUsers(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('Failed to load users:', err);
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
+  // Filter and sort users for dropdown
+  const filteredAndSortedUsers = useMemo(() => {
+    let filtered = users.filter((user) => {
+      const searchLower = userSearchTerm.toLowerCase();
+      return (
+        user.firstname.toLowerCase().includes(searchLower) ||
+        user.lastname.toLowerCase().includes(searchLower) ||
+        user.email.toLowerCase().includes(searchLower)
+      );
+    });
+
+    // Sort users
+    filtered.sort((a, b) => {
+      let compareValue = 0;
+      if (userSortBy === 'name') {
+        const nameA = `${a.firstname} ${a.lastname}`.toLowerCase();
+        const nameB = `${b.firstname} ${b.lastname}`.toLowerCase();
+        compareValue = nameA.localeCompare(nameB);
+      } else {
+        // Sort by creation date
+        compareValue = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      }
+
+      return userSortOrder === 'asc' ? compareValue : -compareValue;
+    });
+
+    return filtered;
+  }, [users, userSearchTerm, userSortBy, userSortOrder]);
+
+  // Load initial data
   useEffect(() => {
     loadTeachers(searchTerm, statusFilter, page);
+    loadUsers();
   }, [page, limit]);
+
+  // Handle user selection from dropdown
+  const handleSelectUser = (user: User) => {
+    setFormData((prev) => ({
+      ...prev,
+      userId: user.id || user._id,
+      firstName: user.firstname,
+      lastName: user.lastname,
+      birthday: user.birthday || prev.birthday,
+      gender: (user.gender as 'male' | 'female' | 'other') || prev.gender,
+      avatar: user.avatar || prev.avatar,
+      location: user.location?.city || prev.address,
+    }));
+    setShowUserDropdown(false);
+    setUserSearchTerm('');
+  };
 
   // Handle form input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -132,19 +213,11 @@ export const TeachersManagementPage: React.FC = () => {
 
       // Validate required fields
       if (!formData.userId.trim()) {
-        setError('User ID is required');
+        setError('User selection is required');
         return;
       }
       if (!formData.teacherId.trim()) {
         setError('Teacher ID is required');
-        return;
-      }
-      if (!formData.firstName.trim()) {
-        setError('First name is required');
-        return;
-      }
-      if (!formData.lastName.trim()) {
-        setError('Last name is required');
         return;
       }
       if (!formData.dateOfBirth) {
@@ -407,19 +480,85 @@ export const TeachersManagementPage: React.FC = () => {
             </h3>
             <form onSubmit={editingId ? handleUpdate : handleCreate} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
+                {/* User Selection Dropdown */}
+                <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                    User ID *
+                    Select User *
                   </label>
-                  <Input
-                    type="text"
-                    name="userId"
-                    value={formData.userId}
-                    onChange={handleInputChange}
-                    placeholder="Enter user ID"
-                    required
-                  />
+                  <div className="relative">
+                    <div
+                      className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
+                      onClick={() => setShowUserDropdown(!showUserDropdown)}
+                    >
+                      {formData.userId
+                        ? users.find((u) => u.id === formData.userId || u._id === formData.userId)
+                            ? `${users.find((u) => u.id === formData.userId || u._id === formData.userId)?.firstname} ${users.find((u) => u.id === formData.userId || u._id === formData.userId)?.lastname} (${users.find((u) => u.id === formData.userId || u._id === formData.userId)?.email})`
+                            : 'Select a user'
+                        : 'Select a user'}
+                    </div>
+
+                    {showUserDropdown && (
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-neutral-700 border border-neutral-300 dark:border-neutral-600 rounded-lg shadow-lg z-10">
+                        {/* Search and Sort Controls */}
+                        <div className="p-3 border-b border-neutral-200 dark:border-neutral-600 space-y-2">
+                          <Input
+                            type="text"
+                            placeholder="Search by name or email..."
+                            value={userSearchTerm}
+                            onChange={(e) => setUserSearchTerm(e.target.value)}
+                          />
+                          <div className="grid grid-cols-2 gap-2">
+                            <select
+                              value={userSortBy}
+                              onChange={(e) => setUserSortBy(e.target.value as 'created' | 'name')}
+                              className="px-2 py-1 border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white text-xs"
+                            >
+                              <option value="created">Sort by Created</option>
+                              <option value="name">Sort by Name</option>
+                            </select>
+                            <select
+                              value={userSortOrder}
+                              onChange={(e) => setUserSortOrder(e.target.value as 'asc' | 'desc')}
+                              className="px-2 py-1 border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white text-xs"
+                            >
+                              <option value="asc">Ascending</option>
+                              <option value="desc">Descending</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        {/* User List */}
+                        <div className="max-h-64 overflow-y-auto">
+                          {usersLoading ? (
+                            <div className="p-3 text-neutral-600 dark:text-neutral-400 text-sm">
+                              Loading users...
+                            </div>
+                          ) : filteredAndSortedUsers.length === 0 ? (
+                            <div className="p-3 text-neutral-600 dark:text-neutral-400 text-sm">
+                              No users found
+                            </div>
+                          ) : (
+                            filteredAndSortedUsers.map((user) => (
+                              <div
+                                key={user._id}
+                                onClick={() => handleSelectUser(user)}
+                                className="px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-600 cursor-pointer border-b border-neutral-100 dark:border-neutral-600 last:border-b-0"
+                              >
+                                <div className="font-medium text-neutral-900 dark:text-white text-sm">
+                                  {user.firstname} {user.lastname}
+                                </div>
+                                <div className="text-xs text-neutral-600 dark:text-neutral-400">
+                                  {user.email}
+                                </div>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Teacher ID *
@@ -435,28 +574,26 @@ export const TeachersManagementPage: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                    First Name *
+                    First Name
                   </label>
                   <Input
                     type="text"
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    placeholder="Enter first name"
-                    required
+                    placeholder="Auto-filled from user"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                    Last Name *
+                    Last Name
                   </label>
                   <Input
                     type="text"
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    placeholder="Enter last name"
-                    required
+                    placeholder="Auto-filled from user"
                   />
                 </div>
                 <div>
