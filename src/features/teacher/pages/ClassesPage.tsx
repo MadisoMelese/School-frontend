@@ -42,7 +42,8 @@ export const ClassesPage: React.FC = () => {
         setLoading(true);
         setError(null);
         const response = await teacherService.getClasses({ limit: 100 });
-        const classesData = response.data?.classes || response.classes || [];
+        // Handle different response structures
+        const classesData = (response as any).data?.classes || (response as any).classes || [];
         setClasses(Array.isArray(classesData) ? classesData : []);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load classes');
