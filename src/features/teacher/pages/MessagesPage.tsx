@@ -22,7 +22,7 @@ import { apiClient } from '@services/api/client';
  */
 
 interface User {
-  _id: string;
+  _id?: string;
   id?: string;
   firstname: string;
   lastname: string;
@@ -40,6 +40,21 @@ interface Message {
   readAt?: string;
   createdAt: string;
 }
+
+// Helper to get user ID from either populated user object or string
+const getUserId = (userRef: User | string): string => {
+  if (typeof userRef === 'string') return userRef;
+  // Backend's toJSON transform converts _id to id, so check id first, then _id
+  return userRef.id || userRef._id || '';
+};
+
+// Helper to get user object from reference
+const getUserFromRef = (userRef: User | string): User => {
+  if (typeof userRef === 'string') {
+    return { _id: userRef, id: userRef, firstname: '', lastname: '', email: '' };
+  }
+  return userRef;
+};
 
 interface Conversation {
   userId: string;
@@ -146,10 +161,8 @@ export const TeacherMessagesPage: React.FC = () => {
 
     messages.forEach((msg) => {
       const otherUser = activeTab === 'sent' ? msg.receiverId : msg.senderId;
-      const userId = typeof otherUser === 'string' ? otherUser : otherUser._id;
-      const user = typeof otherUser === 'string' 
-        ? { _id: userId, firstname: '', lastname: '', email: '' } 
-        : otherUser;
+      const userId = getUserId(otherUser);
+      const user = getUserFromRef(otherUser);
 
       if (!conversationMap.has(userId)) {
         conversationMap.set(userId, {
@@ -198,7 +211,7 @@ export const TeacherMessagesPage: React.FC = () => {
   const selectedUserMessages = selectedConversation
     ? allMessages.filter((msg) => {
         const otherUser = activeTab === 'sent' ? msg.receiverId : msg.senderId;
-        const otherUserId = typeof otherUser === 'string' ? otherUser : otherUser._id;
+        const otherUserId = getUserId(otherUser);
         return otherUserId === selectedConversation.userId;
       })
     : [];
@@ -246,18 +259,26 @@ export const TeacherMessagesPage: React.FC = () => {
       const lastMsg = selectedUserMessages[selectedUserMessages.length - 1];
       const subject = lastMsg?.subject || 'Re: Message';
       
-      await apiClient.post('/messages', {
-        receiverId: selectedConversation.userId,
+      // The conversation userId is already the correct user ID to reply to
+      // (the other person in the conversation)
+      const receiverId = selectedConversation.userId;
+      
+      console.log('Sending reply to receiverId:', receiverId);
+      
+      const response = await apiClient.post('/messages', {
+        receiverId: receiverId,
         subject: subject.startsWith('Re:') ? subject : `Re: ${subject}`,
         content: replyContent,
       });
 
+      console.log('Reply response:', response.data);
       setSuccess('Reply sent successfully!');
       setReplyContent('');
       await loadMessages();
       await loadUnreadCount();
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
+      console.error('Reply error:', err);
       setError(err instanceof Error ? err.message : 'Failed to send reply');
     } finally {
       setSendingReply(false);
@@ -623,11 +644,14 @@ export const TeacherMessagesPage: React.FC = () => {
                       ) : allUsers.length === 0 ? (
                         <option disabled>No users available</option>
                       ) : (
-                        allUsers.map((user) => (
-                          <option key={user.id || user._id} value={user.id || user._id}>
-                            {user.firstname} {user.lastname} ({user.email})
-                          </option>
-                        ))
+                        allUsers.map((user) => {
+                          const userId = getUserId(user);
+                          return (
+                            <option key={userId} value={userId}>
+                              {user.firstname} {user.lastname} ({user.email})
+                            </option>
+                          );
+                        })
                       )}
                     </select>
                     {composeData.receiverId && (
