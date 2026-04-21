@@ -89,6 +89,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         { id: 'fees', label: 'Fees', icon: 'CreditCard', href: '/admin/fees' },
         { id: 'attendance', label: 'Attendance', icon: 'Calendar', href: '/admin/attendance' },
         { id: 'announcements', label: 'Announcements', icon: 'Bell', href: '/admin/announcements' },
+        { id: 'messages', label: 'Messages', icon: 'Mail', href: '/admin/messages' },
         { id: 'library', label: 'Library', icon: 'BookMarked', href: '/admin/library' },
         { id: 'timetables', label: 'Timetables', icon: 'Clock', href: '/admin/timetables' },
         { id: 'staff', label: 'Staff', icon: 'Users', href: '/admin/staff' },
