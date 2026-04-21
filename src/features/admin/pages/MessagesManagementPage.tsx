@@ -8,11 +8,12 @@ import { apiClient } from '@services/api/client';
 
 /**
  * Admin Messages Chat Page
- * Real chat app interface for admin messaging with full backend integration
+ * Professional chat app interface for admin messaging with full backend integration
  */
 
 interface User {
   _id: string;
+  id?: string;
   firstname: string;
   lastname: string;
   email: string;
@@ -21,12 +22,20 @@ interface User {
 
 interface Message {
   _id: string;
-  senderId: User;
-  receiverId: User;
+  senderId: User | string;
+  receiverId: User | string;
   subject: string;
   content: string;
   isRead: boolean;
+  readAt?: string;
   createdAt: string;
+}
+
+interface Conversation {
+  userId: string;
+  user: User;
+  lastMessage?: Message;
+  unreadCount: number;
 }
 
 type TabType = 'inbox' | 'sent' | 'drafts';
@@ -39,12 +48,13 @@ interface ComposeData {
 
 export const MessagesManagementPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('inbox');
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [allMessages, setAllMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [showCompose, setShowCompose] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -56,6 +66,8 @@ export const MessagesManagementPage: React.FC = () => {
   });
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(50);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Handle responsive
@@ -79,8 +91,8 @@ export const MessagesManagementPage: React.FC = () => {
   const loadAllUsers = useCallback(async () => {
     try {
       setLoadingUsers(true);
-      const response = await apiClient.get<{ data: { data: User[] } }>('/users?limit=1000');
-      const users = response.data.data?.data || [];
+      const response = await apiClient.get<{ data: { users: User[] } }>('/users?limit=1000');
+      const users = response.data.data?.users || [];
       setAllUsers(Array.isArray(users) ? users : []);
     } catch (err) {
       console.error('Failed to load users:', err);
@@ -89,81 +101,103 @@ export const MessagesManagementPage: React.FC = () => {
     }
   }, []);
 
-  // Load messages
+  // Load messages and build conversations
   const loadMessages = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      let endpoint = '';
-      if (activeTab === 'inbox') {
-        endpoint = '/messages/inbox?limit=100';
-      } else if (activeTab === 'sent') {
-        endpoint = '/messages/sent?limit=100';
-      } else {
-        // Load drafts from localStorage
+      if (activeTab === 'drafts') {
         const savedDrafts = localStorage.getItem('messageDrafts');
         setDrafts(savedDrafts ? JSON.parse(savedDrafts) : []);
-        setMessages([]);
+        setConversations([]);
+        setAllMessages([]);
         setLoading(false);
         return;
       }
 
-      const response = await apiClient.get<{ data: { messages: Message[] } }>(endpoint);
-      const data = response.data.data;
+      let endpoint = '';
+      if (activeTab === 'inbox') {
+        endpoint = `/messages/inbox?page=${page}&limit=${limit}`;
+      } else if (activeTab === 'sent') {
+        endpoint = `/messages/sent?page=${page}&limit=${limit}`;
+      }
 
-      if (data?.messages && Array.isArray(data.messages)) {
-        setMessages(data.messages);
+      const response = await apiClient.get<{ data: { messages: Message[] } }>(endpoint);
+      const messages = response.data.data?.messages || [];
+
+      if (Array.isArray(messages)) {
+        setAllMessages(messages);
+        buildConversations(messages);
       } else {
-        setMessages([]);
+        setAllMessages([]);
+        setConversations([]);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load messages');
     } finally {
       setLoading(false);
     }
-  }, [activeTab]);
+  }, [activeTab, page, limit]);
+
+  // Build conversations from messages
+  const buildConversations = (messages: Message[]) => {
+    const conversationMap = new Map<string, Conversation>();
+
+    messages.forEach((msg) => {
+      const otherUser = activeTab === 'sent' ? msg.receiverId : msg.senderId;
+      const userId = typeof otherUser === 'string' ? otherUser : otherUser._id;
+      const user = typeof otherUser === 'string' ? { _id: userId, firstname: '', lastname: '', email: '' } : otherUser;
+
+      if (!conversationMap.has(userId)) {
+        conversationMap.set(userId, {
+          userId,
+          user,
+          lastMessage: msg,
+          unreadCount: activeTab === 'inbox' && !msg.isRead ? 1 : 0,
+        });
+      } else {
+        const conv = conversationMap.get(userId)!;
+        if (activeTab === 'inbox' && !msg.isRead) {
+          conv.unreadCount += 1;
+        }
+      }
+    });
+
+    setConversations(Array.from(conversationMap.values()));
+  };
 
   useEffect(() => {
     loadMessages();
     loadUnreadCount();
+  }, [loadMessages, loadUnreadCount]);
+
+  useEffect(() => {
     if (showCompose) {
       loadAllUsers();
     }
-  }, [loadMessages, loadUnreadCount, showCompose]);
+  }, [showCompose, loadAllUsers]);
 
   // Scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [selectedMessage]);
+  }, [selectedConversation, allMessages]);
 
-  // Filter messages
-  const filteredMessages = messages.filter((msg) => {
-    const otherUser = activeTab === 'sent' ? msg.receiverId : msg.senderId;
+  // Filter conversations
+  const filteredConversations = conversations.filter((conv) => {
     const searchLower = searchTerm.toLowerCase();
     return (
-      `${otherUser.firstname} ${otherUser.lastname}`.toLowerCase().includes(searchLower) ||
-      otherUser.email.toLowerCase().includes(searchLower) ||
-      msg.subject.toLowerCase().includes(searchLower)
+      `${conv.user.firstname} ${conv.user.lastname}`.toLowerCase().includes(searchLower) ||
+      conv.user.email.toLowerCase().includes(searchLower)
     );
   });
 
-  // Get unique users
-  const uniqueUsers = Array.from(
-    new Map(
-      filteredMessages.map((msg) => {
-        const user = activeTab === 'sent' ? msg.receiverId : msg.senderId;
-        return [user._id, user];
-      })
-    ).values()
-  );
-
   // Get messages with selected user
-  const selectedUserMessages = selectedMessage
-    ? filteredMessages.filter((msg) => {
+  const selectedUserMessages = selectedConversation
+    ? allMessages.filter((msg) => {
         const otherUser = activeTab === 'sent' ? msg.receiverId : msg.senderId;
-        const selectedUser = activeTab === 'sent' ? selectedMessage.receiverId : selectedMessage.senderId;
-        return otherUser._id === selectedUser._id;
+        const otherUserId = typeof otherUser === 'string' ? otherUser : otherUser._id;
+        return otherUserId === selectedConversation.userId;
       })
     : [];
 
@@ -229,7 +263,7 @@ export const MessagesManagementPage: React.FC = () => {
     try {
       await apiClient.delete(`/messages/${messageId}`);
       setSuccess('Message deleted!');
-      setSelectedMessage(null);
+      setSelectedConversation(null);
       await loadMessages();
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
@@ -243,8 +277,19 @@ export const MessagesManagementPage: React.FC = () => {
     setShowCompose(true);
   };
 
+  // Handle select conversation
+  const handleSelectConversation = (conv: Conversation) => {
+    setSelectedConversation(conv);
+    // Mark all messages as read
+    selectedUserMessages.forEach((msg) => {
+      if (!msg.isRead && activeTab === 'inbox') {
+        handleMarkAsRead(msg._id);
+      }
+    });
+  };
+
   return (
-    <DashboardLayout title="Messages" description="Chat with users">
+    <DashboardLayout title="Messages" description="Professional messaging system">
       <div className="h-screen -mx-4 sm:-mx-6 md:-mx-8 -my-4 sm:-my-6 md:-my-8 flex flex-col bg-white dark:bg-neutral-900">
         {/* Notifications */}
         {error && (
@@ -287,7 +332,8 @@ export const MessagesManagementPage: React.FC = () => {
                 key={tab}
                 onClick={() => {
                   setActiveTab(tab);
-                  setSelectedMessage(null);
+                  setSelectedConversation(null);
+                  setPage(1);
                 }}
                 className={`px-3 sm:px-4 py-2 text-sm font-medium border-b-2 transition-colors relative ${
                   activeTab === tab
@@ -308,17 +354,17 @@ export const MessagesManagementPage: React.FC = () => {
 
         {/* Main Chat Area */}
         <div className="flex-1 flex overflow-hidden">
-          {/* Users/Drafts List */}
+          {/* Conversations List */}
           <div
             className={`${
-              isMobile && selectedMessage ? 'hidden' : 'w-full md:w-80'
+              isMobile && selectedConversation ? 'hidden' : 'w-full md:w-80'
             } bg-neutral-50 dark:bg-neutral-800 border-r border-neutral-200 dark:border-neutral-700 flex flex-col overflow-hidden`}
           >
             {/* Search */}
             <div className="p-3 sm:p-4 border-b border-neutral-200 dark:border-neutral-700">
               <Input
                 type="text"
-                placeholder={activeTab === 'drafts' ? 'Search drafts...' : 'Search users...'}
+                placeholder={activeTab === 'drafts' ? 'Search drafts...' : 'Search conversations...'}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="text-sm"
@@ -335,11 +381,11 @@ export const MessagesManagementPage: React.FC = () => {
                   </div>
                 ) : (
                   drafts.map((draft, idx) => {
-                    const receiver = allUsers.find((u) => u._id === draft.receiverId);
+                    const receiver = allUsers.find((u) => u._id === draft.receiverId || u.id === draft.receiverId);
                     return (
                       <div
                         key={idx}
-                        className="p-3 sm:p-4 border-b border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
+                        className="p-3 sm:p-4 border-b border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer transition-colors"
                         onClick={() => handleUseDraft(draft)}
                       >
                         <p className="font-medium text-neutral-900 dark:text-white truncate">
@@ -356,41 +402,23 @@ export const MessagesManagementPage: React.FC = () => {
                   })
                 )
               ) : (
-                // Messages List
+                // Conversations List
                 loading ? (
                   <div className="p-4 text-center text-neutral-600 dark:text-neutral-400">
-                    Loading...
+                    <div className="animate-spin inline-block w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full"></div>
+                    <p className="mt-2">Loading...</p>
                   </div>
-                ) : uniqueUsers.length === 0 ? (
+                ) : filteredConversations.length === 0 ? (
                   <div className="p-4 text-center text-neutral-600 dark:text-neutral-400">
-                    No messages yet
+                    No conversations yet
                   </div>
                 ) : (
-                  uniqueUsers.map((user) => {
-                    const lastMsg = filteredMessages.find((msg) => {
-                      const otherUser = activeTab === 'sent' ? msg.receiverId : msg.senderId;
-                      return otherUser._id === user._id;
-                    });
-                    const isSelected =
-                      selectedMessage &&
-                      ((activeTab === 'sent' && selectedMessage.receiverId._id === user._id) ||
-                        (activeTab === 'inbox' && selectedMessage.senderId._id === user._id));
-
+                  filteredConversations.map((conv) => {
+                    const isSelected = selectedConversation?.userId === conv.userId;
                     return (
                       <button
-                        key={user._id}
-                        onClick={() => {
-                          const msg = filteredMessages.find((m) => {
-                            const otherUser = activeTab === 'sent' ? m.receiverId : m.senderId;
-                            return otherUser._id === user._id;
-                          });
-                          if (msg) {
-                            setSelectedMessage(msg);
-                            if (!msg.isRead && activeTab === 'inbox') {
-                              handleMarkAsRead(msg._id);
-                            }
-                          }
-                        }}
+                        key={conv.userId}
+                        onClick={() => handleSelectConversation(conv)}
                         className={`w-full p-3 sm:p-4 border-b border-neutral-200 dark:border-neutral-700 text-left transition-colors ${
                           isSelected
                             ? 'bg-primary-50 dark:bg-primary-900'
@@ -398,19 +426,28 @@ export const MessagesManagementPage: React.FC = () => {
                         }`}
                       >
                         <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 rounded-full bg-primary-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
-                            {user.firstname.charAt(0)}
-                            {user.lastname.charAt(0)}
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center text-white font-semibold flex-shrink-0 text-sm">
+                            {conv.user.firstname.charAt(0)}
+                            {conv.user.lastname.charAt(0)}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-neutral-900 dark:text-white truncate">
-                              {user.firstname} {user.lastname}
-                            </p>
+                            <div className="flex items-center justify-between">
+                              <p className="font-medium text-neutral-900 dark:text-white truncate">
+                                {conv.user.firstname} {conv.user.lastname}
+                              </p>
+                              {conv.unreadCount > 0 && (
+                                <Badge variant="primary" className="text-xs flex-shrink-0 ml-2">
+                                  {conv.unreadCount}
+                                </Badge>
+                              )}
+                            </div>
                             <p className="text-xs text-neutral-600 dark:text-neutral-400 truncate">
-                              {lastMsg?.subject || user.email}
+                              {conv.lastMessage?.subject || conv.user.email}
                             </p>
-                            {lastMsg && !lastMsg.isRead && activeTab === 'inbox' && (
-                              <div className="w-2 h-2 bg-primary-600 rounded-full mt-1" />
+                            {conv.lastMessage && (
+                              <p className="text-xs text-neutral-500 dark:text-neutral-500 truncate mt-1">
+                                {conv.lastMessage.content.substring(0, 50)}...
+                              </p>
                             )}
                           </div>
                         </div>
@@ -425,47 +462,44 @@ export const MessagesManagementPage: React.FC = () => {
           {/* Chat Area */}
           <div
             className={`${
-              isMobile && !selectedMessage ? 'hidden' : 'flex-1'
+              isMobile && !selectedConversation ? 'hidden' : 'flex-1'
             } flex flex-col bg-white dark:bg-neutral-900 overflow-hidden`}
           >
-            {selectedMessage ? (
+            {selectedConversation ? (
               <>
                 {/* Chat Header */}
                 <div className="bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 p-4 sm:p-6 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     {isMobile && (
                       <button
-                        onClick={() => setSelectedMessage(null)}
+                        onClick={() => setSelectedConversation(null)}
                         className="text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
                       >
                         <Icon name="ChevronLeft" size={24} />
                       </button>
                     )}
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center text-white font-semibold text-sm">
+                      {selectedConversation.user.firstname.charAt(0)}
+                      {selectedConversation.user.lastname.charAt(0)}
+                    </div>
                     <div>
                       <p className="font-semibold text-neutral-900 dark:text-white">
-                        {activeTab === 'sent'
-                          ? selectedMessage.receiverId.firstname
-                          : selectedMessage.senderId.firstname}{' '}
-                        {activeTab === 'sent'
-                          ? selectedMessage.receiverId.lastname
-                          : selectedMessage.senderId.lastname}
+                        {selectedConversation.user.firstname} {selectedConversation.user.lastname}
                       </p>
                       <p className="text-xs text-neutral-600 dark:text-neutral-400">
-                        {activeTab === 'sent'
-                          ? selectedMessage.receiverId.email
-                          : selectedMessage.senderId.email}
+                        {selectedConversation.user.email}
                       </p>
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    {!selectedMessage.isRead && activeTab === 'inbox' && (
-                      <Badge variant="warning" className="text-xs">
-                        Unread
-                      </Badge>
-                    )}
                     <button
-                      onClick={() => handleDeleteMessage(selectedMessage._id)}
-                      className="text-danger-600 hover:text-danger-700 dark:text-danger-400 dark:hover:text-danger-300"
+                      onClick={() => {
+                        if (selectedUserMessages.length > 0) {
+                          handleDeleteMessage(selectedUserMessages[0]._id);
+                        }
+                      }}
+                      className="text-danger-600 hover:text-danger-700 dark:text-danger-400 dark:hover:text-danger-300 p-2 hover:bg-danger-50 dark:hover:bg-danger-950 rounded-lg transition-colors"
+                      title="Delete conversation"
                     >
                       <Icon name="Trash2" size={20} />
                     </button>
@@ -473,31 +507,49 @@ export const MessagesManagementPage: React.FC = () => {
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto scrollbar-thin p-4 sm:p-6 space-y-4">
-                  {selectedUserMessages.map((msg) => {
-                    const isOwn = activeTab === 'sent';
-                    return (
-                      <div key={msg._id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                        <div
-                          className={`max-w-xs sm:max-w-md lg:max-w-lg px-4 py-2 rounded-lg ${
-                            isOwn
-                              ? 'bg-primary-600 text-white'
-                              : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white'
-                          }`}
-                        >
-                          <p className="font-semibold text-sm">{msg.subject}</p>
-                          <p className="text-sm mt-1 whitespace-pre-wrap break-words">{msg.content}</p>
-                          <p
-                            className={`text-xs mt-2 ${
-                              isOwn ? 'text-primary-100' : 'text-neutral-600 dark:text-neutral-400'
+                <div className="flex-1 overflow-y-auto scrollbar-thin p-4 sm:p-6 space-y-4 bg-neutral-50 dark:bg-neutral-900">
+                  {selectedUserMessages.length === 0 ? (
+                    <div className="flex items-center justify-center h-full">
+                      <div className="text-center">
+                        <Icon name="Mail" size={48} className="text-neutral-400 mx-auto mb-4" />
+                        <p className="text-neutral-600 dark:text-neutral-400">No messages in this conversation</p>
+                      </div>
+                    </div>
+                  ) : (
+                    selectedUserMessages.map((msg) => {
+                      const isOwn = activeTab === 'sent';
+                      return (
+                        <div key={msg._id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                          <div
+                            className={`max-w-xs sm:max-w-md lg:max-w-lg px-4 py-3 rounded-lg shadow-sm ${
+                              isOwn
+                                ? 'bg-primary-600 text-white'
+                                : 'bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-700'
                             }`}
                           >
-                            {new Date(msg.createdAt).toLocaleString()}
-                          </p>
+                            <p className={`font-semibold text-sm ${isOwn ? 'text-primary-100' : ''}`}>
+                              {msg.subject}
+                            </p>
+                            <p className="text-sm mt-2 whitespace-pre-wrap break-words">
+                              {msg.content}
+                            </p>
+                            <div className="flex items-center justify-between mt-2 gap-2">
+                              <p
+                                className={`text-xs ${
+                                  isOwn ? 'text-primary-100' : 'text-neutral-600 dark:text-neutral-400'
+                                }`}
+                              >
+                                {new Date(msg.createdAt).toLocaleString()}
+                              </p>
+                              {isOwn && msg.isRead && (
+                                <Icon name="Check" size={14} className="text-primary-100" />
+                              )}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })
+                  )}
                   <div ref={messagesEndRef} />
                 </div>
 
@@ -524,7 +576,7 @@ export const MessagesManagementPage: React.FC = () => {
                 <div className="text-center">
                   <Icon name="Mail" size={48} className="text-neutral-400 mx-auto mb-4" />
                   <p className="text-neutral-600 dark:text-neutral-400">
-                    {isMobile ? 'Select a message to start' : 'Select a user to view messages'}
+                    {isMobile ? 'Select a conversation to start' : 'Select a conversation to view messages'}
                   </p>
                 </div>
               </div>
@@ -536,7 +588,7 @@ export const MessagesManagementPage: React.FC = () => {
       {/* Compose Modal */}
       {showCompose && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-lg max-w-2xl w-full max-h-96 overflow-y-auto">
+          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl max-w-2xl w-full max-h-96 overflow-y-auto">
             <div className="p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
@@ -553,7 +605,7 @@ export const MessagesManagementPage: React.FC = () => {
               <div className="space-y-3">
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                    To
+                    To *
                   </label>
                   <select
                     value={composeData.receiverId}
@@ -577,7 +629,7 @@ export const MessagesManagementPage: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                    Subject
+                    Subject *
                   </label>
                   <Input
                     type="text"
@@ -591,7 +643,7 @@ export const MessagesManagementPage: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                    Message
+                    Message *
                   </label>
                   <textarea
                     value={composeData.content}
