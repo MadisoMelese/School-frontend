@@ -61,21 +61,21 @@ export const teacherService = {
    */
   getDashboard: async (): Promise<TeacherDashboardData> => {
     try {
-      // Fetch classes
-      const classesResponse = await apiClient.get<PaginatedResponse<any>>('/classes?limit=100');
-      const classes = classesResponse.data.classes || [];
+      // Fetch classes (teacher-scoped via schoolReadScope middleware)
+      const classesResponse = await apiClient.get<{ data: { classes: any[] } }>('/classes?limit=100');
+      const classes = classesResponse.data.data?.classes || [];
 
-      // Fetch grades for pending grading
-      const gradesResponse = await apiClient.get<PaginatedResponse<any>>('/grades?limit=100');
-      const allGrades = gradesResponse.data.grades || [];
+      // Fetch grades (teacher-scoped via schoolReadScope middleware)
+      const gradesResponse = await apiClient.get<{ data: { grades: any[] } }>('/grades?limit=100');
+      const allGrades = gradesResponse.data.data?.grades || [];
 
-      // Fetch attendance for today
-      const attendanceResponse = await apiClient.get<PaginatedResponse<any>>('/attendance?limit=100');
-      const allAttendance = attendanceResponse.data.attendance || [];
+      // Fetch attendance (teacher-scoped via schoolReadScope middleware)
+      const attendanceResponse = await apiClient.get<{ data: { attendance: any[] } }>('/attendance?limit=100');
+      const allAttendance = attendanceResponse.data.data?.attendance || [];
 
-      // Fetch messages
-      const messagesResponse = await apiClient.get<PaginatedResponse<any>>('/messages/inbox?limit=10');
-      const messages = messagesResponse.data.messages || [];
+      // Fetch messages (teacher-scoped via schoolReadScope middleware)
+      const messagesResponse = await apiClient.get<{ data: { messages: any[] } }>('/messages/inbox?limit=10');
+      const messages = messagesResponse.data.data?.messages || [];
 
       // Process pending grades (group by exam and class)
       const pendingGrades = allGrades
