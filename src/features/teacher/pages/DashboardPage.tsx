@@ -34,6 +34,8 @@ export const TeacherDashboardPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [widgets, setWidgets] = useState<Widget[]>([]);
   const [dashboardData, setDashboardData] = useState<any>(null);
+  const [classStudents, setClassStudents] = useState<any>(null);
+  const [classStudentsLoading, setClassStudentsLoading] = useState(false);
 
   // Load dashboard data
   useEffect(() => {
@@ -44,6 +46,19 @@ export const TeacherDashboardPage: React.FC = () => {
 
         const data = await teacherService.getDashboard();
         setDashboardData(data);
+
+        // Fetch class students if teacher has an ID
+        if (user?.id) {
+          try {
+            setClassStudentsLoading(true);
+            const studentsData = await teacherService.getClassStudents(user.id);
+            setClassStudents(studentsData);
+          } catch (err) {
+            console.error('Failed to fetch class students:', err);
+          } finally {
+            setClassStudentsLoading(false);
+          }
+        }
 
         // Create widgets with real data
         const dashboardWidgets: Widget[] = [
@@ -81,6 +96,61 @@ export const TeacherDashboardPage: React.FC = () => {
                   </p>
                 )}
               </div>
+            ),
+          },
+          {
+            id: 'class-students',
+            title: 'Class Students',
+            type: 'list',
+            size: 'large',
+            content: classStudentsLoading ? (
+              <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 p-3">
+                Loading students...
+              </p>
+            ) : classStudents?.class ? (
+              <div className="space-y-2 sm:space-y-3">
+                <div className="p-3 sm:p-4 bg-primary-50 dark:bg-primary-900 rounded-lg mb-3">
+                  <p className="font-semibold text-primary-900 dark:text-primary-100 text-sm sm:text-base">
+                    {classStudents.class.name} - {classStudents.class.section}
+                  </p>
+                  <p className="text-xs sm:text-sm text-primary-700 dark:text-primary-300 mt-1">
+                    Grade {classStudents.class.grade} • {classStudents.students?.length || 0} students
+                  </p>
+                </div>
+                {Array.isArray(classStudents.students) && classStudents.students.length > 0 ? (
+                  <div className="space-y-2">
+                    {classStudents.students.map((student: any) => (
+                      <div
+                        key={student._id}
+                        className="flex items-center justify-between p-3 sm:p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-neutral-900 dark:text-white text-sm sm:text-base">
+                            {student.firstName} {student.lastName}
+                          </p>
+                          <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+                            {student.studentId}
+                          </p>
+                        </div>
+                        <Badge
+                          variant={student.status === 'active' ? 'success' : 'warning'}
+                          className="text-xs sm:text-sm flex-shrink-0"
+                        >
+                          {student.status}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 p-3">
+                    No students in this class
+                  </p>
+                )}
+              </div>
+            ) : (
+              <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 p-3">
+                No class assigned
+              </p>
             ),
           },
           {
@@ -223,7 +293,7 @@ export const TeacherDashboardPage: React.FC = () => {
     };
 
     loadDashboard();
-  }, []);
+  }, [user?.id]);
 
   // Restore scroll position
   useEffect(() => {
