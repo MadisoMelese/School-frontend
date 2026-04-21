@@ -68,6 +68,8 @@ export const MessagesManagementPage: React.FC = () => {
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(50);
+  const [replyContent, setReplyContent] = useState('');
+  const [sendingReply, setSendingReply] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Handle responsive
@@ -91,7 +93,7 @@ export const MessagesManagementPage: React.FC = () => {
   const loadAllUsers = useCallback(async () => {
     try {
       setLoadingUsers(true);
-      const response = await apiClient.get<{ data: { users: User[] } }>('/users?limit=1000');
+      const response = await apiClient.get<{ data: { users: User[]; total: number; page: number; totalPages: number } }>('/users?limit=1000');
       const users = response.data.data?.users || [];
       setAllUsers(Array.isArray(users) ? users : []);
     } catch (err) {
@@ -286,6 +288,39 @@ export const MessagesManagementPage: React.FC = () => {
         handleMarkAsRead(msg._id);
       }
     });
+  };
+
+  // Handle send reply
+  const handleSendReply = async () => {
+    if (!replyContent.trim() || !selectedConversation) {
+      setError('Please enter a reply message');
+      return;
+    }
+
+    try {
+      setSendingReply(true);
+      setError(null);
+      
+      // Get the last message to use its subject
+      const lastMsg = selectedUserMessages[selectedUserMessages.length - 1];
+      const subject = lastMsg?.subject || 'Re: Message';
+      
+      await apiClient.post('/messages', {
+        receiverId: selectedConversation.userId,
+        subject: subject.startsWith('Re:') ? subject : `Re: ${subject}`,
+        content: replyContent,
+      });
+
+      setSuccess('Reply sent successfully!');
+      setReplyContent('');
+      await loadMessages();
+      await loadUnreadCount();
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to send reply');
+    } finally {
+      setSendingReply(false);
+    }
   };
 
   return (
@@ -559,16 +594,35 @@ export const MessagesManagementPage: React.FC = () => {
                     <Input
                       type="text"
                       placeholder="Type a reply..."
+                      value={replyContent}
+                      onChange={(e) => setReplyContent(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSendReply();
+                        }
+                      }}
                       className="text-sm"
-                      disabled
+                      disabled={activeTab === 'sent' || sendingReply}
                     />
-                    <Button variant="primary" size="sm" disabled>
-                      <Icon name="Send" size={18} />
+                    <Button 
+                      variant="primary" 
+                      size="sm" 
+                      onClick={handleSendReply}
+                      disabled={activeTab === 'sent' || sendingReply || !replyContent.trim()}
+                    >
+                      {sendingReply ? (
+                        <div className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+                      ) : (
+                        <Icon name="Send" size={18} />
+                      )}
                     </Button>
                   </div>
-                  <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-2">
-                    Reply feature coming soon
-                  </p>
+                  {activeTab === 'sent' && (
+                    <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-2">
+                      You can only reply to received messages
+                    </p>
+                  )}
                 </div>
               </>
             ) : (
