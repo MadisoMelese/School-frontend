@@ -92,12 +92,15 @@ export const teacherService = {
 
       // Process today's attendance
       const today = new Date().toDateString();
-      const todayAttendance = classes.slice(0, 3).map((cls: any, index: number) => ({
-        _id: cls._id,
-        className: cls.name,
-        time: `${9 + index}:00 AM`,
-        status: index === 1 ? 'completed' : 'pending',
-      }));
+      const todayAttendance = allAttendance
+        .filter((att: any) => new Date(att.date).toDateString() === today)
+        .slice(0, 5)
+        .map((att: any) => ({
+          _id: att._id,
+          className: att.classId?.name || 'Unknown Class',
+          time: att.period || 'N/A',
+          status: att.status || 'pending',
+        }));
 
       return {
         classes: classes.slice(0, 5),
