@@ -5,6 +5,8 @@ import { Badge } from '@components/atoms/Badge';
 import { Icon } from '@components/atoms/Icon';
 import { useAuth } from '@hooks/useAuth';
 import { useLocalStorage } from '@hooks/useLocalStorage';
+import { useOffline } from '@hooks/useOffline';
+import { teacherService } from '@services/api/teacherService';
 
 /**
  * Teacher Dashboard Page
@@ -13,6 +15,7 @@ import { useLocalStorage } from '@hooks/useLocalStorage';
  * - Pending grading tasks
  * - Today's attendance marking
  * - Recent messages
+ * Mobile-first responsive design with dark theme support
  */
 
 interface DashboardState {
@@ -22,6 +25,7 @@ interface DashboardState {
 
 export const TeacherDashboardPage: React.FC = () => {
   const { user } = useAuth();
+  const { isOnline } = useOffline();
   const [dashboardState, setDashboardState] = useLocalStorage<DashboardState>(
     `dashboard-${user?.id}`,
     { scrollPosition: 0, lastUpdated: Date.now() }
@@ -29,89 +33,7 @@ export const TeacherDashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [widgets, setWidgets] = useState<Widget[]>([]);
-
-  // Mock data - replace with actual API calls
-  const mockClasses = [
-    {
-      id: '1',
-      name: 'Class 10-A',
-      gradeLevel: '10',
-      section: 'A',
-      studentCount: 35,
-      schedule: [],
-    },
-    {
-      id: '2',
-      name: 'Class 10-B',
-      gradeLevel: '10',
-      section: 'B',
-      studentCount: 32,
-      schedule: [],
-    },
-    {
-      id: '3',
-      name: 'Class 9-A',
-      gradeLevel: '9',
-      section: 'A',
-      studentCount: 38,
-      schedule: [],
-    },
-  ];
-
-  const mockGradingTasks = [
-    {
-      id: '1',
-      examName: 'Mid-term Exam',
-      subject: 'Mathematics',
-      className: 'Class 10-A',
-      studentCount: 35,
-      gradedCount: 20,
-      dueDate: '2024-01-25',
-    },
-    {
-      id: '2',
-      examName: 'Mid-term Exam',
-      subject: 'Mathematics',
-      className: 'Class 10-B',
-      studentCount: 32,
-      gradedCount: 15,
-      dueDate: '2024-01-25',
-    },
-  ];
-
-  const mockAttendanceClasses = [
-    {
-      id: '1',
-      className: 'Class 10-A',
-      time: '09:00 AM',
-      status: 'pending',
-    },
-    {
-      id: '2',
-      className: 'Class 10-B',
-      time: '10:30 AM',
-      status: 'completed',
-    },
-  ];
-
-  const mockMessages = [
-    {
-      id: '1',
-      senderName: 'Principal',
-      subject: 'Staff Meeting Tomorrow',
-      preview: 'Please attend the staff meeting...',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-      isRead: false,
-    },
-    {
-      id: '2',
-      senderName: 'Parent - John Smith',
-      subject: 'Regarding exam results',
-      preview: 'Could you please explain...',
-      timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-      isRead: true,
-    },
-  ];
+  const [dashboardData, setDashboardData] = useState<any>(null);
 
   // Load dashboard data
   useEffect(() => {
@@ -120,10 +42,10 @@ export const TeacherDashboardPage: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const data = await teacherService.getDashboard();
+        setDashboardData(data);
 
-        // Create widgets
+        // Create widgets with real data
         const dashboardWidgets: Widget[] = [
           {
             id: 'assigned-classes',
@@ -131,19 +53,33 @@ export const TeacherDashboardPage: React.FC = () => {
             type: 'list',
             size: 'large',
             content: (
-              <div className="space-y-3">
-                {mockClasses.map((cls) => (
-                  <div
-                    key={cls.id}
-                    className="flex items-center justify-between p-4 bg-neutral-50 rounded-lg hover:bg-neutral-100 transition-colors cursor-pointer"
-                  >
-                    <div>
-                      <p className="font-semibold text-neutral-900">{cls.name}</p>
-                      <p className="text-sm text-neutral-600 mt-1">{cls.studentCount} students</p>
+              <div className="space-y-2 sm:space-y-3">
+                {Array.isArray(data.classes) && data.classes.length > 0 ? (
+                  data.classes.map((cls: any) => (
+                    <div
+                      key={cls._id}
+                      className="flex items-center justify-between p-3 sm:p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors cursor-pointer"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold text-neutral-900 dark:text-white text-sm sm:text-base">
+                          {cls.name}
+                        </p>
+                        <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+                          {cls.students?.length || 0} students • Grade {cls.grade}
+                        </p>
+                      </div>
+                      <Icon
+                        name="ChevronRight"
+                        size={16}
+                        className="text-neutral-400 dark:text-neutral-500 flex-shrink-0 ml-2"
+                      />
                     </div>
-                    <Icon name="ChevronRight" size={20} className="text-neutral-400" />
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 p-3">
+                    No classes assigned
+                  </p>
+                )}
               </div>
             ),
           },
@@ -153,31 +89,41 @@ export const TeacherDashboardPage: React.FC = () => {
             type: 'stats',
             size: 'medium',
             content: (
-              <div className="space-y-3">
-                {mockGradingTasks.map((task) => (
-                  <div key={task.id} className="p-3 bg-neutral-50 rounded-lg">
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <div>
-                        <p className="font-medium text-neutral-900">{task.className}</p>
-                        <p className="text-xs text-neutral-600">{task.subject}</p>
+              <div className="space-y-2 sm:space-y-3">
+                {Array.isArray(data.pendingGrades) && data.pendingGrades.length > 0 ? (
+                  data.pendingGrades.map((task: any) => (
+                    <div key={task._id} className="p-3 sm:p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-neutral-900 dark:text-white text-sm sm:text-base">
+                            {task.className}
+                          </p>
+                          <p className="text-xs text-neutral-600 dark:text-neutral-400">
+                            {task.subject}
+                          </p>
+                        </div>
+                        <Badge variant="warning" className="text-xs sm:text-sm flex-shrink-0">
+                          {task.gradedCount}/{task.studentCount}
+                        </Badge>
                       </div>
-                      <Badge variant="warning">
-                        {task.gradedCount}/{task.studentCount}
-                      </Badge>
+                      <div className="w-full bg-neutral-200 dark:bg-neutral-600 rounded-full h-2 overflow-hidden">
+                        <div
+                          className="h-full bg-warning-500 transition-all"
+                          style={{
+                            width: `${(task.gradedCount / task.studentCount) * 100}%`,
+                          }}
+                        />
+                      </div>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2">
+                        Due: {new Date(task.dueDate).toLocaleDateString()}
+                      </p>
                     </div>
-                    <div className="w-full bg-neutral-200 rounded-full h-2 overflow-hidden">
-                      <div
-                        className="h-full bg-warning-500 transition-all"
-                        style={{
-                          width: `${(task.gradedCount / task.studentCount) * 100}%`,
-                        }}
-                      />
-                    </div>
-                    <p className="text-xs text-neutral-500 mt-2">
-                      Due: {new Date(task.dueDate).toLocaleDateString()}
-                    </p>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 p-3">
+                    No pending grading tasks
+                  </p>
+                )}
               </div>
             ),
           },
@@ -187,21 +133,34 @@ export const TeacherDashboardPage: React.FC = () => {
             type: 'list',
             size: 'medium',
             content: (
-              <div className="space-y-3">
-                {mockAttendanceClasses.map((cls) => (
-                  <div
-                    key={cls.id}
-                    className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg"
-                  >
-                    <div>
-                      <p className="font-medium text-neutral-900">{cls.className}</p>
-                      <p className="text-xs text-neutral-600">{cls.time}</p>
+              <div className="space-y-2 sm:space-y-3">
+                {Array.isArray(data.todayAttendance) && data.todayAttendance.length > 0 ? (
+                  data.todayAttendance.map((cls: any) => (
+                    <div
+                      key={cls._id}
+                      className="flex items-center justify-between p-3 sm:p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-neutral-900 dark:text-white text-sm sm:text-base">
+                          {cls.className}
+                        </p>
+                        <p className="text-xs text-neutral-600 dark:text-neutral-400">
+                          {cls.time}
+                        </p>
+                      </div>
+                      <Badge
+                        variant={cls.status === 'completed' ? 'success' : 'warning'}
+                        className="text-xs sm:text-sm flex-shrink-0"
+                      >
+                        {cls.status === 'completed' ? 'Done' : 'Pending'}
+                      </Badge>
                     </div>
-                    <Badge variant={cls.status === 'completed' ? 'success' : 'warning'}>
-                      {cls.status === 'completed' ? 'Done' : 'Pending'}
-                    </Badge>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 p-3">
+                    No attendance to mark
+                  </p>
+                )}
               </div>
             ),
           },
@@ -211,30 +170,45 @@ export const TeacherDashboardPage: React.FC = () => {
             type: 'list',
             size: 'medium',
             content: (
-              <div className="space-y-3">
-                {mockMessages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`p-3 rounded-lg border-l-4 ${
-                      msg.isRead
-                        ? 'bg-neutral-50 border-neutral-300'
-                        : 'bg-blue-50 border-primary-500'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-neutral-900">{msg.senderName}</p>
-                        <p className="text-sm text-neutral-700 mt-1 truncate">{msg.subject}</p>
-                        <p className="text-xs text-neutral-500 mt-1">
-                          {new Date(msg.timestamp).toLocaleString()}
-                        </p>
+              <div className="space-y-2 sm:space-y-3">
+                {Array.isArray(data.messages) && data.messages.length > 0 ? (
+                  data.messages.map((msg: any) => {
+                    const senderName = msg.senderId
+                      ? `${msg.senderId.firstName} ${msg.senderId.lastName}`
+                      : 'Unknown Sender';
+                    return (
+                      <div
+                        key={msg._id}
+                        className={`p-3 sm:p-4 rounded-lg border-l-4 ${
+                          msg.isRead
+                            ? 'bg-neutral-50 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600'
+                            : 'bg-blue-50 dark:bg-blue-900 border-primary-500'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-neutral-900 dark:text-white text-sm sm:text-base">
+                              {senderName}
+                            </p>
+                            <p className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 mt-1 truncate">
+                              {msg.subject}
+                            </p>
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                              {new Date(msg.createdAt).toLocaleString()}
+                            </p>
+                          </div>
+                          {!msg.isRead && (
+                            <div className="w-2 h-2 bg-primary-600 rounded-full flex-shrink-0 mt-1" />
+                          )}
+                        </div>
                       </div>
-                      {!msg.isRead && (
-                        <div className="w-2 h-2 bg-primary-600 rounded-full flex-shrink-0 mt-1" />
-                      )}
-                    </div>
-                  </div>
-                ))}
+                    );
+                  })
+                ) : (
+                  <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 p-3">
+                    No messages
+                  </p>
+                )}
               </div>
             ),
           },
@@ -273,7 +247,22 @@ export const TeacherDashboardPage: React.FC = () => {
   }, [dashboardState, setDashboardState]);
 
   return (
-    <DashboardLayout title="Dashboard" description="Welcome! Here's your teaching overview.">
+    <DashboardLayout
+      title="Dashboard"
+      description={
+        !isOnline
+          ? 'Offline mode - showing cached data'
+          : 'Welcome! Here\'s your teaching overview.'
+      }
+    >
+      {!isOnline && (
+        <div className="mb-4 p-3 sm:p-4 bg-warning-50 dark:bg-warning-900 border border-warning-200 dark:border-warning-800 rounded-lg flex items-center gap-2">
+          <Icon name="WifiOff" size={18} className="text-warning-600 dark:text-warning-400 flex-shrink-0" />
+          <span className="text-xs sm:text-sm text-warning-800 dark:text-warning-200">
+            You're offline. Showing cached data.
+          </span>
+        </div>
+      )}
       <Dashboard widgets={widgets} loading={loading} error={error || undefined} />
     </DashboardLayout>
   );
