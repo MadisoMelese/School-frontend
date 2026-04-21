@@ -181,6 +181,67 @@ export const teacherService = {
     }>(`/teachers/${teacherId}/class-students`);
     return response.data.data;
   },
+
+  /**
+   * Get today's classes for a teacher
+   */
+  getTodaysClasses: async (): Promise<any[]> => {
+    const response = await apiClient.get<{ data: { classes: any[] } }>('/classes?limit=100');
+    return response.data.data?.classes || [];
+  },
+
+  /**
+   * Get exams for grading
+   */
+  getExamsForGrading: async (params?: {
+    page?: number;
+    limit?: number;
+  }): Promise<PaginatedResponse<any>> => {
+    const response = await apiClient.get<PaginatedResponse<any>>('/exams', {
+      params,
+    });
+    return response.data;
+  },
+
+  /**
+   * Get exam details for grading
+   */
+  getExamForGrading: async (examId: string): Promise<any> => {
+    const response = await apiClient.get<{ data: any }>(`/exams/${examId}`);
+    return response.data.data;
+  },
+
+  /**
+   * Get grade statistics
+   */
+  getGradeStatistics: async (examId: string): Promise<any> => {
+    const response = await apiClient.get<{ data: any }>(`/exams/${examId}/statistics`);
+    return response.data.data;
+  },
+
+  /**
+   * Submit grades
+   */
+  submitGrades: async (data: any): Promise<any> => {
+    const response = await apiClient.post<{ data: any }>('/grades', data);
+    return response.data.data;
+  },
+
+  /**
+   * Mark attendance
+   */
+  markAttendance: async (data: any): Promise<any> => {
+    const response = await apiClient.post<{ data: any }>('/attendance', data);
+    return response.data.data;
+  },
+
+  /**
+   * Send message
+   */
+  sendMessage: async (data: any): Promise<any> => {
+    const response = await apiClient.post<{ data: any }>('/messages', data);
+    return response.data.data;
+  },
 };
 
 export default teacherService;
