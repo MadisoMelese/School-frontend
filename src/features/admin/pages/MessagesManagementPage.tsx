@@ -64,7 +64,7 @@ export const MessagesManagementPage: React.FC = () => {
       params.append('limit', limit.toString());
 
       const response = await apiClient.get<{ data: PaginatedResponse }>(
-        `/messages?${params.toString()}`
+        `/messages/admin/all?${params.toString()}`
       );
       const data = response.data.data;
 
