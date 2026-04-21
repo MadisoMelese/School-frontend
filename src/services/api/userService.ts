@@ -47,14 +47,15 @@ export const userService = {
     role?: string;
     search?: string;
   }): Promise<User[]> => {
-    const response = await apiClient.get<{ data: { users: User[] } }>('/users', {
+    const response = await apiClient.get<{ data: { users: User[]; total: number; page: number; totalPages: number } }>('/users', {
       params: {
         role: 'user',
         ...params,
         limit: 1000,
       },
     });
-    return Array.isArray(response.data.data?.users) ? response.data.data.users : [];
+    const users = response.data.data?.users;
+    return Array.isArray(users) ? users : [];
   },
 
   /**
