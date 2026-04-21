@@ -28,7 +28,7 @@ import { z } from 'zod';
 
 // Validation schema for message composition
 const messageSchema = z.object({
-  recipientId: z.string().min(1, 'Recipient is required'),
+  receiverId: z.string().min(1, 'Recipient is required'),
   subject: z
     .string()
     .min(1, 'Subject is required')
@@ -42,7 +42,7 @@ const messageSchema = z.object({
 type MessageFormData = z.infer<typeof messageSchema>;
 
 interface MessageFormErrors {
-  recipientId?: string;
+  receiverId?: string;
   subject?: string;
   content?: string;
 }
@@ -65,7 +65,7 @@ export const MessagesPage: React.FC = () => {
 
   // Compose form state
   const [formData, setFormData] = useState<MessageFormData>({
-    recipientId: '',
+    receiverId: '',
     subject: '',
     content: '',
   });
@@ -148,7 +148,7 @@ export const MessagesPage: React.FC = () => {
 
   // Handle form input change
   const handleFormChange = useCallback(
-    (field: keyof MessageFormData, value: string) => {
+    (field: 'receiverId' | 'subject' | 'content', value: string) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
       // Clear error for this field when user starts typing
       if (formErrors[field]) {
@@ -183,7 +183,7 @@ export const MessagesPage: React.FC = () => {
       setMessages((prev) => [response.message, ...prev]);
 
       // Reset form
-      setFormData({ recipientId: '', subject: '', content: '' });
+      setFormData({ receiverId: '', subject: '', content: '' });
       setFormErrors({});
       setShowComposeModal(false);
 
@@ -201,7 +201,7 @@ export const MessagesPage: React.FC = () => {
   // Handle close compose modal
   const handleCloseComposeModal = useCallback(() => {
     setShowComposeModal(false);
-    setFormData({ recipientId: '', subject: '', content: '' });
+    setFormData({ receiverId: '', subject: '', content: '' });
     setFormErrors({});
   }, []);
 
@@ -394,10 +394,10 @@ export const MessagesPage: React.FC = () => {
                 Recipient <span className="text-danger-600">*</span>
               </label>
               <select
-                value={formData.recipientId}
-                onChange={(e) => handleFormChange('recipientId', e.target.value)}
+                value={formData.receiverId}
+                onChange={(e) => handleFormChange('receiverId', e.target.value)}
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
-                  formErrors.recipientId ? 'border-danger-500' : 'border-neutral-300'
+                  formErrors.receiverId ? 'border-danger-500' : 'border-neutral-300'
                 }`}
                 aria-label="Select recipient"
               >
@@ -408,8 +408,8 @@ export const MessagesPage: React.FC = () => {
                   </option>
                 ))}
               </select>
-              {formErrors.recipientId && (
-                <p className="text-sm text-danger-600 mt-1">{formErrors.recipientId}</p>
+              {formErrors.receiverId && (
+                <p className="text-sm text-danger-600 mt-1">{formErrors.receiverId}</p>
               )}
             </div>
 
