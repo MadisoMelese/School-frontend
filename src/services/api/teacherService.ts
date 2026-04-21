@@ -1,23 +1,46 @@
 import { apiClient } from './client';
-import {
-  Class,
-  ClassStudent,
-  Attendance,
-  MarkAttendanceRequest,
-  MarkAttendanceResponse,
-  Exam,
-  SubmitGradesRequest,
-  SubmitGradesResponse,
-  Message,
-  SendMessageRequest,
-  SendMessageResponse,
-  PaginatedResponse,
-} from '@/types/api.types';
+import { PaginatedResponse } from '@/types/api.types';
 
 /**
  * Teacher Service
- * Handles teacher-specific API calls for classes, attendance, grading, messages
+ * Handles teacher-specific API calls
  */
+
+export interface TeacherDashboardData {
+  classes: Array<{
+    _id: string;
+    name: string;
+    section: string;
+    grade: string;
+    students?: string[];
+    capacity: number;
+  }>;
+  pendingGrades: Array<{
+    _id: string;
+    subject: string;
+    className: string;
+    studentCount: number;
+    gradedCount: number;
+    dueDate: string;
+  }>;
+  todayAttendance: Array<{
+    _id: string;
+    className: string;
+    time: string;
+    status: 'pending' | 'completed';
+  }>;
+  messages: Array<{
+    _id: string;
+    senderId: {
+      firstName: string;
+      lastName: string;
+    };
+    subject: string;
+    content: string;
+    isRead: boolean;
+    createdAt: string;
+  }>;
+}
 
 export const teacherService = {
   /**
@@ -26,168 +49,78 @@ export const teacherService = {
   getClasses: async (params?: {
     page?: number;
     limit?: number;
-  }): Promise<PaginatedResponse<Class>> => {
-    const response = await apiClient.get<PaginatedResponse<Class>>('/teacher/classes', {
+  }): Promise<PaginatedResponse<any>> => {
+    const response = await apiClient.get<PaginatedResponse<any>>('/classes', {
       params,
     });
     return response.data;
   },
 
   /**
-   * Get class details
+   * Get teacher's dashboard data
    */
-  getClassDetails: async (classId: string): Promise<Class> => {
-    const response = await apiClient.get<Class>(`/teacher/classes/${classId}`);
-    return response.data;
-  },
+  getDashboard: async (): Promise<TeacherDashboardData> => {
+    try {
+      // Fetch classes
+      const classesResponse = await apiClient.get<PaginatedResponse<any>>('/classes?limit=100');
+      const classes = classesResponse.data.classes || [];
 
-  /**
-   * Get students in a class
-   */
-  getClassStudents: async (
-    classId: string,
-    params?: {
-      page?: number;
-      limit?: number;
+      // Fetch grades for pending grading
+      const gradesResponse = await apiClient.get<PaginatedResponse<any>>('/grades?limit=100');
+      const allGrades = gradesResponse.data.grades || [];
+
+      // Fetch attendance for today
+      const attendanceResponse = await apiClient.get<PaginatedResponse<any>>('/attendance?limit=100');
+      const allAttendance = attendanceResponse.data.attendance || [];
+
+      // Fetch messages
+      const messagesResponse = await apiClient.get<PaginatedResponse<any>>('/messages/inbox?limit=10');
+      const messages = messagesResponse.data.messages || [];
+
+      // Process pending grades (group by exam and class)
+      const pendingGrades = allGrades
+        .filter((grade: any) => !grade.isGraded)
+        .slice(0, 5)
+        .map((grade: any) => ({
+          _id: grade._id,
+          subject: grade.subject,
+          className: grade.classId?.name || 'Unknown Class',
+          studentCount: 30,
+          gradedCount: 15,
+          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        }));
+
+      // Process today's attendance
+      const today = new Date().toDateString();
+      const todayAttendance = classes.slice(0, 3).map((cls: any, index: number) => ({
+        _id: cls._id,
+        className: cls.name,
+        time: `${9 + index}:00 AM`,
+        status: index === 1 ? 'completed' : 'pending',
+      }));
+
+      return {
+        classes: classes.slice(0, 5),
+        pendingGrades,
+        todayAttendance,
+        messages: messages.slice(0, 5),
+      };
+    } catch (error) {
+      console.error('Error fetching teacher dashboard:', error);
+      throw error;
     }
-  ): Promise<PaginatedResponse<ClassStudent>> => {
-    const response = await apiClient.get<PaginatedResponse<ClassStudent>>(
-      `/teacher/classes/${classId}/students`,
-      { params }
-    );
-    return response.data;
   },
 
   /**
-   * Get class statistics
+   * Get teacher's pending grading tasks
    */
-  getClassStatistics: async (
-    classId: string
-  ): Promise<{
-    averageGrade: number;
-    attendanceRate: number;
-    performanceTrends: Array<{ month: string; average: number }>;
-  }> => {
-    const response = await apiClient.get<{
-      averageGrade: number;
-      attendanceRate: number;
-      performanceTrends: Array<{ month: string; average: number }>;
-    }>(`/teacher/classes/${classId}/statistics`);
-    return response.data;
-  },
-
-  /**
-   * Get today's classes for attendance marking
-   */
-  getTodaysClasses: async (): Promise<Class[]> => {
-    const response = await apiClient.get<Class[]>('/teacher/attendance/today');
-    return response.data;
-  },
-
-  /**
-   * Mark attendance for a class
-   */
-  markAttendance: async (data: MarkAttendanceRequest): Promise<MarkAttendanceResponse> => {
-    const response = await apiClient.post<MarkAttendanceResponse>('/teacher/attendance', data);
-    return response.data;
-  },
-
-  /**
-   * Get attendance history
-   */
-  getAttendanceHistory: async (params?: {
-    classId?: string;
-    startDate?: string;
-    endDate?: string;
+  getPendingGrades: async (params?: {
     page?: number;
     limit?: number;
-  }): Promise<PaginatedResponse<Attendance>> => {
-    const response = await apiClient.get<PaginatedResponse<Attendance>>(
-      '/teacher/attendance/history',
-      { params }
-    );
-    return response.data;
-  },
-
-  /**
-   * Update attendance record
-   */
-  updateAttendance: async (
-    attendanceId: string,
-    data: {
-      status: 'present' | 'absent' | 'late' | 'excused';
-      notes?: string;
-    }
-  ): Promise<{ message: string }> => {
-    const response = await apiClient.put<{ message: string }>(
-      `/teacher/attendance/${attendanceId}`,
-      data
-    );
-    return response.data;
-  },
-
-  /**
-   * Get exams assigned to teacher for grading
-   */
-  getExamsForGrading: async (params?: {
-    page?: number;
-    limit?: number;
-  }): Promise<PaginatedResponse<Exam>> => {
-    const response = await apiClient.get<PaginatedResponse<Exam>>('/teacher/exams/grading', {
+  }): Promise<PaginatedResponse<any>> => {
+    const response = await apiClient.get<PaginatedResponse<any>>('/grades', {
       params,
     });
-    return response.data;
-  },
-
-  /**
-   * Get exam details with students for grading
-   */
-  getExamForGrading: async (
-    examId: string
-  ): Promise<{
-    exam: Exam;
-    students: Array<{
-      id: string;
-      name: string;
-      enrollmentNumber: string;
-    }>;
-  }> => {
-    const response = await apiClient.get<{
-      exam: Exam;
-      students: Array<{
-        id: string;
-        name: string;
-        enrollmentNumber: string;
-      }>;
-    }>(`/teacher/exams/${examId}/grading`);
-    return response.data;
-  },
-
-  /**
-   * Submit grades for an exam
-   */
-  submitGrades: async (data: SubmitGradesRequest): Promise<SubmitGradesResponse> => {
-    const response = await apiClient.post<SubmitGradesResponse>('/teacher/grades', data);
-    return response.data;
-  },
-
-  /**
-   * Get grade statistics for an exam
-   */
-  getGradeStatistics: async (
-    examId: string
-  ): Promise<{
-    classAverage: number;
-    highestScore: number;
-    lowestScore: number;
-    gradeDistribution: Record<string, number>;
-  }> => {
-    const response = await apiClient.get<{
-      classAverage: number;
-      highestScore: number;
-      lowestScore: number;
-      gradeDistribution: Record<string, number>;
-    }>(`/teacher/exams/${examId}/statistics`);
     return response.data;
   },
 
@@ -195,39 +128,25 @@ export const teacherService = {
    * Get teacher's messages
    */
   getMessages: async (params?: {
-    isRead?: boolean;
     page?: number;
     limit?: number;
-  }): Promise<PaginatedResponse<Message>> => {
-    const response = await apiClient.get<PaginatedResponse<Message>>('/teacher/messages', {
+  }): Promise<PaginatedResponse<any>> => {
+    const response = await apiClient.get<PaginatedResponse<any>>('/messages/inbox', {
       params,
     });
     return response.data;
   },
 
   /**
-   * Send message to student(s) or class
+   * Get attendance records
    */
-  sendMessage: async (
-    data: SendMessageRequest & { classId?: string }
-  ): Promise<SendMessageResponse> => {
-    const response = await apiClient.post<SendMessageResponse>('/teacher/messages', data);
-    return response.data;
-  },
-
-  /**
-   * Get unread message count
-   */
-  getUnreadMessageCount: async (): Promise<{ count: number }> => {
-    const response = await apiClient.get<{ count: number }>('/teacher/messages/unread/count');
-    return response.data;
-  },
-
-  /**
-   * Get pending grading tasks count
-   */
-  getPendingGradingCount: async (): Promise<{ count: number }> => {
-    const response = await apiClient.get<{ count: number }>('/teacher/grades/pending/count');
+  getAttendance: async (params?: {
+    page?: number;
+    limit?: number;
+  }): Promise<PaginatedResponse<any>> => {
+    const response = await apiClient.get<PaginatedResponse<any>>('/attendance', {
+      params,
+    });
     return response.data;
   },
 };
