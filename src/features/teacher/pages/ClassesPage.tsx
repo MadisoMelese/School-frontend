@@ -27,12 +27,12 @@ export const ClassesPage = () => {
   });
 
   const filteredAndSortedClasses = useMemo(() => {
-    if (!data?.data) return [];
+    if (!data?.classes) return [];
 
-    const filtered = data.data.filter(
+    const filtered = data.classes.filter(
       (cls) =>
         cls.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-        cls.gradeLevel.toLowerCase().includes(debouncedSearch.toLowerCase())
+        cls.grade.toLowerCase().includes(debouncedSearch.toLowerCase())
     );
 
     filtered.sort((a, b) => {
@@ -43,11 +43,11 @@ export const ClassesPage = () => {
         aVal = a.name;
         bVal = b.name;
       } else if (sortBy === 'gradeLevel') {
-        aVal = a.gradeLevel;
-        bVal = b.gradeLevel;
+        aVal = a.grade;
+        bVal = b.grade;
       } else if (sortBy === 'studentCount') {
-        aVal = a.studentCount;
-        bVal = b.studentCount;
+        aVal = a.students?.length || 0;
+        bVal = b.students?.length || 0;
       }
 
       if (typeof aVal === 'string') {
@@ -61,7 +61,7 @@ export const ClassesPage = () => {
     });
 
     return filtered;
-  }, [data?.data, debouncedSearch, sortBy, sortOrder]);
+  }, [data?.classes, debouncedSearch, sortBy, sortOrder]);
 
   const renderSkeletonLoader = () => (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -170,7 +170,7 @@ const ClassCard: React.FC<ClassCardProps> = ({ classData, onViewDetails }) => {
           </h3>
           <div className="flex items-center gap-2 flex-wrap">
             <Badge variant="info" size="sm">
-              Grade {classData.gradeLevel}
+              Grade {classData.grade}
             </Badge>
             <Badge variant="neutral" size="sm">
               Section {classData.section}
@@ -183,13 +183,13 @@ const ClassCard: React.FC<ClassCardProps> = ({ classData, onViewDetails }) => {
           <div className="flex items-center justify-between">
             <span className="text-neutral-600 dark:text-neutral-400">Students:</span>
             <span className="font-semibold text-neutral-900 dark:text-white">
-              {classData.studentCount}
+              {classData.students?.length || 0}
             </span>
           </div>
           <div className="flex items-start justify-between">
-            <span className="text-neutral-600 dark:text-neutral-400">Schedule:</span>
+            <span className="text-neutral-600 dark:text-neutral-400">Capacity:</span>
             <span className="text-right text-neutral-700 dark:text-neutral-300">
-              {formatSchedule(classData.schedule)}
+              {classData.capacity}
             </span>
           </div>
         </div>
