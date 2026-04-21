@@ -140,7 +140,7 @@ export interface Message {
 }
 
 export interface SendMessageRequest {
-  recipientId: string;
+  receiverId: string;
   subject: string;
   content: string;
 }
