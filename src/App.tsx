@@ -57,6 +57,7 @@ import { GradesManagementPage } from '@features/admin/pages/GradesManagementPage
 import { FeesManagementPage } from '@features/admin/pages/FeesManagementPage';
 import { AttendanceManagementPage } from '@features/admin/pages/AttendanceManagementPage';
 import { AnnouncementsManagementPage } from '@features/admin/pages/AnnouncementsManagementPage';
+import { MessagesManagementPage } from '@features/admin/pages/MessagesManagementPage';
 import { LibraryManagementPage } from '@features/admin/pages/LibraryManagementPage';
 import { TimetablesManagementPage } from '@features/admin/pages/TimetablesManagementPage';
 import { StaffManagementPage } from '@features/admin/pages/StaffManagementPage';
@@ -401,6 +402,14 @@ function App() {
           element={
             <ProtectedRoute requiredRole="admin">
               <AnnouncementsManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/messages"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <MessagesManagementPage />
             </ProtectedRoute>
           }
         />
