@@ -680,7 +680,7 @@ export const MessagesManagementPage: React.FC = () => {
                         <option disabled>No users available</option>
                       ) : (
                         allUsers.map((user) => (
-                          <option key={user._id} value={user._id || user.id}>
+                          <option key={user.id || user._id} value={user.id || user._id}>
                             {user.firstname} {user.lastname} ({user.email})
                           </option>
                         ))
