@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@components/templates/DashboardLayout';
 import { Dashboard, Widget } from '@components/organisms/Dashboard';
 import { Badge } from '@components/atoms/Badge';
@@ -24,6 +25,7 @@ interface DashboardState {
 }
 
 export const TeacherDashboardPage: React.FC = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { isOnline } = useOffline();
   const [dashboardState, setDashboardState] = useLocalStorage<DashboardState>(
@@ -72,7 +74,7 @@ export const TeacherDashboardPage: React.FC = () => {
                   data.classes.map((cls: any) => (
                     <div
                       key={cls._id}
-                      onClick={() => window.location.href = `/teacher/classes/${cls._id}`}
+                      onClick={() => navigate(`/teacher/classes/${cls._id}`)}
                       className="flex items-center justify-between p-3 sm:p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors cursor-pointer"
                     >
                       <div className="min-w-0 flex-1">
