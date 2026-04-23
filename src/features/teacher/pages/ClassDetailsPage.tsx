@@ -51,18 +51,17 @@ export const ClassDetailsPage: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // Fetch class details
+        // Fetch class details (includes populated students)
         const classResponse = await apiClient.get<{ data: ClassDetails }>(`/classes/${id}`);
-        const classInfo = classResponse.data.data || classResponse.data;
-        setClassData(classInfo);
-
-        // Fetch students for this class
-        const studentsResponse = await apiClient.get<{ data: { students: Student[] } }>(
-          `/students?classId=${id}&limit=100`
-        );
-        const studentsData = studentsResponse.data.data?.students || [];
-        setStudents(Array.isArray(studentsData) ? studentsData : []);
+        const classInfo = classResponse.data.data;
+        
+        if (classInfo) {
+          setClassData(classInfo);
+          // Students are already populated in the class data
+          setStudents(Array.isArray(classInfo.students) ? classInfo.students : []);
+        }
       } catch (err) {
+        console.error('Failed to load class details:', err);
         setError(err instanceof Error ? err.message : 'Failed to load class details');
       } finally {
         setLoading(false);

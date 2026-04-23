@@ -72,6 +72,7 @@ export const TeacherDashboardPage: React.FC = () => {
                   data.classes.map((cls: any) => (
                     <div
                       key={cls._id}
+                      onClick={() => window.location.href = `/teacher/classes/${cls._id}`}
                       className="flex items-center justify-between p-3 sm:p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors cursor-pointer"
                     >
                       <div className="min-w-0 flex-1">
