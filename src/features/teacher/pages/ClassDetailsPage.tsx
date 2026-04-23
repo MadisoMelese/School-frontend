@@ -34,7 +34,7 @@ interface ClassDetails {
 }
 
 export const ClassDetailsPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { classId } = useParams<{ classId: string }>();
   const navigate = useNavigate();
   const [classData, setClassData] = useState<ClassDetails | null>(null);
   const [students, setStudents] = useState<Student[]>([]);
@@ -45,14 +45,14 @@ export const ClassDetailsPage: React.FC = () => {
   // Load class details
   useEffect(() => {
     const loadClassDetails = async () => {
-      if (!id) return;
+      if (!classId) return;
 
       try {
         setLoading(true);
         setError(null);
 
         // Fetch class details (includes populated students)
-        const classResponse = await apiClient.get<{ data: ClassDetails }>(`/classes/${id}`);
+        const classResponse = await apiClient.get<{ data: ClassDetails }>(`/classes/${classId}`);
         const classInfo = classResponse.data.data;
         
         if (classInfo) {
@@ -69,7 +69,7 @@ export const ClassDetailsPage: React.FC = () => {
     };
 
     loadClassDetails();
-  }, [id]);
+  }, [classId]);
 
   // Filter students
   const filteredStudents = students.filter((student) => {
@@ -165,7 +165,7 @@ export const ClassDetailsPage: React.FC = () => {
           <Button
             variant="primary"
             fullWidth
-            onClick={() => navigate(`/teacher/attendance/${id}`)}
+            onClick={() => navigate(`/teacher/attendance/${classId}`)}
             className="flex items-center justify-center gap-2"
           >
             <Icon name="CheckSquare" size={18} />
@@ -174,7 +174,7 @@ export const ClassDetailsPage: React.FC = () => {
           <Button
             variant="secondary"
             fullWidth
-            onClick={() => navigate(`/teacher/grades?classId=${id}`)}
+            onClick={() => navigate(`/teacher/grades?classId=${classId}`)}
             className="flex items-center justify-center gap-2"
           >
             <Icon name="FileText" size={18} />
@@ -183,7 +183,7 @@ export const ClassDetailsPage: React.FC = () => {
           <Button
             variant="secondary"
             fullWidth
-            onClick={() => navigate(`/teacher/exams?classId=${id}`)}
+            onClick={() => navigate(`/teacher/exams?classId=${classId}`)}
             className="flex items-center justify-center gap-2"
           >
             <Icon name="BookOpen" size={18} />
@@ -192,7 +192,7 @@ export const ClassDetailsPage: React.FC = () => {
           <Button
             variant="secondary"
             fullWidth
-            onClick={() => navigate(`/teacher/timetable?classId=${id}`)}
+            onClick={() => navigate(`/teacher/timetable?classId=${classId}`)}
             className="flex items-center justify-center gap-2"
           >
             <Icon name="Calendar" size={18} />
