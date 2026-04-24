@@ -19,10 +19,12 @@ import { LoginPage } from '@features/auth/pages/LoginPage';
 import { PasswordResetPage } from '@features/auth/pages/PasswordResetPage';
 import { ChangePasswordPage } from '@features/auth/pages/ChangePasswordPage';
 
+// Common Pages (shared across roles)
+import { AttendancePage } from '@features/common/pages/AttendancePage';
+
 // Student Portal Pages
 import StudentDashboard from '@features/student/pages/DashboardPage';
 import { GradesPage } from '@features/student/pages/GradesPage';
-import { AttendancePage } from '@features/student/pages/AttendancePage';
 import { ExamsPage } from '@features/student/pages/ExamsPage';
 import { FeesPage } from '@features/student/pages/FeesPage';
 import { MessagesPage as StudentMessagesPage } from '@features/student/pages/MessagesPage';
@@ -32,14 +34,12 @@ import { TimetablePage } from '@features/student/pages/TimetablePage';
 import TeacherDashboard from '@features/teacher/pages/DashboardPage';
 import { ClassesPage } from '@features/teacher/pages/ClassesPage';
 import { ClassDetailsPage } from '@features/teacher/pages/ClassDetailsPage';
-import { AttendanceMarkingPage } from '@features/teacher/pages/AttendanceMarkingPage';
 import { GradeManagementPage } from '@features/teacher/pages/GradeManagementPage';
 import TeacherMessagesPage from '@features/teacher/pages/MessagesPage';
 
 // Parent Portal Pages
 import ParentDashboard from '@features/parent/pages/DashboardPage';
 import { ChildProgressPage } from '@features/parent/pages/ChildProgressPage';
-import { ChildAttendancePage } from '@features/parent/pages/ChildAttendancePage';
 import { ChildExamsPage } from '@features/parent/pages/ChildExamsPage';
 import { ChildFeesPage } from '@features/parent/pages/ChildFeesPage';
 import ParentMessagesPage from '@features/parent/pages/MessagesPage';
@@ -55,7 +55,6 @@ import { ClassesManagementPage } from '@features/admin/pages/ClassesManagementPa
 import { ExamsManagementPage } from '@features/admin/pages/ExamsManagementPage';
 import { GradesManagementPage } from '@features/admin/pages/GradesManagementPage';
 import { FeesManagementPage } from '@features/admin/pages/FeesManagementPage';
-import { AttendanceManagementPage } from '@features/admin/pages/AttendanceManagementPage';
 import { AnnouncementsManagementPage } from '@features/admin/pages/AnnouncementsManagementPage';
 import { MessagesManagementPage } from '@features/admin/pages/MessagesManagementPage';
 import { LibraryManagementPage } from '@features/admin/pages/LibraryManagementPage';
@@ -253,7 +252,7 @@ function App() {
           path="/teacher/attendance"
           element={
             <ProtectedRoute requiredRole="teacher">
-              <AttendanceMarkingPage />
+              <AttendancePage />
             </ProtectedRoute>
           }
         />
@@ -295,7 +294,7 @@ function App() {
           path="/parent/child-attendance"
           element={
             <ProtectedRoute requiredRole="parent">
-              <ChildAttendancePage />
+              <AttendancePage />
             </ProtectedRoute>
           }
         />
@@ -393,7 +392,7 @@ function App() {
           path="/admin/attendance"
           element={
             <ProtectedRoute requiredRole="admin">
-              <AttendanceManagementPage />
+              <AttendancePage />
             </ProtectedRoute>
           }
         />
