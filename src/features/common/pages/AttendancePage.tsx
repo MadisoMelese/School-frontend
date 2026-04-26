@@ -193,12 +193,18 @@ export const AttendancePage: React.FC = () => {
       
       const records = students.map(s => ({
         studentId: s._id,
-        classId: selectedClass,
-        date: selectedDate,
         status: attendance[s._id] || 'present',
       }));
       
-      await apiClient.post('/attendance/bulk', { records });
+      // Backend expects classId, teacherId, date at top level
+      const payload = {
+        classId: selectedClass,
+        teacherId: 'me', // Backend will resolve 'me' to the actual teacher ID
+        date: selectedDate,
+        records,
+      };
+      
+      await apiClient.post('/attendance/bulk', payload);
       
       alert('Attendance saved successfully!');
     } catch (err) {
