@@ -99,15 +99,35 @@ export const AttendancePage: React.FC = () => {
       const loadStudents = async () => {
         try {
           setLoading(true);
-          // Get class details with students
-          const response = await apiClient.get<{ 
-            data: { 
-              class: ClassInfo;
-              students: Student[];
-            } 
-          }>(`/teachers/me/class-students`);
+          setError(null);
           
-          const studentsData = response.data.data?.students || [];
+          let studentsData: Student[] = [];
+          
+          if (role === 'teacher') {
+            // Teachers use their assigned class students
+            const response = await apiClient.get<{ 
+              data: { 
+                class: ClassInfo;
+                students: Student[];
+              } 
+            }>(`/teachers/me/class-students`);
+            
+            studentsData = response.data.data?.students || [];
+          } else if (role === 'admin') {
+            // Admins select a class and get students from that class
+            const response = await apiClient.get<{ 
+              data: {
+                _id: string;
+                name: string;
+                section: string;
+                grade: string;
+                students: Student[];
+              } 
+            }>(`/classes/${selectedClass}`);
+            
+            studentsData = response.data.data?.students || [];
+          }
+          
           setStudents(Array.isArray(studentsData) ? studentsData : []);
           
           // Initialize attendance as all present
@@ -125,7 +145,7 @@ export const AttendancePage: React.FC = () => {
       };
       loadStudents();
     }
-  }, [viewMode, selectedClass]);
+  }, [viewMode, selectedClass, role]);
 
   // Load attendance records for viewing (student/parent)
   useEffect(() => {
