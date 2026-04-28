@@ -11,13 +11,17 @@ import authService from '@/services/api/authService';
 /**
  * Auth Store
  * Manages authentication state, user data, and token management
+ * 
+ * Security Note: Refresh tokens should be stored in httpOnly cookies by the backend.
+ * The frontend should NOT have access to refresh tokens directly.
+ * If the backend returns a refresh token in the response body, it's stored in
+ * localStorage for compatibility, but this is less secure than httpOnly cookies.
  */
 
 export interface AuthState {
   // State
   user: User | null;
   accessToken: string | null;
-  refreshTokenValue: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -35,7 +39,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   // Initial state
   user: null,
   accessToken: null,
-  refreshTokenValue: null,
   isAuthenticated: false,
   isLoading: false,
   error: null,
@@ -47,18 +50,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const response = await authService.login({ email, password });
 
       // Store tokens
+      // Note: If backend uses httpOnly cookies for refresh token,
+      // response.refreshToken will be undefined/null
       setTokens(
         response.accessToken,
-        response.refreshToken || 'cookie-based', // Use placeholder if refresh token is in httpOnly cookie
+        response.refreshToken, // Will be undefined if using httpOnly cookies
         response.expiresIn,
         response.refreshExpiresIn
       );
 
-      // Update state
+      // Update state - only store access token in memory
       set({
         user: response.user,
         accessToken: response.accessToken,
-        refreshTokenValue: response.refreshToken || 'cookie-based',
         isAuthenticated: true,
         isLoading: false,
         error: null,
@@ -80,7 +84,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({
       user: null,
       accessToken: null,
-      refreshTokenValue: null,
       isAuthenticated: false,
       error: null,
     });
@@ -94,7 +97,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // Store new tokens
       setTokens(
         response.accessToken,
-        response.refreshToken,
+        response.refreshToken, // Will be undefined if using httpOnly cookies
         response.expiresIn,
         response.refreshExpiresIn
       );
@@ -102,7 +105,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // Update state
       set({
         accessToken: response.accessToken,
-        refreshTokenValue: response.refreshToken,
         error: null,
       });
     } catch (error) {
@@ -126,12 +128,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   initializeAuth: async () => {
     try {
       const accessToken = getAccessToken();
-      const refreshToken = getRefreshToken();
+      // Note: getRefreshToken may return null if using httpOnly cookies
+      // We check for accessToken only since refresh is handled by cookies
+      const hasRefreshToken = getRefreshToken();
 
-      if (accessToken && refreshToken) {
+      if (accessToken) {
         set({
           accessToken,
-          refreshTokenValue: refreshToken,
           isAuthenticated: true,
         });
 
@@ -142,7 +145,26 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             user: response.user,
           });
         } catch (error) {
-          // If profile fetch fails, logout
+          // If profile fetch fails, try to refresh token first
+          // If refresh also fails, logout
+          try {
+            await get().refreshTokenAction();
+            const retryResponse = await authService.getProfile();
+            set({ user: retryResponse.user });
+          } catch {
+            get().logout();
+          }
+        }
+      } else if (hasRefreshToken) {
+        // No access token but have refresh token - try to refresh
+        try {
+          await get().refreshTokenAction();
+          const response = await authService.getProfile();
+          set({
+            user: response.user,
+            isAuthenticated: true,
+          });
+        } catch {
           get().logout();
         }
       } else {
