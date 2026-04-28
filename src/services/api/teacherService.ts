@@ -12,34 +12,23 @@ export interface TeacherDashboardData {
     name: string;
     section: string;
     grade: string;
-    students?: string[];
-    capacity: number;
-  }>;
-  pendingGrades: Array<{
-    _id: string;
-    subject: string;
-    className: string;
     studentCount: number;
-    gradedCount: number;
-    dueDate: string;
+    capacity: number;
+    academicYear: string;
+    status: string;
   }>;
-  todayAttendance: Array<{
-    _id: string;
-    className: string;
-    time: string;
-    status: 'pending' | 'completed';
-  }>;
-  messages: Array<{
-    _id: string;
-    senderId: {
-      firstName: string;
-      lastName: string;
-    };
-    subject: string;
-    content: string;
-    isRead: boolean;
-    createdAt: string;
-  }>;
+  totalClasses: number;
+  totalStudents: number;
+  recentGrades: any[];
+  attendanceStats: {
+    total: number;
+    present: number;
+    absent: number;
+    late: number;
+  };
+  pendingGradesCount: number;
+  unreadMessagesCount: number;
+  recentMessages: any[];
 }
 
 export const teacherService = {
@@ -57,61 +46,12 @@ export const teacherService = {
   },
 
   /**
-   * Get teacher's dashboard data
+   * Get teacher's dashboard data (aggregated endpoint)
+   * Single API call instead of 4 separate calls
    */
   getDashboard: async (): Promise<TeacherDashboardData> => {
-    try {
-      // Fetch classes (teacher-scoped via schoolReadScope middleware)
-      const classesResponse = await apiClient.get<{ data: { classes: any[] } }>('/classes?limit=100');
-      const classes = classesResponse.data.data?.classes || [];
-
-      // Fetch grades (teacher-scoped via schoolReadScope middleware)
-      const gradesResponse = await apiClient.get<{ data: { grades: any[] } }>('/grades?limit=100');
-      const allGrades = gradesResponse.data.data?.grades || [];
-
-      // Fetch attendance (teacher-scoped via schoolReadScope middleware)
-      const attendanceResponse = await apiClient.get<{ data: { attendance: any[] } }>('/attendance?limit=100');
-      const allAttendance = attendanceResponse.data.data?.attendance || [];
-
-      // Fetch messages (teacher-scoped via schoolReadScope middleware)
-      const messagesResponse = await apiClient.get<{ data: { messages: any[] } }>('/messages/inbox?limit=10');
-      const messages = messagesResponse.data.data?.messages || [];
-
-      // Process pending grades (group by exam and class)
-      const pendingGrades = allGrades
-        .filter((grade: any) => !grade.isGraded)
-        .slice(0, 5)
-        .map((grade: any) => ({
-          _id: grade._id,
-          subject: grade.subject,
-          className: grade.classId?.name || 'Unknown Class',
-          studentCount: 30,
-          gradedCount: 15,
-          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-        }));
-
-      // Process today's attendance
-      const today = new Date().toDateString();
-      const todayAttendance = allAttendance
-        .filter((att: any) => new Date(att.date).toDateString() === today)
-        .slice(0, 5)
-        .map((att: any) => ({
-          _id: att._id,
-          className: att.classId?.name || 'Unknown Class',
-          time: att.period || 'N/A',
-          status: att.status || 'pending',
-        }));
-
-      return {
-        classes: classes.slice(0, 5),
-        pendingGrades,
-        todayAttendance,
-        messages: messages.slice(0, 5),
-      };
-    } catch (error) {
-      console.error('Error fetching teacher dashboard:', error);
-      throw error;
-    }
+    const response = await apiClient.get<{ data: TeacherDashboardData }>('/teachers/me/dashboard');
+    return response.data.data;
   },
 
   /**
@@ -156,7 +96,7 @@ export const teacherService = {
   /**
    * Get class and students for a teacher
    */
-  getClassStudents: async (teacherId: string): Promise<{
+  getClassStudents: async (teacherId: string = 'me'): Promise<{
     class: {
       _id: string;
       name: string;
