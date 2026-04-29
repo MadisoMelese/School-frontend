@@ -19,6 +19,8 @@ interface NotificationState {
   setUnreadMessageCount: (count: number) => void;
   incrementUnreadMessageCount: () => void;
   decrementUnreadMessageCount: () => void;
+  // Clear all message-type notifications for a specific sender
+  clearMessageNotificationsFromSender: (senderId: string) => void;
 }
 
 export const useNotificationStore = create<NotificationState>((set) => ({
@@ -74,6 +76,28 @@ export const useNotificationStore = create<NotificationState>((set) => ({
     set((state) => ({
       unreadMessageCount: Math.max(0, state.unreadMessageCount - 1),
     }));
+  },
+
+  clearMessageNotificationsFromSender: (senderId: string) => {
+    set((state) => {
+      const toMark = state.notifications.filter(
+        (n) => n.type === 'message' && !n.isRead &&
+          (n.data as any)?._id !== undefined &&
+          (
+            (n.data as any)?.senderId?._id === senderId ||
+            (n.data as any)?.senderId?.id === senderId ||
+            (n.data as any)?.senderId === senderId
+          )
+      );
+      if (toMark.length === 0) return state;
+      const ids = new Set(toMark.map((n) => n.id));
+      return {
+        notifications: state.notifications.map((n) =>
+          ids.has(n.id) ? { ...n, isRead: true } : n
+        ),
+        unreadNotificationCount: Math.max(0, state.unreadNotificationCount - toMark.length),
+      };
+    });
   },
 }));
 

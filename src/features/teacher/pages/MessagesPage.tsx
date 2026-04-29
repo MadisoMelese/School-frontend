@@ -30,7 +30,7 @@ const getUserFromRef = (userRef: User | string): User => {
 
 const TeacherMessagesPage: React.FC = () => {
   const { user } = useAuthStore();
-  const { setUnreadMessageCount } = useNotificationStore();
+  const { setUnreadMessageCount, clearMessageNotificationsFromSender } = useNotificationStore();
   const currentUserId = user?.id ?? '';
 
   // ── Data state ──
@@ -199,22 +199,31 @@ const TeacherMessagesPage: React.FC = () => {
   // ── Handlers ──
   const handleSelectConversation = useCallback(async (conv: Conversation) => {
     setActiveConversation(conv);
+    // Clear notification bell badges for this sender immediately
+    clearMessageNotificationsFromSender(conv.userId);
+
     const unread = allMessages.filter(
       (m) => !m.isRead && getUserId(m.senderId) === conv.userId
     );
-    for (const msg of unread) {
-      try {
-        await apiClient.patch(`/messages/${msg._id}/read`);
-        socketService.emitMessageRead(msg._id);
-      } catch { /* silent */ }
-    }
     if (unread.length > 0) {
+      // Optimistically mark as read in local state immediately
       setAllMessages((prev) =>
         prev.map((m) => getUserId(m.senderId) === conv.userId ? { ...m, isRead: true } : m)
       );
-      await loadUnreadCount();
+      // Update conversation unread count immediately
+      setConversations((prev) =>
+        prev.map((c) => c.userId === conv.userId ? { ...c, unreadCount: 0 } : c)
+      );
+      // Patch in background — don't await to avoid blocking UI
+      const newCount = Math.max(0, unreadCount - unread.length);
+      setUnreadCount(newCount);
+      setUnreadMessageCount(newCount);
+      for (const msg of unread) {
+        apiClient.patch(`/messages/${msg._id}/read`).catch(() => {});
+        socketService.emitMessageRead(msg._id);
+      }
     }
-  }, [allMessages, loadUnreadCount]);
+  }, [allMessages, unreadCount, setUnreadMessageCount, clearMessageNotificationsFromSender]);
 
   const handleSendReply = useCallback(async () => {
     if (!replyContent.trim() || !activeConversation) return;
@@ -222,22 +231,36 @@ const TeacherMessagesPage: React.FC = () => {
       setSendingReply(true);
       setError(null);
       const subject = replySubject.trim() || 'Message';
-      await apiClient.post('/messages', {
+      const res = await apiClient.post<{ data: Message }>('/messages', {
         receiverId: activeConversation.userId,
         subject,
         content: replyContent,
       });
+      // Optimistic: append sent message to local state immediately — no reload
+      const sentMsg: Message = res.data?.data ?? {
+        _id: `temp-${Date.now()}`,
+        senderId: currentUserId,
+        receiverId: activeConversation.userId,
+        subject,
+        content: replyContent,
+        isRead: false,
+        createdAt: new Date().toISOString(),
+      };
+      setAllMessages((prev) => {
+        const map = new Map(prev.map((m) => [m._id, m]));
+        map.set(sentMsg._id, sentMsg);
+        const updated = Array.from(map.values());
+        buildConversations(updated);
+        return updated;
+      });
       setReplyContent('');
       setReplySubject('');
-      setSuccess('Sent!');
-      await loadMessages();
-      await loadUnreadCount();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send message');
     } finally {
       setSendingReply(false);
     }
-  }, [replyContent, replySubject, activeConversation, loadMessages, loadUnreadCount]);
+  }, [replyContent, replySubject, activeConversation, currentUserId, buildConversations]);
 
   const handleSendCompose = useCallback(async () => {
     if (!composeData.receiverId || !composeData.subject.trim() || !composeData.content.trim()) {
