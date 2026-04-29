@@ -21,28 +21,31 @@ export const RealtimeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return;
     }
 
-    // Connect socket
     socketService.connect();
 
-    // Wait a tick for connection to establish
     const setupTimeout = setTimeout(() => {
-      // Listen for new messages
+      // New message → add grouped notification entry
       const offNewMessage = socketService.onNewMessage((message: SocketMessage) => {
         addNotification({
           type: 'message',
           title: 'New Message',
-          message: `${message.senderId?.firstname ?? 'Someone'} ${message.senderId?.lastname ?? ''}: ${message.subject}`,
+          message: message.content ?? '',
           data: message,
           createdAt: new Date(),
         });
+        // NOTE: do NOT increment unreadMessageCount here.
+        // The backend emits message:unread-count right after, which is the
+        // authoritative count. Using that avoids double-counting.
       });
 
-      // Listen for notifications
+      // Non-message notifications (announcements, grades, etc.)
       const offNotification = socketService.onNotification((notification: SocketNotification) => {
-        addNotification(notification);
+        if (notification.type !== 'message') {
+          addNotification(notification);
+        }
       });
 
-      // Listen for unread count updates
+      // Authoritative unread count from backend — this is the ONLY source for the badge
       const offUnreadCount = socketService.onUnreadCountUpdate(({ count }) => {
         setUnreadMessageCount(count);
       });

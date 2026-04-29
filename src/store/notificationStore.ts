@@ -6,27 +6,36 @@ export interface AppNotification extends SocketNotification {
   isRead: boolean;
 }
 
+// Grouped notification per sender for message-type notifications
+export interface GroupedMessageNotification {
+  senderId: string;
+  senderName: string;
+  count: number;
+  latestMessage: string;
+  latestTime: Date;
+  isRead: boolean;
+  notifications: AppNotification[];
+}
+
 interface NotificationState {
   notifications: AppNotification[];
   unreadMessageCount: number;
-  unreadNotificationCount: number;
 
   // Actions
   addNotification: (notification: SocketNotification) => void;
-  markNotificationRead: (id: string) => void;
-  markAllNotificationsRead: () => void;
+  markSenderRead: (senderId: string) => void;
+  markAllRead: () => void;
   clearNotifications: () => void;
   setUnreadMessageCount: (count: number) => void;
-  incrementUnreadMessageCount: () => void;
-  decrementUnreadMessageCount: () => void;
-  // Clear all message-type notifications for a specific sender
   clearMessageNotificationsFromSender: (senderId: string) => void;
+
+  // Derived: grouped message notifications
+  getGroupedMessageNotifications: () => GroupedMessageNotification[];
 }
 
-export const useNotificationStore = create<NotificationState>((set) => ({
+export const useNotificationStore = create<NotificationState>((set, get) => ({
   notifications: [],
   unreadMessageCount: 0,
-  unreadNotificationCount: 0,
 
   addNotification: (notification) => {
     const newNotification: AppNotification = {
@@ -35,69 +44,84 @@ export const useNotificationStore = create<NotificationState>((set) => ({
       isRead: false,
     };
     set((state) => ({
-      notifications: [newNotification, ...state.notifications].slice(0, 50), // Keep last 50
-      unreadNotificationCount: state.unreadNotificationCount + 1,
+      notifications: [newNotification, ...state.notifications].slice(0, 200),
     }));
   },
 
-  markNotificationRead: (id) => {
+  markSenderRead: (senderId: string) => {
     set((state) => ({
-      notifications: state.notifications.map((n) =>
-        n.id === id ? { ...n, isRead: true } : n
-      ),
-      unreadNotificationCount: Math.max(
-        0,
-        state.unreadNotificationCount -
-          (state.notifications.find((n) => n.id === id && !n.isRead) ? 1 : 0)
-      ),
+      notifications: state.notifications.map((n) => {
+        if (n.type !== 'message' || n.isRead) return n;
+        const data = n.data as any;
+        const nSenderId = data?.senderId?._id ?? data?.senderId?.id ?? data?.senderId;
+        return nSenderId === senderId ? { ...n, isRead: true } : n;
+      }),
     }));
   },
 
-  markAllNotificationsRead: () => {
+  markAllRead: () => {
     set((state) => ({
       notifications: state.notifications.map((n) => ({ ...n, isRead: true })),
-      unreadNotificationCount: 0,
     }));
   },
 
   clearNotifications: () => {
-    set({ notifications: [], unreadNotificationCount: 0 });
+    set({ notifications: [] });
   },
 
   setUnreadMessageCount: (count) => {
     set({ unreadMessageCount: count });
   },
 
-  incrementUnreadMessageCount: () => {
-    set((state) => ({ unreadMessageCount: state.unreadMessageCount + 1 }));
-  },
-
-  decrementUnreadMessageCount: () => {
+  clearMessageNotificationsFromSender: (senderId: string) => {
     set((state) => ({
-      unreadMessageCount: Math.max(0, state.unreadMessageCount - 1),
+      notifications: state.notifications.map((n) => {
+        if (n.type !== 'message' || n.isRead) return n;
+        const data = n.data as any;
+        const nSenderId = data?.senderId?._id ?? data?.senderId?.id ?? data?.senderId;
+        return nSenderId === senderId ? { ...n, isRead: true } : n;
+      }),
     }));
   },
 
-  clearMessageNotificationsFromSender: (senderId: string) => {
-    set((state) => {
-      const toMark = state.notifications.filter(
-        (n) => n.type === 'message' && !n.isRead &&
-          (n.data as any)?._id !== undefined &&
-          (
-            (n.data as any)?.senderId?._id === senderId ||
-            (n.data as any)?.senderId?.id === senderId ||
-            (n.data as any)?.senderId === senderId
-          )
-      );
-      if (toMark.length === 0) return state;
-      const ids = new Set(toMark.map((n) => n.id));
-      return {
-        notifications: state.notifications.map((n) =>
-          ids.has(n.id) ? { ...n, isRead: true } : n
-        ),
-        unreadNotificationCount: Math.max(0, state.unreadNotificationCount - toMark.length),
-      };
+  getGroupedMessageNotifications: () => {
+    const { notifications } = get();
+    const unreadMessages = notifications.filter((n) => n.type === 'message' && !n.isRead);
+    const groupMap = new Map<string, GroupedMessageNotification>();
+
+    unreadMessages.forEach((n) => {
+      const data = n.data as any;
+      const senderId = data?.senderId?._id ?? data?.senderId?.id ?? data?.senderId ?? 'unknown';
+      const firstname = data?.senderId?.firstname ?? '';
+      const lastname = data?.senderId?.lastname ?? '';
+      const senderName = `${firstname} ${lastname}`.trim() || 'Unknown';
+      const content = data?.content ?? n.message ?? '';
+
+      if (!groupMap.has(senderId)) {
+        groupMap.set(senderId, {
+          senderId,
+          senderName,
+          count: 1,
+          latestMessage: content,
+          latestTime: new Date(n.createdAt),
+          isRead: false,
+          notifications: [n],
+        });
+      } else {
+        const group = groupMap.get(senderId)!;
+        group.count += 1;
+        group.notifications.push(n);
+        const t = new Date(n.createdAt);
+        if (t > group.latestTime) {
+          group.latestTime = t;
+          group.latestMessage = content;
+        }
+      }
     });
+
+    return Array.from(groupMap.values()).sort(
+      (a, b) => b.latestTime.getTime() - a.latestTime.getTime()
+    );
   },
 }));
 
