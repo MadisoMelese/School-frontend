@@ -52,7 +52,6 @@ export interface ChatPageProps {
   loadingMessages: boolean;
   loadingUsers: boolean;
   unreadCount: number;
-  activeTab: 'inbox' | 'sent';
   searchTerm: string;
   replyContent: string;
   replySubject: string;
@@ -64,7 +63,6 @@ export interface ChatPageProps {
   success: string | null;
 
   // Callbacks
-  onTabChange: (tab: 'inbox' | 'sent') => void;
   onSearchChange: (term: string) => void;
   onSelectConversation: (conv: Conversation) => void;
   onBackToList: () => void;
@@ -480,9 +478,7 @@ interface LeftPanelProps {
   activeConversation: Conversation | null;
   loading: boolean;
   unreadCount: number;
-  activeTab: 'inbox' | 'sent';
   searchTerm: string;
-  onTabChange: (tab: 'inbox' | 'sent') => void;
   onSearchChange: (term: string) => void;
   onSelectConversation: (conv: Conversation) => void;
   onShowCompose: () => void;
@@ -493,9 +489,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
   activeConversation,
   loading,
   unreadCount,
-  activeTab,
   searchTerm,
-  onTabChange,
   onSearchChange,
   onSelectConversation,
   onShowCompose,
@@ -556,28 +550,6 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
             </button>
           )}
         </div>
-
-        {/* Tabs */}
-        <div className="flex mt-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl p-1">
-          {(['inbox', 'sent'] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => onTabChange(tab)}
-              className={`flex-1 py-1.5 text-sm font-medium rounded-lg transition-colors capitalize ${
-                activeTab === tab
-                  ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white shadow-sm'
-                  : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
-              }`}
-            >
-              {tab}
-              {tab === 'inbox' && unreadCount > 0 && (
-                <span className="ml-1.5 inline-flex items-center justify-center w-4 h-4 bg-primary-600 text-white text-xs rounded-full">
-                  {unreadCount > 9 ? '9+' : unreadCount}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Conversation List */}
@@ -627,7 +599,6 @@ interface RightPanelProps {
   replySubject: string;
   isTyping: boolean;
   sendingReply: boolean;
-  activeTab: 'inbox' | 'sent';
   isMobile: boolean;
   onBackToList: () => void;
   onReplyChange: (content: string) => void;
@@ -647,7 +618,6 @@ const RightPanel: React.FC<RightPanelProps> = ({
   replySubject,
   isTyping,
   sendingReply,
-  activeTab,
   isMobile,
   onBackToList,
   onReplyChange,
@@ -837,7 +807,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
           <>
             {filteredMessages.map((msg, idx) => {
               const senderId = getUserId(msg.senderId);
-              const isOwn = senderId === currentUserId || activeTab === 'sent';
+              const isOwn = senderId === currentUserId;
               const prev = filteredMessages[idx - 1];
               const showSep = shouldShowDateSeparator(msg, prev);
               return (
@@ -952,7 +922,6 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   loadingMessages,
   loadingUsers,
   unreadCount,
-  activeTab,
   searchTerm,
   replyContent,
   replySubject,
@@ -962,7 +931,6 @@ export const ChatPage: React.FC<ChatPageProps> = ({
   sendingReply,
   error,
   success,
-  onTabChange,
   onSearchChange,
   onSelectConversation,
   onBackToList,
@@ -1020,9 +988,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
               activeConversation={activeConversation}
               loading={loading}
               unreadCount={unreadCount}
-              activeTab={activeTab}
               searchTerm={searchTerm}
-              onTabChange={onTabChange}
               onSearchChange={onSearchChange}
               onSelectConversation={onSelectConversation}
               onShowCompose={onShowCompose}
@@ -1042,7 +1008,6 @@ export const ChatPage: React.FC<ChatPageProps> = ({
               replySubject={replySubject}
               isTyping={isTyping}
               sendingReply={sendingReply}
-              activeTab={activeTab}
               isMobile={isMobile}
               onBackToList={onBackToList}
               onReplyChange={onReplyChange}
