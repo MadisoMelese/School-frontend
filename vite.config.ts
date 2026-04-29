@@ -85,50 +85,31 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Isolate lucide-react icons into separate chunk
-          if (id.includes('lucide-react')) {
+          // Everything React-related in ONE chunk — prevents duplicate React instances
+          if (
+            id.includes('node_modules/react/') ||
+            id.includes('node_modules/react-dom/') ||
+            id.includes('node_modules/react-router-dom/') ||
+            id.includes('node_modules/scheduler/') ||
+            id.includes('node_modules/react-hook-form/') ||
+            id.includes('node_modules/@hookform/') ||
+            id.includes('node_modules/@tanstack/')
+          ) {
+            return 'react-vendor';
+          }
+
+          // Lucide icons — large but no React circular dep risk
+          if (id.includes('node_modules/lucide-react/')) {
             return 'lucide-icons';
           }
-          
-          // Route-based code splitting for features
-          if (id.includes('/features/admin/')) {
-            return 'admin';
-          }
-          if (id.includes('/features/teacher/')) {
-            return 'teacher';
-          }
-          if (id.includes('/features/student/')) {
-            return 'student';
-          }
-          if (id.includes('/features/parent/')) {
-            return 'parent';
-          }
-          
-          // Vendor chunks
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
-              return 'react-vendor';
-            }
-            if (id.includes('@tanstack/react-query')) {
-              return 'query-vendor';
-            }
-            if (id.includes('react-hook-form') || id.includes('zod') || id.includes('@hookform/resolvers')) {
-              return 'form-vendor';
-            }
-            if (id.includes('axios')) {
-              return 'axios-vendor';
-            }
-            if (id.includes('zustand')) {
-              return 'zustand-vendor';
-            }
-            if (id.includes('idb')) {
-              return 'idb-vendor';
-            }
-            if (id.includes('workbox')) {
-              return 'workbox-vendor';
-            }
-            return 'vendor';
-          }
+
+          // Route-based splitting for app code
+          if (id.includes('/features/admin/')) return 'admin';
+          if (id.includes('/features/teacher/')) return 'teacher';
+          if (id.includes('/features/student/')) return 'student';
+          if (id.includes('/features/parent/')) return 'parent';
+
+          // Everything else (zod, axios, zustand, idb, workbox, etc.) stays in default chunks
         },
       },
     },
