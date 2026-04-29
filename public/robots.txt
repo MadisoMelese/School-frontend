@@ -1,0 +1,11 @@
+# SchoolOS robots.txt
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+
+# Disallow API endpoints
+Disallow: /api/
+
+# Sitemap location (update with actual domain)
+Sitemap: https://schoolos.com/sitemap.xml

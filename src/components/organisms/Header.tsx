@@ -6,6 +6,7 @@ import { Badge } from '../atoms/Badge';
 import { useHeaderVisibility } from '../../hooks/useHeaderVisibility';
 import { SyncStatusIndicator } from './SyncStatusIndicator';
 import { ManualSyncButton } from './ManualSyncButton';
+import { NotificationBell } from './NotificationBell';
 
 export interface Notification {
   id: string;
@@ -113,79 +114,8 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
-          {/* Notifications */}
-          <div className="relative">
-            <button
-              onClick={() => setNotificationsOpen(!notificationsOpen)}
-              className="relative p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors"
-              aria-label="Notifications"
-              aria-expanded={notificationsOpen}
-            >
-              <Icon name="Bell" size={20} className="text-neutral-600 dark:text-neutral-400" />
-              {unreadCount > 0 && (
-                <Badge
-                  variant="danger"
-                  className="absolute -top-1 -right-1 text-xs w-5 h-5 flex items-center justify-center p-0"
-                >
-                  {unreadCount}
-                </Badge>
-              )}
-            </button>
-
-            {/* Notifications Dropdown */}
-            {notificationsOpen && (
-              <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg overflow-hidden">
-                <div className="px-4 py-3 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-700">
-                  <h3 className="font-semibold text-neutral-900 dark:text-white">Notifications</h3>
-                </div>
-
-                <div className="max-h-96 overflow-y-auto">
-                  {notifications.length === 0 ? (
-                    <div className="px-4 py-6 text-center text-neutral-500 dark:text-neutral-400">
-                      No notifications
-                    </div>
-                  ) : (
-                    notifications.map((notification) => (
-                      <button
-                        key={notification.id}
-                        onClick={() => {
-                          if (onNotificationClick) {
-                            onNotificationClick(notification.id);
-                          }
-                          setNotificationsOpen(false);
-                        }}
-                        className={`w-full px-4 py-3 border-b border-neutral-100 dark:border-neutral-700 text-left hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors ${
-                          !notification.read ? 'bg-primary-50 dark:bg-primary-900' : ''
-                        }`}
-                      >
-                        <div className="flex gap-3">
-                          <Icon
-                            name={getNotificationIcon(notification.type)}
-                            size={20}
-                            className={getNotificationColor(notification.type)}
-                          />
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-sm text-neutral-900 dark:text-white">
-                              {notification.title}
-                            </p>
-                            <p className="text-xs text-neutral-600 dark:text-neutral-400 line-clamp-2">
-                              {notification.message}
-                            </p>
-                            <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
-                              {new Date(notification.timestamp).toLocaleTimeString()}
-                            </p>
-                          </div>
-                          {!notification.read && (
-                            <div className="w-2 h-2 bg-primary-600 rounded-full mt-1 flex-shrink-0" />
-                          )}
-                        </div>
-                      </button>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Real-time Notifications */}
+          <NotificationBell />
 
           {/* User Menu */}
           {user && (
