@@ -7,6 +7,7 @@ import {
   getRefreshToken,
 } from '@/services/api/tokenManager';
 import authService from '@/services/api/authService';
+import { getUserFriendlyErrorMessage } from '@/services/api/errorHandler';
 
 /**
  * Auth Store
@@ -68,13 +69,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         error: null,
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Login failed';
+      const errorMessage = getUserFriendlyErrorMessage(error);
       set({
         isLoading: false,
         error: errorMessage,
         isAuthenticated: false,
       });
-      throw error;
+      throw new Error(errorMessage);
     }
   },
 

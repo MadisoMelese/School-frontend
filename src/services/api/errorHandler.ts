@@ -78,6 +78,11 @@ export const getUserFriendlyErrorMessage = (error: unknown): string => {
       return error.response.data.message;
     }
 
+    // Also handle nested data.message pattern
+    if ((error.response?.data as any)?.data?.message) {
+      return (error.response?.data as any).data.message;
+    }
+
     // Use mapped message or default
     if (status && errorMessageMap[status]) {
       return errorMessageMap[status];
@@ -191,4 +196,13 @@ export const isServerError = (error: unknown): boolean => {
     return status ? status >= 500 : false;
   }
   return false;
+};
+
+/**
+ * Universal error message extractor.
+ * Use this everywhere instead of `err instanceof Error ? err.message : 'fallback'`
+ * It correctly reads the backend ApiError message from the response body.
+ */
+export const getErrorMessage = (error: unknown, fallback = 'An unexpected error occurred'): string => {
+  return getUserFriendlyErrorMessage(error) || fallback;
 };
