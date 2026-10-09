@@ -5,7 +5,7 @@ export interface UserListResponse {
   users: User[];
   total: number;
   page: number;
-  limit: number;
+  totalPages: number;
 }
 
 export interface CreateUserRequest {
@@ -43,7 +43,12 @@ export const userService = {
   async getUsers(filters?: UserFilters) {
     const params = new URLSearchParams();
     if (filters?.role) params.append('role', filters.role);
-    if (filters?.status) params.append('status', filters.status);
+    if (filters?.status === 'active') params.append('isActive', 'true');
+    if (filters?.status === 'inactive') {
+      params.append('isActive', 'false');
+      params.append('isBlocked', 'false');
+    }
+    if (filters?.status === 'blocked') params.append('isBlocked', 'true');
     if (filters?.search) params.append('search', filters.search);
     if (filters?.page) params.append('page', filters.page.toString());
     if (filters?.limit) params.append('limit', filters.limit.toString());
@@ -52,8 +57,11 @@ export const userService = {
       success: boolean;
       data: UserListResponse;
       message: string;
-    }>('/users', { params });
-    return response.data.data;
+    }>('/admin/users', { params });
+    return {
+      ...response.data.data,
+      limit: filters?.limit ?? 20,
+    };
   },
 
   /**
@@ -76,7 +84,11 @@ export const userService = {
       success: boolean;
       data: { user: User };
       message: string;
-    }>('/users', data);
+    }>('/admin/users', {
+      email: data.email,
+      name: `${data.firstname} ${data.lastname}`.trim(),
+      role: data.role,
+    });
     return response.data.data.user;
   },
 
@@ -96,11 +108,11 @@ export const userService = {
    * Change user role
    */
   async changeUserRole(userId: string, role: UserRole) {
-    const response = await apiClient.patch<{
+    const response = await apiClient.put<{
       success: boolean;
       data: { user: User };
       message: string;
-    }>(`/users/${userId}/role`, {
+    }>(`/admin/users/${userId}`, {
       role,
     });
     return response.data.data.user;

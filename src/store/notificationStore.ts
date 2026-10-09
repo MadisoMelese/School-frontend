@@ -38,14 +38,39 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   unreadMessageCount: 0,
 
   addNotification: (notification) => {
-    const newNotification: AppNotification = {
-      ...notification,
-      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      isRead: false,
-    };
-    set((state) => ({
-      notifications: [newNotification, ...state.notifications].slice(0, 200),
-    }));
+    set((state) => {
+      const messageId =
+        notification.type === 'message' &&
+        notification.data &&
+        typeof notification.data === 'object' &&
+        '_id' in notification.data &&
+        typeof notification.data._id === 'string'
+          ? notification.data._id
+          : undefined;
+
+      if (
+        messageId &&
+        state.notifications.some(
+          (existing) =>
+            existing.type === 'message' &&
+            existing.data &&
+            typeof existing.data === 'object' &&
+            '_id' in existing.data &&
+            existing.data._id === messageId
+        )
+      ) {
+        return state;
+      }
+
+      const newNotification: AppNotification = {
+        ...notification,
+        id: messageId ?? `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        isRead: false,
+      };
+      return {
+        notifications: [newNotification, ...state.notifications].slice(0, 200),
+      };
+    });
   },
 
   markSenderRead: (senderId: string) => {

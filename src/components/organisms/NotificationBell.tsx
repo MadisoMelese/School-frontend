@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Icon } from '@components/atoms/Icon';
 import { useNotificationStore } from '@store/notificationStore';
 import { useAuthStore } from '@store/authStore';
+import { apiClient } from '@services/api/client';
 
 /**
  * NotificationBell
@@ -12,6 +13,7 @@ import { useAuthStore } from '@store/authStore';
  */
 export const NotificationBell: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [markAllError, setMarkAllError] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { user } = useAuthStore();
@@ -56,8 +58,15 @@ export const NotificationBell: React.FC = () => {
     navigate(path);
   };
 
-  const handleMarkAllRead = () => {
-    markAllRead();
+  const handleMarkAllRead = async () => {
+    setMarkAllError(null);
+    try {
+      await apiClient.patch('/messages/read-all');
+      markAllRead();
+      setUnreadMessageCount(0);
+    } catch (error) {
+      setMarkAllError(error instanceof Error ? error.message : 'Failed to mark messages as read');
+    }
   };
 
   return (
@@ -98,6 +107,12 @@ export const NotificationBell: React.FC = () => {
               </button>
             )}
           </div>
+
+          {markAllError && (
+            <p className="px-4 py-2 text-xs text-danger-600 dark:text-danger-400" role="alert">
+              {markAllError}
+            </p>
+          )}
 
           {/* Grouped sender list */}
           <div className="max-h-80 overflow-y-auto">

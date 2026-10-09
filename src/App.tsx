@@ -1,12 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect, Suspense, lazy } from 'react';
 import { useAuth } from '@hooks/useAuth';
 import { useTheme } from '@hooks/useTheme';
 import { initializeSyncEngine, cleanupSyncEngine } from '@/services/offline/syncEngine';
 import { initializeDB } from '@/services/offline/indexedDB';
-
-// Layouts
-import { AuthLayout } from '@components/templates/AuthLayout';
 
 // PWA Components
 import { PWAUpdatePrompt } from '@components/organisms/PWAUpdatePrompt';
@@ -29,6 +26,9 @@ const PageLoader = () => (
 const LoginPage = lazy(() => import('@features/auth/pages/LoginPage').then(m => ({ default: m.LoginPage })));
 const PasswordResetPage = lazy(() => import('@features/auth/pages/PasswordResetPage').then(m => ({ default: m.PasswordResetPage })));
 const ChangePasswordPage = lazy(() => import('@features/auth/pages/ChangePasswordPage').then(m => ({ default: m.ChangePasswordPage })));
+const LandingPage = lazy(() => import('@features/common/pages/LandingPage'));
+const SchoolInfoPage = lazy(() => import('@features/common/pages/SchoolInfoPage'));
+const SchoolSiteManagementPage = lazy(() => import('@features/admin/pages/SchoolSiteManagementPage'));
 
 // Common Pages (shared across roles) - Lazy loaded
 const AttendancePage = lazy(() => import('@features/common/pages/AttendancePage').then(m => ({ default: m.AttendancePage })));
@@ -71,13 +71,6 @@ const MessagesManagementPage = lazy(() => import('@features/admin/pages/Messages
 const LibraryManagementPage = lazy(() => import('@features/admin/pages/LibraryManagementPage').then(m => ({ default: m.LibraryManagementPage })));
 const TimetablesManagementPage = lazy(() => import('@features/admin/pages/TimetablesManagementPage').then(m => ({ default: m.TimetablesManagementPage })));
 const StaffManagementPage = lazy(() => import('@features/admin/pages/StaffManagementPage').then(m => ({ default: m.StaffManagementPage })));
-
-// Auth Layout Wrapper
-const AuthLayoutWrapper = () => (
-  <AuthLayout>
-    <Outlet />
-  </AuthLayout>
-);
 
 // Protected Route Component
 const ProtectedRoute = ({
@@ -172,11 +165,12 @@ function App() {
           <Suspense fallback={<PageLoader />}>
             <Routes>
           {/* Auth Routes */}
-          <Route element={<AuthLayoutWrapper />}>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/password-reset" element={<PasswordResetPage />} />
-            <Route path="/change-password" element={<ChangePasswordPage />} />
-          </Route>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/password-reset" element={<PasswordResetPage />} />
+          <Route path="/change-password" element={<ChangePasswordPage />} />
+          <Route path="/latest/:section" element={<SchoolInfoPage />} />
+          <Route path="/about/:section" element={<SchoolInfoPage />} />
+          <Route path="/contact" element={<SchoolInfoPage />} />
 
           {/* Student Portal Routes */}
           <Route
@@ -418,6 +412,14 @@ function App() {
             }
           />
           <Route
+            path="/admin/school-site"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <SchoolSiteManagementPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/admin/messages"
             element={
               <ProtectedRoute requiredRole="admin">
@@ -466,14 +468,14 @@ function App() {
             }
           />
 
-          {/* Root redirect based on authentication */}
+          {/* Public school landing page; authenticated users go to their portal. */}
           <Route
             path="/"
             element={
               isAuthenticated && user ? (
                 <Navigate to={`/${user.role}`} replace />
               ) : (
-                <Navigate to="/login" replace />
+                <LandingPage />
               )
             }
           />

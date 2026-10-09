@@ -285,7 +285,7 @@ export const UserManagementPage: React.FC = () => {
         </div>
 
         {/* Filters Card */}
-        <Card>
+        <Card className="!overflow-visible">
           <div className="space-y-4">
             <h3 className="font-semibold text-neutral-900 dark:text-white">Filters</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

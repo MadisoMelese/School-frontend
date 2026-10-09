@@ -89,6 +89,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         { id: 'fees', label: 'Fees', icon: 'CreditCard', href: '/admin/fees' },
         { id: 'attendance', label: 'Attendance', icon: 'Calendar', href: '/admin/attendance' },
         { id: 'announcements', label: 'Announcements', icon: 'Bell', href: '/admin/announcements' },
+        { id: 'school-site', label: 'School Website', icon: 'Globe', href: '/admin/school-site' },
         { id: 'messages', label: 'Messages', icon: 'Mail', href: '/admin/messages' },
         { id: 'library', label: 'Library', icon: 'BookMarked', href: '/admin/library' },
         { id: 'timetables', label: 'Timetables', icon: 'Clock', href: '/admin/timetables' },
@@ -161,6 +162,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         >
           <Header
             title={title}
+            description={description}
             user={user || undefined}
             onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
             onLogout={handleLogout}
@@ -175,7 +177,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         >
           <div className="px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8 lg:py-10">
             {/* Page title and description */}
-            {title && (
+            {/* {title && (
               <div className="mb-6 sm:mb-8 animate-fade-in">
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-2">
                   {title}
@@ -186,7 +188,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   </p>
                 )}
               </div>
-            )}
+            )} */}
 
             {/* Page content */}
             {children}
